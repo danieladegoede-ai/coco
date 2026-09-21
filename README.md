@@ -102,6 +102,20 @@ rebuild a broken submission.
 The source and test folders are intentionally empty. Implementation files will
 be added only after the four group members approve the work split.
 
+## AI-assistant work packets
+
+The root [`AGENTS.md`](AGENTS.md) file contains the rules that every coding
+assistant must follow. Detailed front-end work packets are stored in
+[`agent_tasks/`](agent_tasks/README.md).
+
+Before implementation starts, the team must approve
+[`00_team_decisions.md`](agent_tasks/00_team_decisions.md). After approval,
+each member and their AI assistant must read the shared contracts, SPL
+reference and that member's own work packet before changing code.
+
+These files are the temporary task system. No GitHub implementation issues
+will be created until all four members approve the allocation and interfaces.
+
 ## Basic setup
 
 1. Install Python 3.11 or later.
