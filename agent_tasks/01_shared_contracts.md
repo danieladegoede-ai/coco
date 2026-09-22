@@ -1,12 +1,17 @@
 # Shared front-end contracts
 
-Status: proposed baseline. The approved team decisions take priority.
+Status: **APPROVED on 22 September 2026.**
+
+The common token, token-stream, diagnostic and tree-type foundation is stored
+under `src/spl_frontend/`. Owners extend those types without breaking these
+contracts.
 
 ## Planned package layout
 
 ```text
 src/spl_frontend/
 |-- __init__.py
+|-- cli_contract.py
 |-- diagnostics.py
 |-- source.py
 |-- tokens.py
@@ -166,3 +171,6 @@ Defaults:
 
 The final executable name is provisionally `splc` until submission instructions
 say otherwise.
+
+The approved defaults are represented by the shared `CliRequest` value in
+`cli_contract.py`. The CLI owner implements argument parsing around that value.

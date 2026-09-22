@@ -62,8 +62,8 @@ agreement.
 - Every implementation change must include relevant tests.
 - Do not commit `SPL.txt`, `tree.xml`, caches, virtual environments, build
   output or packaged executables to the source branch.
-- Do not create GitHub issues unless the Speaker confirms that the team has
-  approved the split.
+- Do not create, close or materially change GitHub issues outside the approved
+  allocation unless the Speaker requests it.
 
 ## Required verification
 

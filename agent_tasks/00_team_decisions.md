@@ -1,6 +1,6 @@
 # Team decisions required before implementation
 
-Status: **PROPOSED - waiting for all four members**
+Status: **APPROVED by all four members on 22 September 2026**
 
 The Speaker records the final choices and changes the status to `APPROVED` only
 after all members reply.
@@ -20,7 +20,7 @@ Shorter, but less clear and easier to use incorrectly.
 
 Simplest, but cannot support accurate error positions.
 
-Proposed choice: **A**
+Approved choice: **A**
 
 ## Decision 2: Token source
 
@@ -37,7 +37,7 @@ Uses less memory but needs a lookahead buffer and is harder to inspect.
 
 Creates tight coupling and blocks independent testing.
 
-Proposed choice: **A**
+Approved choice: **A**
 
 ## Decision 3: Syntax-tree construction
 
@@ -54,7 +54,7 @@ Initially simple, but parent references and deterministic IDs are harder later.
 
 Couples parsing to output and makes partial-output failures more likely.
 
-Proposed choice: **A**
+Approved choice: **A**
 
 ## Decision 4: Command-line interface
 
@@ -71,7 +71,7 @@ Proposed choice: **A**
 With no argument, read `SPL.txt`. If an argument is provided, read that path.
 Write `tree.xml` by default.
 
-Proposed choice: **C**
+Approved choice: **C**
 
 ## Provisional specification decisions
 
@@ -85,12 +85,12 @@ These remain isolated so one tutor answer can change them safely:
 
 ## Approval record
 
-- [ ] `u20598425`: choices submitted
-- [ ] `u20620111`: choices submitted
-- [ ] `u21434019`: choices submitted
-- [ ] `u21448842`: choices submitted
-- [ ] Speaker recorded the accepted choices
-- [ ] Status changed to `APPROVED`
+- [x] `u20598425`: approved `1A, 2A, 3A, 4C`
+- [x] `u20620111`: approved `1A, 2A, 3A, 4C`
+- [x] `u21434019`: approved `1A, 2A, 3A, 4C`
+- [x] `u21448842`: approved `1A, 2A, 3A, 4C`
+- [x] Speaker recorded the accepted choices
+- [x] Status changed to `APPROVED`
 
 Suggested reply format:
 

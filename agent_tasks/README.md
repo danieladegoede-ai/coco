@@ -5,9 +5,9 @@ front-end task without relying on GitHub issues.
 
 ## Current status
 
-The allocation and interfaces are **proposed until all four members approve
-`00_team_decisions.md`**. Reading, reviewing and suggesting changes is allowed.
-Implementation should begin only after the team records approval.
+The allocation and interfaces were **approved by all four members on
+22 September 2026**. Implementation may begin from the shared foundation on
+`main`.
 
 ## Required shared reading
 

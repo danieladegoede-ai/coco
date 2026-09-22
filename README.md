@@ -99,8 +99,8 @@ rebuild a broken submission.
 `-- README.md        Confirmed front-end scope and working rules
 ```
 
-The source and test folders are intentionally empty. Implementation files will
-be added only after the four group members approve the work split.
+The repository contains only the approved shared contracts. Each member now
+implements the module described in that member's work packet.
 
 ## AI-assistant work packets
 
@@ -108,13 +108,13 @@ The root [`AGENTS.md`](AGENTS.md) file contains the rules that every coding
 assistant must follow. Detailed front-end work packets are stored in
 [`agent_tasks/`](agent_tasks/README.md).
 
-Before implementation starts, the team must approve
-[`00_team_decisions.md`](agent_tasks/00_team_decisions.md). After approval,
-each member and their AI assistant must read the shared contracts, SPL
+The team approved `1A, 2A, 3A, 4C` and the allocation on 22 September 2026.
+Each member and their AI assistant must read the
+[`approved decisions`](agent_tasks/00_team_decisions.md), shared contracts, SPL
 reference and that member's own work packet before changing code.
 
-These files are the temporary task system. No GitHub implementation issues
-will be created until all four members approve the allocation and interfaces.
+These files remain the detailed source of truth behind the approved GitHub
+issues.
 
 ## Basic setup
 
@@ -151,5 +151,5 @@ The front end is ready only when:
   `blank_space` always required?
 - Where and in what format must the executable be uploaded?
 
-No GitHub implementation issues will be created until the team agrees on the
-front-end work split.
+The approved GitHub issues link back to the detailed work packets in
+`agent_tasks/`.
