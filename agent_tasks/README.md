@@ -24,12 +24,12 @@ Every member and AI assistant must read:
 
 ## Proposed equal allocation
 
-| Student | Work packet | Main result |
-| --- | --- | --- |
-| `u20598425` | `10_u20598425_tree_xml.md` | Validated syntax tree and deterministic `tree.xml` |
-| `u20620111` | `20_u20620111_lexer.md` | Correct token stream with locations and lexical errors |
-| `u21434019` | `30_u21434019_parser.md` | Complete grammar parser with useful syntax errors |
-| `u21448842` | `40_u21448842_cli_testing_release.md` | Runnable integrated front end and black-box test system |
+| Student | Work packet | GitHub issue | Main result |
+| --- | --- | --- | --- |
+| `u20598425` | `10_u20598425_tree_xml.md` | [#8](https://github.com/RudolphLamp/coco/issues/8) | Validated syntax tree and deterministic `tree.xml` |
+| `u20620111` | `20_u20620111_lexer.md` | [#9](https://github.com/RudolphLamp/coco/issues/9) | Correct token stream with locations and lexical errors |
+| `u21434019` | `30_u21434019_parser.md` | [#10](https://github.com/RudolphLamp/coco/issues/10) | Complete grammar parser with useful syntax errors |
+| `u21448842` | `40_u21448842_cli_testing_release.md` | [#11](https://github.com/RudolphLamp/coco/issues/11) | Runnable integrated front end and black-box test system |
 
 Each packet contains implementation, tests, documentation and integration
 responsibilities. Coordination alone does not count as a member's technical

@@ -116,6 +116,13 @@ reference and that member's own work packet before changing code.
 These files remain the detailed source of truth behind the approved GitHub
 issues.
 
+Approved implementation issues:
+
+- [`#8` - u20598425: syntax tree and XML](https://github.com/RudolphLamp/coco/issues/8)
+- [`#9` - u20620111: source reader and lexer](https://github.com/RudolphLamp/coco/issues/9)
+- [`#10` - u21434019: parser and syntax diagnostics](https://github.com/RudolphLamp/coco/issues/10)
+- [`#11` - u21448842: CLI, generated tests and executable](https://github.com/RudolphLamp/coco/issues/11)
+
 ## Basic setup
 
 1. Install Python 3.11 or later.
