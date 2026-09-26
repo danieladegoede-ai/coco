@@ -99,8 +99,8 @@ rebuild a broken submission.
 `-- README.md        Confirmed front-end scope and working rules
 ```
 
-The repository contains only the approved shared contracts. Each member now
-implements the module described in that member's work packet.
+The repository contains the approved shared contracts and the syntax-tree/XML
+modules. The lexer, parser and CLI are separate team tasks.
 
 ## AI-assistant work packets
 
@@ -133,6 +133,53 @@ Approved implementation issues:
 
 Do not commit `SPL.txt`, `tree.xml`, Python caches, virtual environments,
 packaged executables or private course material.
+
+## Run the syntax tree and XML writer
+
+Run this example from the repository root with Python 3.11 or later. It builds
+a small tree in memory, validates its structure, and writes `tree.xml` in the
+current directory:
+
+```sh
+PYTHONPATH=src python3 - <<'PY'
+from pathlib import Path
+
+from spl_frontend.tree import SyntaxTree
+from spl_frontend.xml_writer import write_tree
+
+tree = SyntaxTree()
+root = tree.add_root("SPL_PROG")
+program = tree.add_inner("P", root.node_id)
+tree.add_leaf(":", program.node_id)
+
+tree.validate()
+write_tree(tree, Path("tree.xml"))
+print(Path("tree.xml").resolve())
+PY
+```
+
+Open the printed path in a browser to inspect the XML. The example shows the
+tree/XML API; it is not a complete SPL program. The parser will supply the
+grammar nodes and terminal lexemes when that team module is integrated.
+`SyntaxTree` assigns IDs and updates ordered child links automatically; callers
+should not edit `child_ids`. `write_tree` validates again and atomically replaces
+the output file. The output directory must already exist. Do not commit the
+generated `tree.xml`.
+
+## Run the tree and XML tests
+
+From the repository root, using Python 3.11 or later:
+
+```sh
+PYTHONPATH=src python3 -m unittest tests.unit.test_tree -v
+PYTHONPATH=src python3 -m unittest tests.unit.test_xml_writer -v
+PYTHONPATH=src python3 -m unittest tests.integration.test_tree_xml -v
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+python3 -m compileall -q src tests
+```
+
+The integration tests construct trees directly and write XML only inside
+temporary directories; they do not require the unfinished lexer, parser or CLI.
 
 ## Definition of done for the front end
 
