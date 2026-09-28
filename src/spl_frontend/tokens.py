@@ -47,6 +47,42 @@ class TokenType(str, Enum):
     SEMICOLON = ";"
     ASSIGN = "="
 
+KEYWORDS: dict[str, TokenType] = {
+    "void": TokenType.VOID,
+    "num": TokenType.NUM_TYPE,
+    "return": TokenType.RETURN,
+    "print": TokenType.PRINT,
+    "nop": TokenType.NOP,
+    "comment": TokenType.COMMENT,
+    "if": TokenType.IF,
+    "then": TokenType.THEN,
+    "else": TokenType.ELSE,
+    "while": TokenType.WHILE,
+    "until": TokenType.UNTIL,
+    "do": TokenType.DO,
+    "not": TokenType.NOT,
+    "and": TokenType.AND,
+    "or": TokenType.OR,
+    "eq": TokenType.EQ,
+    "larger": TokenType.LARGER,
+    "lesser": TokenType.LESSER,
+    "mod": TokenType.MOD,
+    "add": TokenType.ADD,
+    "sub": TokenType.SUB,
+    "mul": TokenType.MUL,
+    "div": TokenType.DIV,
+    "neg": TokenType.NEG,
+}
+
+PUNCTUATION: dict[str, TokenType] = {
+    "(": TokenType.LPAREN,
+    ")": TokenType.RPAREN,
+    "{": TokenType.LBRACE,
+    "}": TokenType.RBRACE,
+    ":": TokenType.COLON,
+    ";": TokenType.SEMICOLON,
+    "=": TokenType.ASSIGN,
+}
 
 @dataclass(frozen=True, slots=True)
 class Token:
