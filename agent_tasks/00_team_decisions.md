@@ -78,7 +78,9 @@ Approved choice: **C**
 These remain isolated so one tutor answer can change them safely:
 
 - Treat space, CR, LF and CRLF as supported token separators; reject tab.
-- Keep the final-token-before-EOF rule configurable until confirmed.
+- Require a final `blank_space` by default, following the syntax specification's
+  explicit every-token rule. The lexer keeps an explicit override for testing
+  a different tutor interpretation if one is later confirmed.
 - Represent nullable productions consistently, with the exact XML appearance
   still awaiting confirmation.
 - Use a simple internal XML schema until an official sample is supplied.

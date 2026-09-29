@@ -4,7 +4,9 @@ from .diagnostics import Diagnostic, DiagnosticPhase, ExitCode, FrontendError
 from .source import SourceFile
 from .tokens import Token, TokenType, KEYWORDS, PUNCTUATION
 
-ALLOW_EOF_AS_SEPARATOR: bool = True
+# The syntax specification requires every token to end in blank_space.
+# Keep the explicit override for investigating tutor interpretations.
+ALLOW_EOF_AS_SEPARATOR: bool = False
 
 
 def tokenize(source: SourceFile, allow_eof_terminator: bool | None = None) -> list[Token]:
@@ -314,7 +316,7 @@ class _Lexer:
         self._add_token(KEYWORDS[lexeme], lexeme, start_line, start_col, start_pos)
 
     def _require_separator(self, lexeme: str, token_line: int, token_col: int) -> None:
-        """Ensure the token is followed by whitespace or EOF."""
+        """Ensure the token is followed by blank_space (or permitted EOF)."""
         if self._at_end():
             if not self._allow_eof_terminator:
                 self._error_at(

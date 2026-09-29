@@ -1,7 +1,6 @@
 # COS341 SPL Front End - Group 2
 
-This repository is a clean starting point for Group 2's COS341 front-end
-assessment.
+This repository contains Group 2's COS341 SPL front end.
 
 ## Current scope
 
@@ -51,6 +50,8 @@ syntax tree still uses the original grammar's node names.
 ## Important specification details
 
 - Every token must end with the specification's `blank_space` delimiter.
+- The final token also needs a separator. A bare end-of-file does not count as
+  `blank_space`; use a trailing space or newline in `SPL.txt`.
 - The main lexical categories are `NUM`, `USER-DEFINED-NAME` and `STRING`, plus
   the reserved keywords and punctuation shown in the grammar.
 - The `$` in grammar Rule 0 is only an end-of-file meta-symbol. It must not
@@ -96,11 +97,11 @@ rebuild a broken submission.
 |-- .editorconfig    Shared basic editor settings
 |-- .gitignore       Local and generated files excluded from Git
 |-- pyproject.toml   Minimal Python project information
-`-- README.md        Confirmed front-end scope and working rules
+`-- README.md        Front-end usage and working rules
 ```
 
-The repository contains the approved shared contracts and the syntax-tree/XML
-modules. The lexer, parser and CLI are separate team tasks.
+The source reader, lexer, parser, syntax tree, XML writer and development CLI
+are integrated. Packaging the required executable is a separate release task.
 
 ## AI-assistant work packets
 
@@ -134,6 +135,30 @@ Approved implementation issues:
 Do not commit `SPL.txt`, `tree.xml`, Python caches, virtual environments,
 packaged executables or private course material.
 
+## Run the integrated front end during development
+
+From the repository root, create `SPL.txt` in the directory where you will run
+the command. The smallest valid program is `: : `, with a space after each
+colon. Then run:
+
+```sh
+PYTHONPATH=src python3 -m spl_frontend
+```
+
+You may pass one input path instead of using `SPL.txt`:
+
+```sh
+PYTHONPATH=src python3 -m spl_frontend path/to/input.txt
+```
+
+Successful runs return zero and write a fresh `tree.xml` in the current
+directory. Errors are printed to standard error and return a nonzero status.
+The driver removes an old `tree.xml` before attempting a new compilation, so
+an input failure does not leave the previous result looking current. Do not
+put the literal `$` at the end of `SPL.txt`; it is only a grammar meta-symbol.
+These Python commands are for development; the submission executable must be
+tested separately on the tutors' target platform.
+
 ## Run the syntax tree and XML writer
 
 Run this example from the repository root with Python 3.11 or later. It builds
@@ -160,7 +185,7 @@ PY
 
 Open the printed path in a browser to inspect the XML. The example shows the
 tree/XML API; it is not a complete SPL program. The parser will supply the
-grammar nodes and terminal lexemes when that team module is integrated.
+grammar nodes and terminal lexemes during a normal compilation.
 `SyntaxTree` assigns IDs and updates ordered child links automatically; callers
 should not edit `child_ids`. `write_tree` validates again and atomically replaces
 the output file. The output directory must already exist. Do not commit the
@@ -175,11 +200,44 @@ PYTHONPATH=src python3 -m unittest tests.unit.test_tree -v
 PYTHONPATH=src python3 -m unittest tests.unit.test_xml_writer -v
 PYTHONPATH=src python3 -m unittest tests.integration.test_tree_xml -v
 PYTHONPATH=src python3 -m unittest discover -s tests -v
-python3 -m compileall -q src tests
+python3 -m compileall -q src tests tools
 ```
 
-The integration tests construct trees directly and write XML only inside
-temporary directories; they do not require the unfinished lexer, parser or CLI.
+The tree/XML integration tests construct trees directly. The full suite also
+tests the integrated CLI, generated programs and repeated-run output safety.
+Run the development black-box harness with:
+
+```sh
+python3 tools/black_box_test.py
+```
+
+For the larger edge corpus and deterministic grammar coverage case:
+
+```sh
+PYTHONPATH=src python3 -m unittest tests.integration.test_edge_corpus -v
+PYTHONPATH=src python3 -m unittest tests.generated.test_generate_valid_spl -v
+python3 tools/generate_valid_spl.py --coverage SPL.txt
+PYTHONPATH=src python3 -m spl_frontend
+```
+
+The edge corpus currently checks more than 300 distinct source files through
+the complete front end, including lexical boundaries, all grammar alternatives,
+missing separators and repeated instruction combinations. The generated
+coverage program exercises every original grammar production. Seeded programs
+have independent limits for expansion count (`max_size`) and concrete-tree node
+count (`max_nodes`, default 1000). `SPL.txt` and `tree.xml` are ignored local
+artifacts; do not commit them. Executable-only cases still require the packaged
+release candidate, and unconfirmed tutor choices remain provisional.
+
+## Phase 1 submission package
+
+Announcement #25 requires one Group 2 ZIP containing a runnable executable
+whose filename includes `group-2` and a short PDF manual whose filename also
+includes `group-2`. The PDF must list the full names and student numbers of
+all four members and explain how tutors run the program. Only the designated
+Speaker (`u20598425`) uploads the ZIP to ClickUp before the deadline. The
+executable, manual, ZIP and downloaded-copy retest are release artifacts. The
+development commands above do not produce them.
 
 ## Definition of done for the front end
 
@@ -201,9 +259,7 @@ The front end is ready only when:
 - Must the program always read `SPL.txt` from the current directory?
 - Is there an exact XML tag structure or sample output to follow?
 - How must nullable grammar productions appear in `tree.xml`?
-- May end-of-file directly terminate the last token, or is a final
-  `blank_space` always required?
-- Where and in what format must the executable be uploaded?
+- Which exact ClickUp upload link will the Speaker use?
 
 The approved GitHub issues link back to the detailed work packets in
 `agent_tasks/`.

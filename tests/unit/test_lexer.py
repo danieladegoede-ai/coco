@@ -270,10 +270,10 @@ class TestSpecialCases(unittest.TestCase):
             tokenize(make_source("@ "))
         self.assertEqual(ctx.exception.diagnostic.code, "LEX-UNKNOWN")
 
-    def test_eof_without_trailing_space(self):
-        tokens = tokenize(make_source("print"))
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].token_type, TokenType.PRINT)
+    def test_default_requires_blank_space_after_final_token(self):
+        with self.assertRaises(FrontendError) as ctx:
+            tokenize(make_source("print"))
+        self.assertEqual(ctx.exception.diagnostic.code, "LEX-NO-SEPARATOR")
 
 
 class TestPositionTracking(unittest.TestCase):

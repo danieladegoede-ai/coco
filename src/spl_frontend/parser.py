@@ -199,8 +199,12 @@ class _Parser:
         node=self.tree.add_inner('COND',parent_id)
         self.expect(node.node_id,TokenType.WHILE,TokenType.UNTIL)
 
-def parse(tokens:Sequence[Token], tree:SyntaxTree)->SyntaxTree:
-    parser=_Parser(TokenStream(tokens),tree)
+def parse(
+    tokens: Sequence[Token],
+    tree: SyntaxTree,
+    path: Path = DEFAULT_INPUT_PATH,
+) -> SyntaxTree:
+    parser = _Parser(TokenStream(tokens), tree, path)
     parser.parse_spl_prog()
     tree.validate()
     return tree

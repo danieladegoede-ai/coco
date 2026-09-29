@@ -19,6 +19,13 @@ dist/
 /SPL.txt
 /tree.xml
 
+# Local scratch test files
+/d*.txt
+/demo*.txt
+/invalid*.txt
+/valid.txt
+/scratch/
+
 # Editors and operating systems
 .DS_Store
 .idea/
