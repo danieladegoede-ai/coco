@@ -62,6 +62,34 @@ def check_case(executable: Path, case: Edge) -> str | None:
         return None
 
 
+def check_explicit_input_path(executable: Path) -> str | None:
+    """Verify the documented `group-2.exe SPL.txt` form works."""
+    with tempfile.TemporaryDirectory() as directory:
+        workdir = Path(directory)
+        (workdir / "SPL.txt").write_bytes(b": : ")
+        try:
+            result = subprocess.run(
+                [str(executable), "SPL.txt"],
+                cwd=workdir,
+                capture_output=True,
+                timeout=30,
+            )
+        except (OSError, subprocess.TimeoutExpired) as error:
+            return str(error)
+        if result.returncode != 0:
+            stderr = result.stderr.decode("utf-8", errors="replace").strip()
+            return f"explicit SPL.txt path exited {result.returncode}: {stderr}"
+        output = workdir / "tree.xml"
+        if not output.is_file():
+            return "explicit SPL.txt path did not create tree.xml"
+        try:
+            if ET.parse(output).getroot().tag != "syntax_tree":
+                return "explicit SPL.txt path produced an unexpected XML root"
+        except ET.ParseError as error:
+            return f"explicit SPL.txt path produced malformed XML: {error}"
+        return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--executable", required=True, type=Path)
@@ -82,7 +110,13 @@ def main() -> int:
             print(f"  SPL.txt bytes: {case.source!r}")
         elif index % 50 == 0 or index == len(cases):
             print(f"PASS {index}/{len(cases)} SPL.txt edge cases")
-    print(f"{len(cases) - failures}/{len(cases)} packaged edge cases passed")
+    explicit_error = check_explicit_input_path(executable)
+    if explicit_error is None:
+        print("PASS explicit SPL.txt argument")
+    else:
+        failures += 1
+        print(f"FAIL explicit SPL.txt argument: {explicit_error}")
+    print(f"{len(cases) + 1 - failures}/{len(cases) + 1} packaged cases passed")
     return 0 if failures == 0 else 1
 
 
