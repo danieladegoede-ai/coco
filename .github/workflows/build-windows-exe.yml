@@ -32,13 +32,13 @@ jobs:
           Copy-Item dist/group-2-splc.exe smoke/
           Set-Location smoke
           [System.IO.File]::WriteAllText((Join-Path (Get-Location).Path 'SPL.txt'), ': : ', [System.Text.Encoding]::ASCII)
-          & .\group-2-splc.exe
-          if ($LASTEXITCODE -ne 0 -or !(Test-Path tree.xml)) {
+          $valid = Start-Process -FilePath (Join-Path (Get-Location).Path 'group-2-splc.exe') -WorkingDirectory (Get-Location).Path -Wait -PassThru -NoNewWindow
+          if ($valid.ExitCode -ne 0 -or !(Test-Path tree.xml)) {
             throw 'Valid SPL input did not produce tree.xml.'
           }
           [System.IO.File]::WriteAllText((Join-Path (Get-Location).Path 'SPL.txt'), ': :', [System.Text.Encoding]::ASCII)
-          & .\group-2-splc.exe
-          if ($LASTEXITCODE -eq 0 -or (Test-Path tree.xml)) {
+          $invalid = Start-Process -FilePath (Join-Path (Get-Location).Path 'group-2-splc.exe') -WorkingDirectory (Get-Location).Path -Wait -PassThru -NoNewWindow
+          if ($invalid.ExitCode -eq 0 -or (Test-Path tree.xml)) {
             throw 'Invalid SPL input was accepted or left a stale tree.xml.'
           }
 
