@@ -13,12 +13,12 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            build_name: group-2-linux.exe
-            executable: dist/group-2-linux.exe
+            build_name: group-2.splc
+            executable: dist/group-2.splc
             artifact: group-2-linux-executable
           - os: windows-2022
-            build_name: group-2-windows
-            executable: dist/group-2-windows.exe
+            build_name: group-2
+            executable: dist/group-2.exe
             artifact: group-2-windows-exe
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
