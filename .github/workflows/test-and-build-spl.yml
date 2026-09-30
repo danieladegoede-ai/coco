@@ -1,0 +1,56 @@
+name: Test and build Group 2 SPL front end
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  packaged-edge-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            build_name: group-2-linux.exe
+            executable: dist/group-2-linux.exe
+            artifact: group-2-linux-executable
+          - os: windows-2022
+            build_name: group-2-windows
+            executable: dist/group-2-windows.exe
+            artifact: group-2-windows-exe
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run all source, generated, and integration tests
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
+
+      - name: Compile Python sources and tests
+        run: python -m compileall -q src tests tools ci
+
+      - name: Build native executable
+        run: |
+          python -m pip install pyinstaller
+          python -m PyInstaller --clean --noconfirm --onefile --name "${{ matrix.build_name }}" --paths src src/spl_frontend/__main__.py
+
+      - name: Test every SPL.txt edge case against executable
+        run: python ci/test_packaged_edges.py --executable "${{ matrix.executable }}"
+
+      - name: Run packaged black-box lifecycle tests
+        run: python tools/black_box_test.py --executable "${{ matrix.executable }}"
+
+      - name: Upload tested executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.executable }}
+          if-no-files-found: error
+          compression-level: 0
