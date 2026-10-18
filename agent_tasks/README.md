@@ -1,69 +1,28 @@
-# Front-end agent work packets
+# Group 2 AI work packets
 
-These files let each member and their AI assistant understand the complete
-front-end task without relying on GitHub issues.
+**Current work: P2, 1st Class, Parts 2a + 2b + 3a + 3b.** P1 earned full marks.
+The detailed instructions refreshed on 18 October 2026 are under [p2/](p2/README.md).
 
-## Current status
+Read [the P2 start guide](p2/00_START_HERE.md) and select your packet:
 
-The allocation and interfaces were **approved by all four members on
-22 September 2026**. Implementation may begin from the shared foundation on
-`main`.
+| Member | Issues | Packet |
+| --- | --- | --- |
+| Rudolph / u20598425 / RudolphLamp | #21, #22, #23, #36 | [Foundation, names and final release](p2/10_u20598425_foundation_names_release.md) |
+| Kuda / u20620111 / Kuda21 | #24, #25, #32, #33 | [Numeric policy, types and semantic testing](p2/20_u20620111_types_numeric_tests.md) |
+| Cherise / u21434019 / CheriseHeyl | #26, #27, #28, #34 | [IR, arithmetic, control flow and executable verification](p2/30_u21434019_codegen_verification.md) |
+| Michele / u21448842 / michey-n | #29, #30, #31, #35 | [Templates, inlining, compiler driver and native package](p2/40_u21448842_inlining_driver_release.md) |
 
-## Required shared reading
+Every packet contains a copyable AI prompt, work order, dependency handling,
+owned paths, detailed issue requirements, concrete tests, reviewer and handoff.
+[Shared interfaces](p2/05_SHARED_INTERFACES.md) distinguish implemented APIs on
+pending branches from proposals. [Shared acceptance](p2/90_HANDOFF_AND_ACCEPTANCE.md)
+explains how the four results join into the actual assessment executable.
 
-Every member and AI assistant must read:
+The shared tracker is [#20](https://github.com/RudolphLamp/coco/issues/20).
+Read live issues/PRs before starting; this dated instruction snapshot does not
+close issues or approve code. Do not redo #21/#22/#23 simply because their
+implementation has not yet merged into main.
 
-1. `../README.md`
-2. `../AGENTS.md`
-3. `00_team_decisions.md`
-4. `01_shared_contracts.md`
-5. `02_spl_reference.md`
-6. `90_integration_and_release.md`
-7. `91_frontend_acceptance_checklist.md`
-8. The member's individual packet
-
-## Proposed equal allocation
-
-| Student | Work packet | GitHub issue | Main result |
-| --- | --- | --- | --- |
-| `u20598425` | `10_u20598425_tree_xml.md` | [#8](https://github.com/RudolphLamp/coco/issues/8) | Validated syntax tree and deterministic `tree.xml` |
-| `u20620111` | `20_u20620111_lexer.md` | [#9](https://github.com/RudolphLamp/coco/issues/9) | Correct token stream with locations and lexical errors |
-| `u21434019` | `30_u21434019_parser.md` | [#10](https://github.com/RudolphLamp/coco/issues/10) | Complete grammar parser with useful syntax errors |
-| `u21448842` | `40_u21448842_cli_testing_release.md` | [#11](https://github.com/RudolphLamp/coco/issues/11) | Runnable integrated front end and black-box test system |
-
-Each packet contains implementation, tests, documentation and integration
-responsibilities. Coordination alone does not count as a member's technical
-work.
-
-## How the work remains independent
-
-- The lexer is tested without the parser.
-- The parser is tested with manually constructed tokens.
-- The tree and XML modules are tested with manually constructed nodes.
-- The CLI and testing tools are developed against small stubs until the real
-  modules are merged.
-- Each member owns different source paths and different primary test files.
-- Only the approved interfaces are shared.
-
-## Expected branches
-
-```text
-feat/u20598425-tree-xml
-feat/u20620111-lexer
-feat/u21434019-parser
-feat/u21448842-cli-testing
-```
-
-## Handoff format
-
-When a member says a task is ready, include:
-
-- branch and latest commit;
-- owned files changed;
-- tests added;
-- exact verification commands and results;
-- known limitations;
-- provisional specification decisions used; and
-- anything required from another module at integration time.
-
-No work is considered handed off when it exists only on one person's computer.
+Files outside p2/ are the preserved P1 reference and approval/ownership record.
+The old student packets and frontend acceptance plan do not define current P2
+allocation or deadlines. Their lexical/grammar/tree constraints still matter.

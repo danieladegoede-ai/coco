@@ -1,24 +1,44 @@
-# COS341 SPL Front End - Group 2
+# COS341 SPL Compiler - Group 2
 
-This repository contains Group 2's COS341 SPL front end.
+Group 2 earned full marks for P1. Current work targets **P2 1st Class**:
+Parts 2a (names/scopes), 2b (types), 3a (algorithm target generation) and 3b
+(function inlining), including correct executable target behavior.
 
-## Current scope
+The final date is **Sunday 25 October 2026**; the portal closing hour is
+unconfirmed. Internal targets aim for a tested native candidate on 23 October
+and personally signed, reviewed, verified submission on 24 October.
 
-We are working only on the SPL front end this week.
+## Start your AI here
 
-The strict submission deadline is **Wednesday, 30 September 2026**. Missing the
-deadline means receiving zero for the front-end assessment.
+Read [AGENTS.md](AGENTS.md), then [the detailed P2 start guide](agent_tasks/p2/00_START_HERE.md).
+The [agent_tasks folder](agent_tasks/README.md) contains a detailed packet and
+copyable AI prompt for every member:
 
-The front end must:
+| Member | Main issues | Guide |
+| --- | --- | --- |
+| Rudolph / u20598425 | #21, #22, #23, #36 | [Foundation, names and release](agent_tasks/p2/10_u20598425_foundation_names_release.md) |
+| Kuda / u20620111 | #24, #25, #32, #33 | [Numeric policy, types and semantic tests](agent_tasks/p2/20_u20620111_types_numeric_tests.md) |
+| Cherise / u21434019 | #26, #27, #28, #34 | [IR, code generation and verification](agent_tasks/p2/30_u21434019_codegen_verification.md) |
+| Michele / u21448842 | #29, #30, #31, #35 | [Templates, inlining, driver and native release](agent_tasks/p2/40_u21448842_inlining_driver_release.md) |
 
-- read a plain ASCII input file named `SPL.txt`;
-- recognise valid SPL tokens and reject malformed tokens;
-- check the complete SPL grammar;
-- give a meaningful syntax error with a helpful hint for invalid input; and
-- write a browser-readable `tree.xml` containing the complete syntax tree for
-  valid input.
+[Tracker #20](https://github.com/RudolphLamp/coco/issues/20) holds the live work
+allocation. Read [shared interfaces/tutor questions](agent_tasks/p2/05_SHARED_INTERFACES.md)
+and [handoff/acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md) before editing.
 
-No work outside the front-end assessment belongs in this repository right now.
+## Current implementation status
+
+At the 18 October documentation refresh, main still runs the integrated P1
+source reader, lexer, parser, tree/XML and CLI. **The final P2 command is not
+integrated yet.** #21/#22 are implemented for review in [PR #37](https://github.com/RudolphLamp/coco/pull/37);
+#23 is implemented for review in [PR #38](https://github.com/RudolphLamp/coco/pull/38),
+stacked on #37. Inspect live branch/PR state before importing their modules.
+Documentation on main does not merge those implementations or approve them.
+
+The pending name branch's last recorded local check was 363 tests plus 10/10
+CLI cases on macOS Python 3.14.0. Hosted Actions failed before starting jobs;
+Windows/Linux checks are unverified. Later issues implement types, generation,
+inlining, full driver and the native package. Preserve frontend regression
+coverage while adding the new stages.
 
 ## Confirmed decisions
 
@@ -105,24 +125,14 @@ are integrated. Packaging the required executable is a separate release task.
 
 ## AI-assistant work packets
 
-The root [`AGENTS.md`](AGENTS.md) file contains the rules that every coding
-assistant must follow. Detailed front-end work packets are stored in
-[`agent_tasks/`](agent_tasks/README.md).
+Use the current [P2 packets](agent_tasks/p2/README.md). Each contains owned
+paths, full assigned issue requirements, dependencies, concrete expected
+results, focused suite names, reviewer and handoff instructions.
 
-The team approved `1A, 2A, 3A, 4C` and the allocation on 22 September 2026.
-Each member and their AI assistant must read the
-[`approved decisions`](agent_tasks/00_team_decisions.md), shared contracts, SPL
-reference and that member's own work packet before changing code.
-
-These files remain the detailed source of truth behind the approved GitHub
-issues.
-
-Approved implementation issues:
-
-- [`#8` - u20598425: syntax tree and XML](https://github.com/RudolphLamp/coco/issues/8)
-- [`#9` - u20620111: source reader and lexer](https://github.com/RudolphLamp/coco/issues/9)
-- [`#10` - u21434019: parser and syntax diagnostics](https://github.com/RudolphLamp/coco/issues/10)
-- [`#11` - u21448842: CLI, generated tests and executable](https://github.com/RudolphLamp/coco/issues/11)
+The September all-member approval covers the P1 interfaces and allocation.
+It is preserved in [the historical decision record](agent_tasks/00_team_decisions.md)
+and does not claim approval of new P2 APIs. The old frontend-only packets are
+historical references; the current P2 guides supersede their scope/deadlines.
 
 ## Basic setup
 
@@ -208,7 +218,7 @@ tests the integrated CLI, generated programs and repeated-run output safety.
 Run the development black-box harness with:
 
 ```sh
-python3 tools/black_box_test.py
+PYTHONPATH=src python3 tools/black_box_test.py
 ```
 
 For the larger edge corpus and deterministic grammar coverage case:
@@ -229,9 +239,13 @@ count (`max_nodes`, default 1000). `SPL.txt` and `tree.xml` are ignored local
 artifacts; do not commit them. Executable-only cases still require the packaged
 release candidate, and unconfirmed tutor choices remain provisional.
 
-## Phase 1 submission package
+## Historical Phase 1 submission package
 
-Announcement #25 requires one Group 2 ZIP containing a runnable executable
+This paragraph records P1 requirements. P2 instead follows #35/#36 and the
+[current release gates](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md), including
+two declarations each personally signed by every member.
+
+For P1, Announcement #25 required one Group 2 ZIP containing a runnable executable
 whose filename includes `group-2` and a short PDF manual whose filename also
 includes `group-2`. The PDF must list the full names and student numbers of
 all four members and explain how tutors run the program. Only the designated
@@ -252,14 +266,11 @@ The front end is ready only when:
 - the packaged executable runs on a clean target machine; and
 - the uploaded copy is downloaded and tested before the deadline.
 
-## Questions that still need official answers
+## Current tutor questions
 
-- Which operating system and processor will run the executable?
-- What exact command will the black-box tester use?
-- Must the program always read `SPL.txt` from the current directory?
-- Is there an exact XML tag structure or sample output to follow?
-- How must nullable grammar productions appear in `tree.xml`?
-- Which exact ClickUp upload link will the Speaker use?
-
-The approved GitHub issues link back to the detailed work packets in
-`agent_tasks/`.
+The [D01-D08 table](agent_tasks/p2/05_SHARED_INTERFACES.md#tutor-decisions)
+records unanswered P2 questions: target dialect/toolchain, argument-copy
+example, Boolean control-flow invariant, arity/evaluation order, numeric mode/
+formatting, namespaces/return visibility, required semantic files, target OS/
+launch/signature details and the portal cutoff hour. Keep proposals visibly
+provisional until an actual dated answer is recorded.

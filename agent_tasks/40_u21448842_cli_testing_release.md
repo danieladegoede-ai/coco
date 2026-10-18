@@ -1,5 +1,8 @@
 # u21448842 - CLI, generated testing and executable
 
+> Historical P1 record. Current P2 work is in [the updated guide](p2/40_u21448842_inlining_driver_release.md).
+> Preserve this reference; its old allocation/checklist is not current P2 status.
+
 ## Objective
 
 Provide the public front-end command, automated valid/invalid program

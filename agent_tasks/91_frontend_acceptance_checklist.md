@@ -1,5 +1,8 @@
 # Front-end acceptance checklist
 
+> Historical P1 record. Current P2 work is in [the updated guide](p2/90_HANDOFF_AND_ACCEPTANCE.md).
+> Preserve this reference; its old allocation/checklist is not current P2 status.
+
 This is the shared completion checklist. An AI assistant must not describe the
 front end as complete while a required item is unchecked or untested.
 

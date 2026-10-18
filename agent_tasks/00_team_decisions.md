@@ -1,5 +1,8 @@
 # Team decisions required before implementation
 
+> Historical P1 record. Current P2 work is in [the updated guide](p2/05_SHARED_INTERFACES.md).
+> Preserve this reference; its old allocation/checklist is not current P2 status.
+
 Status: **APPROVED by all four members on 22 September 2026**
 
 The Speaker records the final choices and changes the status to `APPROVED` only
