@@ -1,0 +1,12 @@
+[
+  {"file": "ancestor-shadow.spl", "expected": "accept", "rules": ["N01", "N02", "N05", "N09", "N10"]},
+  {"file": "child-calls.spl", "expected": "accept", "rules": ["N06", "N07", "N08", "N09", "N10"]},
+  {"file": "duplicate-local.spl", "expected": "NAME-DUPLICATE-VARIABLE", "name": "#x", "rules": ["N04", "N10"]},
+  {"file": "duplicate-parameter.spl", "expected": "NAME-DUPLICATE-PARAMETER", "name": "#x", "rules": ["N04", "N10"]},
+  {"file": "parameter-mask.spl", "expected": "NAME-PARAMETER-MASK", "name": "#x", "rules": ["N05", "N10"]},
+  {"file": "duplicate-function.spl", "expected": "NAME-DUPLICATE-FUNCTION", "name": "#f", "rules": ["N07", "N10"]},
+  {"file": "sideways-variable.spl", "expected": "NAME-UNDECLARED-VARIABLE", "name": "#x", "rules": ["N03", "N10"]},
+  {"file": "self-call.spl", "expected": "NAME-INVISIBLE-FUNCTION", "name": "#f", "rules": ["N06", "N08", "N10"]},
+  {"file": "sibling-call.spl", "expected": "NAME-INVISIBLE-FUNCTION", "name": "#g", "rules": ["N06", "N08", "N10"]},
+  {"file": "deep-call.spl", "expected": "NAME-INVISIBLE-FUNCTION", "name": "#g", "rules": ["N06", "N10"]}
+]
