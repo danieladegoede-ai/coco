@@ -1,0 +1,1 @@
+: num #f ( ) { : : return ( mod ( 5 2 ) ) } num #g ( ) { : : return ( div ( 4 2 ) ) } :

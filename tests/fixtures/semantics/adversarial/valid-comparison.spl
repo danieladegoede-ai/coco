@@ -1,0 +1,1 @@
+: num #f ( ) { : : return ( 2 ) } : if lesser ( #f ( ) 3 ) then { nop ; } else { nop ; } ;

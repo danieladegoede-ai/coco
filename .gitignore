@@ -31,3 +31,9 @@ dist/
 .idea/
 .vscode/
 *.swp
+
+# Generated test fixtures (can be regenerated)
+tests/fixtures/semantic_oracle/
+
+# Project specification PDFs (not code)
+project_specs/

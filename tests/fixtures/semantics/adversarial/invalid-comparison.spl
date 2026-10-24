@@ -1,0 +1,1 @@
+: void #f ( ) { : : return } : if lesser ( #f ( ) 3 ) then { nop ; } else { nop ; } ;

@@ -1,0 +1,394 @@
+{
+  "description": "Semantic test cases manifest for SPL compiler",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "name-undeclared-variable",
+      "file": "adversarial/undeclared-variable.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "valid": false,
+      "requirement": "Variables must be declared before use",
+      "explanation": "Reference to #y without declaration",
+      "paired_case": "baseline-name-undeclared-variable"
+    },
+    {
+      "id": "name-duplicate-variable",
+      "file": "adversarial/duplicate-variable.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-DUPLICATE-VARIABLE",
+      "valid": false,
+      "requirement": "Variables in one scope must have distinct names",
+      "explanation": "Two declarations of #x in V_DECL",
+      "paired_case": "baseline-name-duplicate-variable"
+    },
+    {
+      "id": "name-duplicate-function",
+      "file": "adversarial/duplicate-function.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-DUPLICATE-FUNCTION",
+      "valid": false,
+      "requirement": "Function names must be unique in F_DECL",
+      "explanation": "Two functions named #f in same F_DECL",
+      "paired_case": "baseline-name-duplicate-function"
+    },
+    {
+      "id": "name-duplicate-parameter",
+      "file": "adversarial/duplicate-parameter.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-DUPLICATE-PARAMETER",
+      "valid": false,
+      "requirement": "Parameters must have distinct names",
+      "explanation": "Two parameters named #a in function",
+      "paired_case": "baseline-name-duplicate-parameter"
+    },
+    {
+      "id": "name-parameter-mask",
+      "file": "adversarial/parameter-mask.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-PARAMETER-MASK",
+      "valid": false,
+      "requirement": "Local variables may not mask parameters",
+      "explanation": "Local #a masks parameter #a",
+      "paired_case": "baseline-name-parameter-mask"
+    },
+    {
+      "id": "name-invisible-function-self",
+      "file": "adversarial/self-call.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-INVISIBLE-FUNCTION",
+      "valid": false,
+      "requirement": "Self-recursion is forbidden",
+      "explanation": "Function #f calls itself",
+      "paired_case": "baseline-name-invisible-function-self"
+    },
+    {
+      "id": "name-invisible-function-sibling",
+      "file": "adversarial/sibling-call.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-INVISIBLE-FUNCTION",
+      "valid": false,
+      "requirement": "Sibling function calls are forbidden",
+      "explanation": "Function #f calls sibling #g",
+      "paired_case": "baseline-name-invisible-function-sibling"
+    },
+    {
+      "id": "name-invisible-ancestor",
+      "file": "adversarial/recursion.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-INVISIBLE-FUNCTION",
+      "valid": false,
+      "requirement": "Cannot call ancestor/parent function (which also prevents recursion)",
+      "explanation": "Inner function tries to call outer function (ancestor)",
+      "paired_case": "baseline-name-invisible-ancestor"
+    },
+    {
+      "id": "type-num-as-instr",
+      "file": "adversarial/num-as-instr.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-INSTR-CALL",
+      "valid": false,
+      "requirement": "num function results cannot be discarded",
+      "explanation": "Calling num function as instruction"
+    },
+    {
+      "id": "type-void-in-term",
+      "file": "adversarial/void-in-term.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "void function cannot be used in numeric context",
+      "explanation": "Using void #f() in assignment"
+    },
+    {
+      "id": "type-void-in-print",
+      "file": "adversarial/void-in-print.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "void function cannot be printed as numeric",
+      "explanation": "Using void #f() in print"
+    },
+    {
+      "id": "numeric-mod-div-conflict",
+      "file": "adversarial/mod-div-conflict.spl",
+      "phase": "type_analysis",
+      "expected_code": "FLOAT-INT-CONFLICT",
+      "valid": false,
+      "requirement": "mod and div cannot coexist",
+      "explanation": "Both mod and div in program"
+    },
+    {
+      "id": "numeric-decimal-mod-conflict",
+      "file": "adversarial/decimal-mod-conflict.spl",
+      "phase": "type_analysis",
+      "expected_code": "DECIMAL-WITH-MOD",
+      "valid": false,
+      "requirement": "Decimal literals cannot be used with mod",
+      "explanation": "Decimal literal with mod operator"
+    },
+    {
+      "id": "valid-empty",
+      "file": "adversarial/valid-empty.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Empty programs are valid",
+      "explanation": "Minimal valid program"
+    },
+    {
+      "id": "valid-ancestor-shadow",
+      "file": "adversarial/valid-ancestor-shadow.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Ancestor shadowing is allowed",
+      "explanation": "Inner scope shadows outer #x"
+    },
+    {
+      "id": "valid-direct-child-call",
+      "file": "adversarial/valid-child-call.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Direct child function calls are allowed",
+      "explanation": "Main calls direct child #f"
+    },
+    {
+      "id": "valid-mod-only",
+      "file": "adversarial/valid-mod-only.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "mod alone is valid",
+      "explanation": "Only mod, no div"
+    },
+    {
+      "id": "valid-div-only",
+      "file": "adversarial/valid-div-only.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "div alone is valid",
+      "explanation": "Only div, no mod"
+    },
+    {
+      "id": "valid-arithmetic",
+      "file": "adversarial/valid-arithmetic.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in arithmetic",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-arithmetic"
+    },
+    {
+      "id": "invalid-arithmetic",
+      "file": "adversarial/invalid-arithmetic.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in arithmetic",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-arithmetic"
+    },
+    {
+      "id": "valid-negation",
+      "file": "adversarial/valid-negation.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in negation",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-negation"
+    },
+    {
+      "id": "invalid-negation",
+      "file": "adversarial/invalid-negation.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in negation",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-negation"
+    },
+    {
+      "id": "valid-comparison",
+      "file": "adversarial/valid-comparison.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in comparison",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-comparison"
+    },
+    {
+      "id": "invalid-comparison",
+      "file": "adversarial/invalid-comparison.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in comparison",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-comparison"
+    },
+    {
+      "id": "valid-argument",
+      "file": "adversarial/valid-argument.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in argument",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-argument"
+    },
+    {
+      "id": "invalid-argument",
+      "file": "adversarial/invalid-argument.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in argument",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-argument"
+    },
+    {
+      "id": "valid-loop-condition",
+      "file": "adversarial/valid-loop-condition.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in loop-condition",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-loop-condition"
+    },
+    {
+      "id": "invalid-loop-condition",
+      "file": "adversarial/invalid-loop-condition.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in loop-condition",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-loop-condition"
+    },
+    {
+      "id": "valid-uncalled-return",
+      "file": "adversarial/valid-uncalled-return.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Part 2b numeric TERM call in uncalled-return",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "invalid-uncalled-return"
+    },
+    {
+      "id": "invalid-uncalled-return",
+      "file": "adversarial/invalid-uncalled-return.spl",
+      "phase": "type_analysis",
+      "expected_code": "TYPE-TERM-CALL",
+      "valid": false,
+      "requirement": "Part 2b numeric TERM call in uncalled-return",
+      "explanation": "Paired num/void declaration isolates the call-result type",
+      "paired_case": "valid-uncalled-return"
+    },
+    {
+      "id": "cross-uncalled-mod-div",
+      "file": "adversarial/cross-uncalled-mod-div.spl",
+      "phase": "type_analysis",
+      "expected_code": "FLOAT-INT-CONFLICT",
+      "valid": false,
+      "requirement": "Part 2b entire-tree numeric policy",
+      "explanation": "Uncalled and nested return terms are included"
+    },
+    {
+      "id": "nested-uncalled-decimal-mod",
+      "file": "adversarial/nested-uncalled-decimal-mod.spl",
+      "phase": "type_analysis",
+      "expected_code": "DECIMAL-WITH-MOD",
+      "valid": false,
+      "requirement": "Part 2b entire-tree numeric policy",
+      "explanation": "Uncalled and nested return terms are included"
+    },
+    {
+      "id": "baseline-name-undeclared-variable",
+      "file": "adversarial/baseline-name-undeclared-variable.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Variables must be declared before use",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-undeclared-variable"
+    },
+    {
+      "id": "baseline-name-duplicate-variable",
+      "file": "adversarial/baseline-name-duplicate-variable.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Variables in one scope must have distinct names",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-duplicate-variable"
+    },
+    {
+      "id": "baseline-name-duplicate-function",
+      "file": "adversarial/baseline-name-duplicate-function.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Function names must be unique in F_DECL",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-duplicate-function"
+    },
+    {
+      "id": "baseline-name-duplicate-parameter",
+      "file": "adversarial/baseline-name-duplicate-parameter.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Parameters must have distinct names",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-duplicate-parameter"
+    },
+    {
+      "id": "baseline-name-parameter-mask",
+      "file": "adversarial/baseline-name-parameter-mask.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Local variables may not mask parameters",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-parameter-mask"
+    },
+    {
+      "id": "baseline-name-invisible-function-self",
+      "file": "adversarial/baseline-name-invisible-function-self.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Self-recursion is forbidden",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-invisible-function-self"
+    },
+    {
+      "id": "baseline-name-invisible-function-sibling",
+      "file": "adversarial/baseline-name-invisible-function-sibling.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Sibling function calls are forbidden",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-invisible-function-sibling"
+    },
+    {
+      "id": "baseline-name-invisible-ancestor",
+      "file": "adversarial/baseline-name-invisible-ancestor.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirement": "Cannot call ancestor/parent function (which also prevents recursion)",
+      "explanation": "Valid baseline for one-fault negative",
+      "paired_case": "name-invisible-ancestor"
+    }
+  ]
+}
