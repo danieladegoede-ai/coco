@@ -24,7 +24,9 @@ SPL.txt -> existing lexer/parser -> validated syntax tree
 Documentation on main does not mean all these passes are merged. Check the
 live branch, source files, issues and PRs before importing an API. Foundation,
 names, numeric/types, backend and templates are merged through #37/#38/#41/#40/#42.
-This branch adds the full driver on top of the #30 inlining PR. Read the
+The full driver and inlining are integrated. Source acceptance uses the
+semantic/target runners in tools/GENERATED_TARGET.md. Preserve the original
+38 requirement IDs and E01-E10 meanings when updating cases. Read the
 [current command/API guide](agent_tasks/p2/part_3b_driver.md); the dated personal
 packets below remain historical task allocations.
 

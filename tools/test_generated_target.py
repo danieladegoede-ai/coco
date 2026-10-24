@@ -1,8 +1,8 @@
 """Source-based backend acceptance runner with separate compile/run evidence.
 
-The default subprocess adapter exercises the checked-program/codegen API. It
-does not claim final CLI/inliner or native-package integration. Supply an
-external compiler command for those downstream checks. Each failing case keeps
+The default subprocess adapter exercises the full public compiler CLI.
+An external command reruns the same corpus against a packaged compiler; no
+package is built by this tool. Each failing case keeps
 its source, target, expectations, commands, stage logs and a bounded replay.
 """
 
@@ -39,6 +39,8 @@ class CaseReport:
     target_structure_status: str = "not-run"
     target_issues: list[dict] = field(default_factory=list)
     target_compile_status: int | str | None = None
+    target_compile_stdout: str = ""
+    target_compile_stderr: str = ""
     execution_status: int | str | None = None
     stdout_matches: bool | None = None
     stdout: str = ""
@@ -57,7 +59,7 @@ def _text(value: str | bytes | None) -> str:
     return value or ""
 
 
-def _run(command: list[str], cwd: Path, timeout: float) -> tuple[int | str, str, str]:
+def run_process(command: list[str], cwd: Path, timeout: float) -> tuple[int | str, str, str]:
     try:
         result = subprocess.run(
             command, cwd=cwd, text=True, encoding="utf-8", errors="replace",
@@ -71,38 +73,36 @@ def _run(command: list[str], cwd: Path, timeout: float) -> tuple[int | str, str,
 
 
 def _compile_source(input_path: Path, target_path: Path) -> int:
-    # This adapter is deliberately confined to Cherise's existing API. It
-    # preserves the inliner hook boundary and rejects calls without an inliner.
+    # The subprocess enters the actual public command from its fresh cwd.
     sys.path.insert(0, str(ROOT / "src"))
-    from spl_frontend.codegen import generate_target
-    from spl_frontend.diagnostics import FrontendError
-    from spl_frontend.lexer import tokenize
-    from spl_frontend.name_analysis import resolve_names
-    from spl_frontend.parser import parse
-    from spl_frontend.source import SourceFile
-    from spl_frontend.source_map import build_source_map
-    from spl_frontend.target_writer import write_target
-    from spl_frontend.tree import SyntaxTree
-    from spl_frontend.type_analysis import check_types
+    from spl_frontend.cli import main
+    from spl_frontend.cli_contract import DEFAULT_TARGET_PATH
+    if target_path.resolve() != DEFAULT_TARGET_PATH.resolve():
+        raise ValueError("The CLI adapter expects its default target path.")
+    return main([str(input_path)])
 
-    try:
-        source = SourceFile(input_path, input_path.read_text(encoding="utf-8"))
-        tokens = tokenize(source)
-        tree = SyntaxTree()
-        parse(tokens, tree, input_path)
-        resolved = resolve_names(tree, build_source_map(tree, tokens, input_path))
-        write_target(generate_target(check_types(resolved)), target_path)
-    except FrontendError as exc:
-        print(exc.diagnostic.render(), file=sys.stderr)
-        return int(exc.exit_code)
-    except Exception as exc:
-        # A failed subprocess is evidence, including unexpected tracebacks.
-        # Expected library diagnostics remain traceback-free.
-        if hasattr(exc, "render"):
-            print(exc.render(), file=sys.stderr)
-            return 1
-        raise
-    return 0
+
+def normalize_compiler_command(external: Sequence[str] | None) -> list[str] | None:
+    """Freeze an existing relative executable path before temporary cwd/replay."""
+    if external is None:
+        return None
+    if isinstance(external, str) or not external or any(not isinstance(item, str) for item in external):
+        raise ValueError("Compiler command must be a nonempty argv sequence.")
+    command = list(external)
+    if Path(command[0]).is_file():
+        command[0] = str(Path(command[0]).resolve())
+    return command
+
+
+def compiler_command_for(input_path: Path, target_path: Path,
+                         external: Sequence[str] | None = None) -> list[str]:
+    """Build argv without a shell; preserve input/target placeholder support."""
+    command = normalize_compiler_command(external)
+    if command is None:
+        return [sys.executable, str(Path(__file__).resolve()), "--compile-source",
+                str(input_path), str(target_path)]
+    return [item.replace("{input}", str(input_path)).replace("{target}", str(target_path))
+            for item in command]
 
 
 def verify_case(
@@ -126,9 +126,12 @@ def verify_case(
     """
     if timeout <= 0 or (execution_timeout is not None and execution_timeout <= 0):
         raise ValueError("Timeouts must be positive.")
+    compiler_command = normalize_compiler_command(compiler_command)
     runtime_limit = timeout if execution_timeout is None else execution_timeout
     report = CaseReport(case_id=case_id, seed=seed)
     cxx = target_compiler or shutil.which("c++") or shutil.which("g++") or "c++"
+    if Path(cxx).is_file():
+        cxx = str(Path(cxx).resolve())
     with tempfile.TemporaryDirectory(prefix="spl-target-case-") as temporary:
         work = Path(temporary)
         input_path = work / "SPL.txt"
@@ -139,7 +142,7 @@ def verify_case(
 
         def stage(name: str, command: list[str], limit: float) -> tuple[int | str, str, str]:
             report.commands[name] = command
-            status, stdout, stderr = _run(command, work, limit)
+            status, stdout, stderr = run_process(command, work, limit)
             logs[name + ".stdout.log"] = stdout
             logs[name + ".stderr.log"] = stderr
             return status, stdout, stderr
@@ -147,11 +150,7 @@ def verify_case(
         if pre_generated_target is not None:
             target_path.write_text(pre_generated_target, encoding="utf-8")
         else:
-            command = (
-                [item.replace("{input}", str(input_path)).replace("{target}", str(target_path)) for item in compiler_command]
-                if compiler_command is not None else
-                [sys.executable, str(Path(__file__).resolve()), "--compile-source", str(input_path), str(target_path)]
-            )
+            command = compiler_command_for(input_path, target_path, compiler_command)
             report.compiler_status, report.compiler_stdout, report.compiler_stderr = stage("compiler", command, timeout)
             if report.compiler_status != 0:
                 report.failure_stage = "compiler-timeout" if report.compiler_status == "timeout" else "compiler-process"
@@ -172,7 +171,7 @@ def verify_case(
 
         if report.failure_stage is None:
             command = [cxx, "-std=c++17", "-Wall", "-Wextra", "-pedantic", str(target_path), "-o", str(executable)]
-            report.target_compile_status, _, _ = stage("target-compile", command, timeout)
+            report.target_compile_status, report.target_compile_stdout, report.target_compile_stderr = stage("target-compile", command, timeout)
             if report.target_compile_status != 0:
                 report.failure_stage = "target-compile-timeout" if report.target_compile_status == "timeout" else "target-compilation"
 
@@ -195,7 +194,7 @@ def verify_case(
             saved = Path(tempfile.mkdtemp(prefix=safe_id + "-", dir=artifact_root)).resolve()
             (saved / "input.spl").write_text(source, encoding="utf-8")
             (saved / "expected.stdout").write_text(expected_stdout, encoding="utf-8")
-            if target_path.exists():
+            if target_path.is_file():
                 shutil.copyfile(target_path, saved / "program.cpp")
             for name, contents in logs.items():
                 (saved / name).write_text(contents, encoding="utf-8")
@@ -203,7 +202,7 @@ def verify_case(
                 "case_id": case_id, "seed": seed, "commands": report.commands,
                 "timeout": timeout, "execution_timeout": runtime_limit,
                 "python": sys.version, "platform": sys.platform,
-                "compiler_adapter": "checked-program API" if compiler_command is None else "external command",
+                "compiler_adapter": "pre-generated target" if pre_generated_target is not None else "full compiler CLI" if compiler_command is None else "external command",
             }
             (saved / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
             replay = [
@@ -222,6 +221,13 @@ def verify_case(
                 '#!/bin/sh\nset -eu\ncd -- "$(dirname -- "$0")"\nexec ' + shlex.join(replay) + "\n",
                 encoding="utf-8",
             )
+            (saved / "replay.json").write_text(json.dumps(replay, indent=2) + "\n", encoding="utf-8")
+            (saved / "reproduce.py").write_text(
+                "import json, pathlib, subprocess\n"
+                "p = pathlib.Path(__file__).resolve().parent\n"
+                "raise SystemExit(subprocess.run(json.loads((p/'replay.json').read_text()), cwd=p).returncode)\n",
+                encoding="utf-8",
+            )
             report.artifact_dir = str(saved)
             report.reproduction_command = "sh reproduce.sh"
             (saved / "report.json").write_text(json.dumps(report.to_json(), indent=2) + "\n", encoding="utf-8")
@@ -231,6 +237,7 @@ def verify_case(
 def run_manifest(
     manifest: Path, *, artifacts: Path | None = None, target_compiler: str | None = None,
     timeout: float = 5.0, seed: int | None = None, compiler_command: Sequence[str] | None = None,
+    execution_timeout: float | None = None,
 ) -> tuple[list[CaseReport], dict]:
     data = json.loads(Path(manifest).read_text(encoding="utf-8"))
     reports: list[CaseReport] = []
@@ -242,6 +249,7 @@ def run_manifest(
         reports.append(verify_case(
             case["source"], case["expected_stdout"], case_id=case["id"], artifacts=artifacts,
             target_compiler=target_compiler, timeout=timeout, seed=seed, compiler_command=compiler_command,
+            execution_timeout=execution_timeout,
         ))
     return reports, {
         "runnable": len(reports), "passed": sum(report.passed for report in reports),
@@ -266,7 +274,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.compile_source:
         return _compile_source(*(Path(path) for path in args.compile_source))
-    compiler_command = json.loads(args.compiler_command) if args.compiler_command is not None else None
+    try:
+        compiler_command = json.loads(args.compiler_command) if args.compiler_command is not None else None
+    except json.JSONDecodeError as exc:
+        parser.error(f"Invalid --compiler-command JSON: {exc}")
+    if args.timeout <= 0 or (args.execution_timeout is not None and args.execution_timeout <= 0):
+        parser.error("Timeouts must be positive")
     if compiler_command is not None and (
         not isinstance(compiler_command, list) or not compiler_command or
         any(not isinstance(item, str) for item in compiler_command)
@@ -275,7 +288,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     options = dict(artifacts=args.artifacts, target_compiler=args.target_compiler,
                    timeout=args.timeout, seed=args.seed, compiler_command=compiler_command)
     if args.manifest:
-        reports, summary = run_manifest(args.manifest, **options)
+        reports, summary = run_manifest(args.manifest, execution_timeout=args.execution_timeout, **options)
         print(json.dumps({"summary": summary, "reports": [report.to_json() for report in reports]}, indent=2))
         return int(bool(summary["failed"] or summary["blocked"]))
     if args.source is None or args.expected is None:

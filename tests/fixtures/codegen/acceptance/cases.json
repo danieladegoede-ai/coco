@@ -1,20 +1,24 @@
 {
   "schema_version": 1,
-  "description": "Hand-checked source-to-C++ executable anchors for the u21434019 backend. Expected output strings are specified independently of the code generator.",
+  "description": "Hand-computed algorithm and inlining fixtures for the actual public CLI -> C++ compile -> execution pipeline.",
   "target_dialect": "C++17 (D01 proposal; tutor confirmation remains pending)",
   "cases": [
     {
-      "id": "E01-empty-program",
+      "id": "B01-empty-program",
       "requirements": [
         "G01"
       ],
       "source": ": : ",
       "expected_stdout": "",
       "semantic_expectation": "accepted",
-      "purpose": "Minimal checked program renders, compiles, and exits with no output."
+      "purpose": "Minimal checked program renders, compiles, and exits with no output.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E02-fractional-division",
+      "id": "B02-fractional-division",
       "requirements": [
         "G05",
         "G06"
@@ -22,10 +26,14 @@
       "source": ": : print ( div ( 5 2 ) ) ; ",
       "expected_stdout": "2.5",
       "semantic_expectation": "accepted-float-mode",
-      "purpose": "Integer-looking operands must be divided in the selected floating numeric mode."
+      "purpose": "Integer-looking operands must be divided in the selected floating numeric mode.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E03-integer-modulo",
+      "id": "B03-integer-modulo",
       "requirements": [
         "G05",
         "G06"
@@ -33,30 +41,42 @@
       "source": ": : print ( mod ( 5 2 ) ) ; ",
       "expected_stdout": "1",
       "semantic_expectation": "accepted-integer-mode",
-      "purpose": "Modulo is exact integer arithmetic, in a distinct compilation from division."
+      "purpose": "Modulo is exact integer arithmetic, in a distinct compilation from division.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E04-self-reading-assignment",
+      "id": "B04-self-reading-assignment",
       "requirements": [
         "G04"
       ],
       "source": "#x : : #x = 4 ; #x = add ( #x 1 ) ; print ( #x ) ; ",
       "expected_stdout": "5",
       "semantic_expectation": "accepted",
-      "purpose": "The RHS is evaluated from the old value before assigning the destination."
+      "purpose": "The RHS is evaluated from the old value before assigning the destination.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E05-exact-string-and-print-order",
+      "id": "B05-exact-string-and-print-order",
       "requirements": [
         "G02"
       ],
       "source": ": : print \"alpha\" ; print \"\" ; print \"omega\" ; ",
       "expected_stdout": "alphaomega",
       "semantic_expectation": "accepted",
-      "purpose": "Output order is stable, and print adds no implicit spaces or newline."
+      "purpose": "Output order is stable, and print adds no implicit spaces or newline.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E06-nested-not-or-false-fallthrough",
+      "id": "B06-nested-not-or-false-fallthrough",
       "requirements": [
         "G07",
         "G08"
@@ -64,10 +84,16 @@
       "source": ": : if or ( not ( eq ( 1 1 ) ) eq ( 1 2 ) ) then { print \"bad\" ; } else { print \"ok\" ; } ; ",
       "expected_stdout": "ok",
       "semantic_expectation": "accepted",
-      "purpose": "False Boolean paths must reach the false destination; a false OR not may not fall into the true branch."
+      "purpose": "False Boolean paths must reach the false destination; a false OR not may not fall into the true branch.",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D03",
+        "D04"
+      ]
     },
     {
-      "id": "E07-nested-short-circuit-truth-table",
+      "id": "B07-nested-short-circuit-truth-table",
       "requirements": [
         "G07",
         "G08"
@@ -75,30 +101,44 @@
       "source": ": : if and ( eq ( 1 1 ) or ( eq ( 1 2 ) not ( eq ( 1 2 ) ) ) ) then { print \"t\" ; } else { print \"f\" ; } ; if and ( eq ( 1 2 ) eq ( 1 1 ) ) then { print \"t\" ; } else { print \"f\" ; } ; if not ( or ( eq ( 1 2 ) eq ( 1 1 ) ) ) then { print \"t\" ; } else { print \"f\" ; } ; ",
       "expected_stdout": "tff",
       "semantic_expectation": "accepted",
-      "purpose": "Nested AND/OR/NOT decisions are evaluated by explicit label transfers."
+      "purpose": "Nested AND/OR/NOT decisions are evaluated by explicit label transfers.",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D03",
+        "D04"
+      ]
     },
     {
-      "id": "E08-pretest-zero-iterations",
+      "id": "B08-pretest-zero-iterations",
       "requirements": [
         "G09"
       ],
       "source": "#x : : #x = 0 ; while eq ( 1 2 ) do { #x = add ( #x 1 ) ; } ; print ( #x ) ; ",
       "expected_stdout": "0",
       "semantic_expectation": "accepted",
-      "purpose": "Pre-test while may execute its body zero times."
+      "purpose": "Pre-test while may execute its body zero times.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E09-posttest-guaranteed-first-iteration",
+      "id": "B09-posttest-guaranteed-first-iteration",
       "requirements": [
         "G09"
       ],
       "source": "#x : : #x = 0 ; do { #x = add ( #x 1 ) ; } while lesser ( #x 0 ) ; print ( #x ) ; ",
       "expected_stdout": "1",
       "semantic_expectation": "accepted",
-      "purpose": "Post-test while always executes its body at least once."
+      "purpose": "Post-test while always executes its body at least once.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
     },
     {
-      "id": "E10-all-loop-polarities",
+      "id": "B10-all-loop-polarities",
       "requirements": [
         "G09",
         "G10"
@@ -106,7 +146,393 @@
       "source": "#x : : #x = 0 ; until eq ( 1 1 ) do { #x = add ( #x 1 ) ; } ; print ( #x ) ; #x = 0 ; do { #x = add ( #x 1 ) ; } until eq ( #x 1 ) ; print ( #x ) ; ",
       "expected_stdout": "01",
       "semantic_expectation": "accepted",
-      "purpose": "Pre-test until exits immediately when true, and post-test until exits after the first matching iteration."
+      "purpose": "Pre-test until exits immediately when true, and post-test until exits after the first matching iteration.",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
+    },
+    {
+      "id": "C01-zero_and_one_argument_return_nonzero_value_copy",
+      "source": "#x : num #zero ( ) { : : return ( 7 ) } num #one ( #p ) { : : return ( #p ) } : #x = #one ( #zero ( ) ) ; print ( #x ) ; ",
+      "expected_stdout": "7",
+      "requirements": [
+        "F03",
+        "F05"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_zero_and_one_argument_return_nonzero_value_copy",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C02-multiple_whole_term_actuals",
+      "source": ": num #f ( #a #b #c ) { : : return ( add ( mul ( #a 100 ) add ( mul ( #b 10 ) #c ) ) ) } : print ( #f ( add ( 1 1 ) mul ( 1 3 ) neg ( -4 ) ) ) ; ",
+      "expected_stdout": "234",
+      "requirements": [
+        "F03",
+        "F04"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_multiple_whole_term_actuals",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C03-all_actuals_are_captured_before_later_argument_side_effects",
+      "source": "#global : num #combine ( #a #b ) { : : return ( add ( mul ( #a 10 ) #b ) ) } num #bump ( ) { : : #global = add ( #global 1 ) ; return ( #global ) } : #global = 4 ; print ( #combine ( #global #bump ( ) ) ) ; print \":\" ; print ( #global ) ; ",
+      "expected_stdout": "45:5",
+      "requirements": [
+        "F04"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_all_actuals_are_captured_before_later_argument_side_effects",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C04-actuals_evaluate_left_to_right",
+      "source": ": num #combine ( #a #b ) { : : return ( add ( mul ( #a 10 ) #b ) ) } num #left ( ) { : : print \"a\" ; return ( 2 ) } num #right ( ) { : : print \"b\" ; return ( 3 ) } : print ( #combine ( #left ( ) #right ( ) ) ) ; ",
+      "expected_stdout": "ab23",
+      "requirements": [
+        "F04"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_actuals_evaluate_left_to_right",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C05-child_updates_current_parent_local_on_each_call",
+      "source": "#x : num #f ( #a ) { #v : void #g ( ) { : : #v = add ( #v 1 ) ; return } : #v = #a ; #g ( ) ; return ( #v ) } : #x = #f ( 4 ) ; print ( #x ) ; print \":\" ; #x = #f ( 8 ) ; print ( #x ) ; ",
+      "expected_stdout": "5:9",
+      "requirements": [
+        "F06",
+        "F08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_child_updates_current_parent_local_on_each_call",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C06-nested_parent_shadow_does_not_detach_global",
+      "source": "#x : num #f ( #a ) { #x : void #g ( ) { : : #x = add ( #x 1 ) ; return } : #x = #a ; #g ( ) ; return ( #x ) } : #x = 90 ; print ( #f ( 4 ) ) ; print \":\" ; print ( #x ) ; ",
+      "expected_stdout": "5:90",
+      "requirements": [
+        "F08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_nested_parent_shadow_does_not_detach_global",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C07-grandchild_updates_current_grandparent_and_global",
+      "source": "#global : num #f ( #a ) { #local : void #g ( ) { : void #h ( ) { : : #local = add ( #local 2 ) ; #global = add ( #global 1 ) ; return } : #h ( ) ; return } : #local = #a ; #g ( ) ; return ( #local ) } : #global = 0 ; print ( #f ( 4 ) ) ; print \":\" ; print ( #f ( 8 ) ) ; print \":\" ; print ( #global ) ; ",
+      "expected_stdout": "6:10:2",
+      "requirements": [
+        "F06",
+        "F08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_grandchild_updates_current_grandparent_and_global",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C08-repeated_loop_function_has_fresh_jump_targets",
+      "source": ": num #count ( #n ) { #i : : #i = 0 ; while lesser ( #i #n ) do { #i = add ( #i 1 ) ; } ; return ( #i ) } : print ( #count ( 2 ) ) ; print \":\" ; print ( #count ( 3 ) ) ; ",
+      "expected_stdout": "2:3",
+      "requirements": [
+        "F07",
+        "G10"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_repeated_loop_function_has_fresh_jump_targets",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C09-calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+      "source": "#x : num #identity ( #a ) { : : return ( #a ) } num #outer ( #p ) { : num #inner ( #q ) { : : return ( add ( #q 1 ) ) } : return ( #inner ( #p ) ) } : #x = #identity ( 3 ) ; print ( #x ) ; print \":\" ; print ( add ( #identity ( 4 ) #identity ( 5 ) ) ) ; print \":\" ; if eq ( #identity ( 6 ) 6 ) then { print \"yes\" ; } else { print \"no\" ; } ; print \":\" ; print ( #identity ( #outer ( 7 ) ) ) ; ",
+      "expected_stdout": "3:9:yes:8",
+      "requirements": [
+        "F03",
+        "F05",
+        "F06"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C10-void_procedure_returns_no_numeric_value_and_preserves_root_write",
+      "source": "#x : void #set ( #value ) { : : #x = #value ; return } : #x = 0 ; #set ( 7 ) ; print ( #x ) ; ",
+      "expected_stdout": "7",
+      "requirements": [
+        "F05",
+        "F08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_void_procedure_returns_no_numeric_value_and_preserves_root_write",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C11-uncalled_function_code_mine_produces_no_output_or_state_change",
+      "source": "#x : void #unused ( ) { : : print \"bad\" ; #x = 99 ; nop ; comment \"inside.mine\" ; return } : #x = 4 ; print ( #x ) ; ",
+      "expected_stdout": "4",
+      "requirements": [
+        "F01",
+        "F02"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_uncalled_function_code_mine_produces_no_output_or_state_change",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C12-mine_annotations_are_comment_safe_and_target_still_compiles",
+      "source": ": void #f ( ) { : : nop ; comment \"comment!\" ; return } : #f ( ) ; ",
+      "expected_stdout": "",
+      "requirements": [
+        "F01",
+        "F02",
+        "G03"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_mine_annotations_are_comment_safe_and_target_still_compiles",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C13-short_circuit_skips_calls_and_loop_conditions_reevaluate_them",
+      "source": "#x : num #tick ( ) { : : #x = add ( #x 1 ) ; return ( #x ) } : #x = 0 ; if or ( eq ( 1 1 ) eq ( #tick ( ) 1 ) ) then { } else { } ; if and ( eq ( 1 2 ) eq ( #tick ( ) 1 ) ) then { } else { } ; print ( #x ) ; print \":\" ; while lesser ( #tick ( ) 3 ) do { print ( #x ) ; } ; print ( #x ) ; ",
+      "expected_stdout": "0:123",
+      "requirements": [
+        "G08",
+        "G09",
+        "F05"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_short_circuit_skips_calls_and_loop_conditions_reevaluate_them",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06",
+        "D03"
+      ]
+    },
+    {
+      "id": "C14-repeated_compilations_are_deterministic_and_independent",
+      "source": ": void #f ( ) { : : print \"other\" ; return } : #f ( ) ; ",
+      "expected_stdout": "other",
+      "requirements": [
+        "F07",
+        "G10"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_repeated_compilations_are_deterministic_and_independent",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "C15-float_arguments_locals_and_returns_use_one_selected_mode",
+      "source": ": num #f ( #a ) { #local : : #local = add ( #a 0.5 ) ; return ( #local ) } : print ( #f ( 2.25 ) ) ; ",
+      "expected_stdout": "2.75",
+      "requirements": [
+        "G06",
+        "F05"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Handwritten call/behavior fixture from test_float_arguments_locals_and_returns_use_one_selected_mode",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "E01-ancestor-access-and-legal-shadowing",
+      "source": "#x : void #f ( #p ) { #x : : #x = #p ; print ( #x ) ; return } : #x = 7 ; #f ( 2 ) ; print ( #x ) ;\n",
+      "expected_stdout": "27",
+      "requirements": [
+        "N02",
+        "N09"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E01",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "E06-division-of-integer-looking-literals",
+      "source": "#x : : #x = div ( 5 2 ) ; print ( #x ) ;\n",
+      "expected_stdout": "2.5",
+      "requirements": [
+        "G05",
+        "G06",
+        "T06"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E06",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
+    },
+    {
+      "id": "E07-Boolean-composition-counterexample",
+      "source": ": : if or ( not ( eq ( 1 1 ) ) eq ( 1 2 ) ) then { print \"bad\" ; } else { print \"ok\" ; } ;\n",
+      "expected_stdout": "ok",
+      "requirements": [
+        "G07",
+        "G08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E07",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D03",
+        "D04"
+      ]
+    },
+    {
+      "id": "E08-pre-test-and-post-test-behavior",
+      "source": "#x : : #x = 0 ; while lesser ( #x 3 ) do { #x = add ( #x 1 ) ; } ; print ( #x ) ;\n",
+      "expected_stdout": "3",
+      "requirements": [
+        "G09"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E08",
+      "provisional_decisions": [
+        "D01",
+        "D05"
+      ]
+    },
+    {
+      "id": "E09-repeated-numeric-calls-containing-a-loop",
+      "source": "#x #y : num #f ( #a ) { #i : : #i = 0 ; while lesser ( #i #a ) do { #i = add ( #i 1 ) ; } ; return ( #i ) } : #x = #f ( 2 ) ; #y = #f ( 3 ) ; print ( #x ) ; print ( #y ) ;\n",
+      "expected_stdout": "23",
+      "requirements": [
+        "F03",
+        "F04",
+        "F05",
+        "F07"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E09",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
+    },
+    {
+      "id": "E10-child-captures-the-current-parent-local",
+      "source": "#x : num #f ( #a ) { #v : void #g ( ) { : : #v = add ( #v 1 ) ; return } : #v = #a ; #g ( ) ; return ( #v ) } : #x = #f ( 4 ) ; print ( #x ) ;\n",
+      "expected_stdout": "5",
+      "requirements": [
+        "F06",
+        "F08"
+      ],
+      "semantic_expectation": "accepted",
+      "purpose": "Original planning anchor E10",
+      "provisional_decisions": [
+        "D01",
+        "D05",
+        "D02",
+        "D04",
+        "D06"
+      ]
     }
-  ]
+  ],
+  "provisional_policies": {
+    "D01": "C++17 and program.cpp",
+    "D02": "formal = captured actual",
+    "D03": "explicit true/false comparison-goto transfer",
+    "D04": "matching arity, left-to-right evaluation and short circuit",
+    "D05": "selected int/float and default stream formatting",
+    "D06": "separate namespaces and body-scope return terms"
+  }
 }

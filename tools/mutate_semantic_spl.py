@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import random
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Literal
 
@@ -24,6 +25,13 @@ MutationType = Literal["name_undeclared", "name_duplicate", "type_void_in_term",
                        "type_num_as_instr", "numeric_mod_div", "numeric_decimal_mod"]
 
 @dataclass(frozen=True)
+class TokenEdit:
+    index: int
+    removed: tuple[str, ...]
+    inserted: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Mutation:
     original_source: str
     mutated_source: str
@@ -32,6 +40,7 @@ class Mutation:
     expected_code: str
     description: str
     seed: int
+    edits: tuple[TokenEdit, ...] = ()
 
 
 def generate_mutation(source: str, mutation_type: MutationType | None = None,
@@ -86,8 +95,11 @@ def generate_mutation(source: str, mutation_type: MutationType | None = None,
                 continue
             result.extend("print ( mod ( 5.5 2 ) ) ;".split())
             code = "DECIMAL-WITH-MOD"
+        edits = tuple(TokenEdit(i, tuple(words[i:j]), tuple(result[k:l]))
+                      for tag, i, j, k, l in SequenceMatcher(a=words, b=result, autojunk=False).get_opcodes()
+                      if tag != "equal")
         return Mutation(source, " ".join(result) + " ", kind, phase, code,
-                        f"Insert an isolated {kind} fault into a valid program", seed)
+                        f"Insert an isolated {kind} fault into a valid program", seed, edits)
     return None
 
 

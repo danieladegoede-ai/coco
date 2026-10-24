@@ -1,0 +1,125 @@
+{
+  "description": "Original E01-E10 from the 17 October plan, with source-stage errors distinguished from executable successes. B01-B10 are supplemental backend anchors.",
+  "anchors": [
+    {
+      "id": "E01",
+      "requirements": [
+        "N02",
+        "N09"
+      ],
+      "semantic_case": "planning-E01",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "N02, N09: ancestor access and legal shadowing",
+      "target_case": "E01-ancestor-access-and-legal-shadowing",
+      "expected_stdout": "27"
+    },
+    {
+      "id": "E02",
+      "requirements": [
+        "N03"
+      ],
+      "semantic_case": "planning-E02",
+      "expected_status": 7,
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "explanation": "N03: sibling lookup is forbidden"
+    },
+    {
+      "id": "E03",
+      "requirements": [
+        "N05"
+      ],
+      "semantic_case": "planning-E03",
+      "expected_status": 7,
+      "expected_code": "NAME-PARAMETER-MASK",
+      "explanation": "N05: local may not mask its own parameter"
+    },
+    {
+      "id": "E04",
+      "requirements": [
+        "T04"
+      ],
+      "semantic_case": "type-num-as-instr",
+      "expected_status": 8,
+      "expected_code": "TYPE-INSTR-CALL",
+      "explanation": "T04: numeric function in instruction position"
+    },
+    {
+      "id": "E05",
+      "requirements": [
+        "T06"
+      ],
+      "semantic_case": "numeric-mod-div-conflict",
+      "expected_status": 8,
+      "expected_code": "FLOAT-INT-CONFLICT",
+      "explanation": "T06 and global numeric rules"
+    },
+    {
+      "id": "E06",
+      "requirements": [
+        "G05",
+        "G06",
+        "T06"
+      ],
+      "semantic_case": "planning-E06",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "G05-T06: division of integer-looking literals",
+      "target_case": "E06-division-of-integer-looking-literals",
+      "expected_stdout": "2.5"
+    },
+    {
+      "id": "E07",
+      "requirements": [
+        "G07",
+        "G08"
+      ],
+      "semantic_case": "planning-E07",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "G08: Boolean composition counterexample",
+      "target_case": "E07-Boolean-composition-counterexample",
+      "expected_stdout": "ok"
+    },
+    {
+      "id": "E08",
+      "requirements": [
+        "G09"
+      ],
+      "semantic_case": "planning-E08",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "G09: pre-test and post-test behavior",
+      "target_case": "E08-pre-test-and-post-test-behavior",
+      "expected_stdout": "3"
+    },
+    {
+      "id": "E09",
+      "requirements": [
+        "F03",
+        "F04",
+        "F05",
+        "F07"
+      ],
+      "semantic_case": "planning-E09",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "F03-F07: repeated numeric calls containing a loop",
+      "target_case": "E09-repeated-numeric-calls-containing-a-loop",
+      "expected_stdout": "23"
+    },
+    {
+      "id": "E10",
+      "requirements": [
+        "F06",
+        "F08"
+      ],
+      "semantic_case": "planning-E10",
+      "expected_status": 0,
+      "expected_code": null,
+      "explanation": "F06-F08: child captures the current parent local",
+      "target_case": "E10-child-captures-the-current-parent-local",
+      "expected_stdout": "5"
+    }
+  ]
+}

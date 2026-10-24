@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -39,7 +40,7 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="spl-missing-target-") as temporary:
             report = verify_case(
                 ": : ", "", case_id="missing-target", target_compiler=TARGET_CXX,
-                compiler_command=[sys.executable, "-c", "pass"], artifacts=Path(temporary),
+                compiler_command=[sys.executable, "-c", "from pathlib import Path; Path('program.cpp').mkdir()"], artifacts=Path(temporary),
             )
             self.assertFalse(report.passed)
             self.assertEqual(report.compiler_status, 0)
@@ -60,19 +61,18 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
             self.assertIn("TARGET-DANGLING-GOTO", {item["code"] for item in report.target_issues})
 
     def test_all_hand_computed_backend_anchors_compile_and_execute(self):
-        with tempfile.TemporaryDirectory(prefix="spl-acceptance-test-") as temporary:
-            artifacts = Path(temporary) / "failure-artifacts"
-            reports, summary = run_manifest(MANIFEST, artifacts=artifacts, target_compiler=TARGET_CXX, timeout=5.0, seed=20261023)
+        reports, summary = run_manifest(MANIFEST, artifacts=ROOT/'build/acceptance-failures',
+                                        target_compiler=TARGET_CXX, timeout=5.0, seed=20261023)
         self.assertEqual(summary["blocked"], [])
-        self.assertEqual(summary["runnable"], 10)
-        self.assertEqual(summary["passed"], 10, [report.to_json() for report in reports if not report.passed])
+        self.assertEqual(summary["runnable"], len(json.loads(MANIFEST.read_text())["cases"]))
+        self.assertEqual(summary["passed"], summary["runnable"], [report.to_json() for report in reports if not report.passed])
         self.assertEqual(summary["failed"], 0)
         self.assertTrue(all(report.compiler_status == 0 for report in reports))
         self.assertTrue(all(report.target_compile_status == 0 for report in reports))
         self.assertTrue(all(report.execution_status == 0 for report in reports))
         self.assertTrue(all(report.stdout_matches is True for report in reports))
 
-    def test_requirement_matrix_covers_38_ids_and_labels_external_gates(self):
+    def test_requirement_matrix_covers_original_38_ids_with_real_evidence(self):
         matrix_path = ROOT / "tests/fixtures/codegen/requirements.json"
         matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
         requirements = matrix["requirements"]
@@ -84,10 +84,36 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
         self.assertEqual(len(requirements), 38)
         self.assertEqual(ids, expected)
         status_by_id = {entry["id"]: entry["status"] for entry in requirements}
-        self.assertTrue(all(status_by_id[f"G{i:02d}"] == "implemented-tested" for i in range(1, 11)))
-        self.assertTrue(all(status_by_id[f"F{i:02d}"] == "blocked-dependency" for i in range(1, 9)))
-        self.assertTrue(all(status_by_id[f"N{i:02d}"] == "upstream-owned-not-claimed" for i in range(1, 11)))
-        self.assertTrue(all(status_by_id[f"T{i:02d}"] == "upstream-owned-not-claimed" for i in range(1, 11)))
+        self.assertTrue(all(status == "implemented-tested" for status in status_by_id.values()))
+        import ast
+        semantic_ids = {c['id'] for c in json.loads((ROOT/'tests/fixtures/semantics/cases.json').read_text())['cases']}
+        target_ids = {c['id'] for c in json.loads(MANIFEST.read_text())['cases']}
+        for row in requirements:
+            self.assertTrue(row['tests'], row['id'])
+            self.assertTrue(row['semantic_cases'] or row['target_cases'], row['id'])
+            self.assertTrue(set(row['semantic_cases']).issubset(semantic_ids))
+            self.assertTrue(set(row['target_cases']).issubset(target_ids))
+            for reference in row['tests']:
+                filename, method = reference.split('::')
+                methods = {n.name for n in ast.walk(ast.parse((ROOT/filename).read_text())) if isinstance(n,ast.FunctionDef)}
+                self.assertIn(method, methods, (row['id'], reference))
+
+    def test_original_ten_planning_anchors_keep_correct_error_and_runtime_expectations(self):
+        anchors = json.loads((MANIFEST.parent/'planning_anchors.json').read_text())['anchors']
+        self.assertEqual([a['id'] for a in anchors], [f'E{i:02}' for i in range(1,11)])
+        semantic_root = ROOT/'tests/fixtures/semantics'
+        semantic = {c['id']:c for c in json.loads((semantic_root/'cases.json').read_text())['cases']}
+        targets = {c['id']:c for c in json.loads(MANIFEST.read_text())['cases']}
+        for anchor in anchors:
+            case = semantic[anchor['semantic_case']]
+            self.assertEqual(case['expected_status'], anchor['expected_status'])
+            self.assertEqual(case['expected_code'], anchor['expected_code'])
+            if anchor['expected_status'] == 0:
+                target = targets[anchor['target_case']]
+                self.assertEqual(target['expected_stdout'], anchor['expected_stdout'])
+                self.assertEqual((semantic_root/case['file']).read_text().split(), target['source'].split())
+            else:
+                self.assertNotIn('target_case', anchor)
 
     def test_structurally_legal_but_wrong_target_output_fails_and_keeps_artifacts(self):
         target = '#include <iostream>\nint main() { std::cout << "right"; return 0; }\n'
@@ -132,7 +158,7 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
             # Verify the saved command is executable and preserves the same
             # failure classification instead of merely checking its contents.
             replay_result = subprocess.run(
-                ["sh", "reproduce.sh"], cwd=saved, text=True, capture_output=True,
+                [sys.executable, str(saved/"reproduce.py")], cwd=saved, text=True, capture_output=True,
                 timeout=15, check=False,
             )
             self.assertEqual(replay_result.returncode, 1, replay_result.stdout + replay_result.stderr)
@@ -152,14 +178,29 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
             saved = Path(report.artifact_dir or "")
             self.assertTrue((saved / "program.cpp").exists())
             self.assertIn("missing_identifier", (saved / "target-compile.stderr.log").read_text(encoding="utf-8"))
+            self.assertIn('missing_identifier', report.target_compile_stderr)
+            replay = subprocess.run([sys.executable, str(saved/'reproduce.py')], capture_output=True, text=True, timeout=15)
+            self.assertEqual(replay.returncode, 1, replay.stdout+replay.stderr)
+            self.assertIn('"failure_stage": "target-compilation"', replay.stdout)
             self.assertTrue((saved / "reproduce.sh").is_file())
+
+    def test_real_source_runtime_timeout_retains_full_compiler_evidence(self):
+        source = ': : while eq ( 1 1 ) do { nop ; } ; '
+        with tempfile.TemporaryDirectory() as temporary:
+            report = verify_case(source, '', target_compiler=TARGET_CXX,
+                                 execution_timeout=0.1, artifacts=Path(temporary))
+            self.assertEqual(report.failure_stage, 'target-timeout')
+            self.assertEqual(report.compiler_status, 0)
+            self.assertEqual(report.target_compile_status, 0)
+            self.assertEqual(report.execution_status, 'timeout')
+            self.assertEqual((Path(report.artifact_dir)/'input.spl').read_text(), source)
 
     def test_external_compiler_failure_is_separate_from_target_compile_status(self):
         with tempfile.TemporaryDirectory(prefix="spl-compiler-failure-") as temporary:
             artifacts = Path(temporary) / "evidence"
             report = verify_case(
                 ": : ", "", case_id="intentional-compiler-failure", target_compiler=TARGET_CXX,
-                compiler_command=[sys.executable, "-c", "import sys; print('compiler fixture failure'); sys.exit(7)"],
+                compiler_command=[os.path.relpath(sys.executable), "-c", "import sys; print('compiler fixture failure'); sys.exit(7)"],
                 artifacts=artifacts,
             )
             self.assertFalse(report.passed)
@@ -170,6 +211,9 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
             saved = Path(report.artifact_dir or "")
             self.assertTrue((saved / "compiler.stdout.log").exists())
             self.assertTrue((saved / "compiler.stderr.log").exists())
+            replay = subprocess.run([sys.executable, str(saved/'reproduce.py')], capture_output=True, text=True, timeout=10)
+            self.assertEqual(replay.returncode, 1, replay.stdout+replay.stderr)
+            self.assertIn('"compiler_status": 7', replay.stdout)
 
 
 if __name__ == "__main__":

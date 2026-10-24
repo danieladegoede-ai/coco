@@ -257,5 +257,69 @@ class TestValidBoundaryCases(unittest.TestCase):
         self.assertIsNotNone(checked)
 
 
+class TestCompleteSemanticManifest(unittest.TestCase):
+    def test_every_negative_has_a_reproducible_positive_partner_and_fault_ranges(self):
+        cases = load_cases()
+        by_id = {c['id']: c for c in cases}
+        self.assertEqual(len(by_id), len(cases))
+        for case in cases:
+            with self.subTest(case=case['id']):
+                self.assertTrue(case['requirements'])
+                self.assertTrue(case['policy'] == 'confirmed' or case['policy'].startswith('provisional:'))
+                if case['valid']:
+                    continue
+                self.assertTrue(case['expected_locations'])
+                positive = by_id[case['paired_case']]
+                self.assertTrue(positive['valid'])
+                words = (FIXTURES_DIR/positive['file']).read_text().split()
+                for edit in reversed(case['fault']['edits']):
+                    start = edit['index']
+                    self.assertEqual(words[start:start+len(edit['removed'])], edit['removed'])
+                    words[start:start+len(edit['removed'])] = edit['inserted']
+                self.assertEqual(words, (FIXTURES_DIR/case['file']).read_text().split())
+
+    def test_stage_errors_use_real_spans_in_the_independent_fault_ranges(self):
+        from spl_frontend.compiler import compile_tree
+        from spl_frontend.source_map import build_source_map
+        from tools.test_semantic_acceptance import location_matches
+        for case in load_cases():
+            path = FIXTURES_DIR/case['file']
+            source = path.read_text()
+            tokens = tokenize(SourceFile(path, source))
+            tree = parse(tokens, SyntaxTree(), path)
+            with self.subTest(case=case['id']):
+                if case['valid']:
+                    compile_tree(tree, build_source_map(tree, tokens, path))
+                else:
+                    with self.assertRaises((NameAnalysisError, TypeAnalysisError)) as caught:
+                        compile_tree(tree, build_source_map(tree, tokens, path))
+                    error = caught.exception
+                    self.assertEqual(error.code, case['expected_code'])
+                    self.assertEqual(error.path, path)
+                    self.assertIsNotNone(error.span)
+                    self.assertTrue(location_matches(error.span.line, error.span.column, case['expected_locations']))
+                    if case.get('expected_message'):
+                        self.assertEqual(error.message, case['expected_message'])
+
+    def test_complete_manifest_through_cli_with_stale_outputs_and_explicit_paths(self):
+        import tempfile
+        from tools.test_semantic_acceptance import run_manifest
+        reports, summary = run_manifest(CASES_FILE)
+        self.assertEqual(summary['failed'], 0, [r for r in reports if not r.passed])
+        self.assertEqual(summary['passed'], len(load_cases()))
+
+    def test_external_compiler_failure_retains_portable_replay(self):
+        import tempfile, sys, subprocess
+        from tools.test_semantic_acceptance import run_case
+        case = next(c for c in load_cases() if c['id'] == 'valid-empty')
+        with tempfile.TemporaryDirectory() as temporary:
+            report = run_case(case, ': : ', compiler_command=[sys.executable, '-c', 'raise SystemExit(7)'], artifacts=Path(temporary))
+            self.assertFalse(report.passed)
+            saved = Path(report.artifact_dir)
+            self.assertTrue((saved/'report.json').is_file())
+            replay = subprocess.run([sys.executable, str(saved/'reproduce.py')], capture_output=True, text=True, timeout=10)
+            self.assertEqual(replay.returncode, 1, replay.stdout+replay.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

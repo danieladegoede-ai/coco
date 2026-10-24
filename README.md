@@ -27,15 +27,16 @@ and [handoff/acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md) before edi
 
 ## Current implementation status
 
-Foundation/names (#37/#38), numeric/type analysis (#41), algorithm generation
-(#40) and templates (#42) are merged. This branch builds on the #30 inlining
-PR and integrates the [full compiler command](agent_tasks/p2/part_3b_driver.md).
-The default command produces checked `tree.xml` and `program.cpp`; use
-`--frontend` for deliberate P1 syntax-only testing. See the
-[inlining API](agent_tasks/p2/part_3b_inlining.md) and
-[template/environment API](agent_tasks/p2/part_3b_templates.md) for library use.
-Native packaging and administration remain separate. Local checks are platform
-specific; hosted Actions has been failing before starting jobs.
+The names/types/backend/templates, static inlining and full default compiler
+command are integrated. The [driver guide](agent_tasks/p2/part_3b_driver.md)
+records APIs, phase statuses and protected output behavior. The final source
+acceptance runners and reproducible failure replay commands are described in
+[tools/GENERATED_TARGET.md](tools/GENERATED_TARGET.md), with semantic cases and
+all 38 original planning IDs linked to executable evidence.
+
+Native executable packaging (#35), the submission manual/declarations (#36)
+and hosted-platform verification remain separate. These source checks do not
+claim those external release actions or a full-marks outcome.
 
 ## Confirmed decisions
 

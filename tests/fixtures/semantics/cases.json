@@ -1,6 +1,6 @@
 {
-  "description": "Semantic test cases manifest for SPL compiler",
-  "version": "1.0.0",
+  "description": "Parser-valid paired semantic cases with confirmed/provisional policy, exact phase/status/code and independent text-location ranges.",
+  "version": "2.0.0",
   "cases": [
     {
       "id": "name-undeclared-variable",
@@ -10,7 +10,37 @@
       "valid": false,
       "requirement": "Variables must be declared before use",
       "explanation": "Reference to #y without declaration",
-      "paired_case": "baseline-name-undeclared-variable"
+      "paired_case": "baseline-name-undeclared-variable",
+      "requirements": [
+        "N02",
+        "N10"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 5
+          },
+          "end": {
+            "line": 1,
+            "column": 7
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Reference to #y without declaration",
+        "edits": [
+          {
+            "index": 0,
+            "removed": [
+              "#y"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "name-duplicate-variable",
@@ -20,7 +50,36 @@
       "valid": false,
       "requirement": "Variables in one scope must have distinct names",
       "explanation": "Two declarations of #x in V_DECL",
-      "paired_case": "baseline-name-duplicate-variable"
+      "paired_case": "baseline-name-duplicate-variable",
+      "requirements": [
+        "N04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 4
+          },
+          "end": {
+            "line": 1,
+            "column": 6
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Two declarations of #x in V_DECL",
+        "edits": [
+          {
+            "index": 0,
+            "removed": [],
+            "inserted": [
+              "#x"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-duplicate-function",
@@ -30,7 +89,38 @@
       "valid": false,
       "requirement": "Function names must be unique in F_DECL",
       "explanation": "Two functions named #f in same F_DECL",
-      "paired_case": "baseline-name-duplicate-function"
+      "paired_case": "baseline-name-duplicate-function",
+      "requirements": [
+        "N07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 35
+          },
+          "end": {
+            "line": 1,
+            "column": 37
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Two functions named #f in same F_DECL",
+        "edits": [
+          {
+            "index": 11,
+            "removed": [
+              "#g"
+            ],
+            "inserted": [
+              "#f"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-duplicate-parameter",
@@ -40,7 +130,38 @@
       "valid": false,
       "requirement": "Parameters must have distinct names",
       "explanation": "Two parameters named #a in function",
-      "paired_case": "baseline-name-duplicate-parameter"
+      "paired_case": "baseline-name-duplicate-parameter",
+      "requirements": [
+        "N04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 16
+          },
+          "end": {
+            "line": 1,
+            "column": 18
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Two parameters named #a in function",
+        "edits": [
+          {
+            "index": 5,
+            "removed": [
+              "#b"
+            ],
+            "inserted": [
+              "#a"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-parameter-mask",
@@ -50,7 +171,38 @@
       "valid": false,
       "requirement": "Local variables may not mask parameters",
       "explanation": "Local #a masks parameter #a",
-      "paired_case": "baseline-name-parameter-mask"
+      "paired_case": "baseline-name-parameter-mask",
+      "requirements": [
+        "N05"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 20
+          },
+          "end": {
+            "line": 1,
+            "column": 22
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Local #a masks parameter #a",
+        "edits": [
+          {
+            "index": 7,
+            "removed": [
+              "#b"
+            ],
+            "inserted": [
+              "#a"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-invisible-function-self",
@@ -60,7 +212,41 @@
       "valid": false,
       "requirement": "Self-recursion is forbidden",
       "explanation": "Function #f calls itself",
-      "paired_case": "baseline-name-invisible-function-self"
+      "paired_case": "baseline-name-invisible-function-self",
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 21
+          },
+          "end": {
+            "line": 1,
+            "column": 23
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Function #f calls itself",
+        "edits": [
+          {
+            "index": 8,
+            "removed": [
+              "nop"
+            ],
+            "inserted": [
+              "#f",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-invisible-function-sibling",
@@ -70,7 +256,40 @@
       "valid": false,
       "requirement": "Sibling function calls are forbidden",
       "explanation": "Function #f calls sibling #g",
-      "paired_case": "baseline-name-invisible-function-sibling"
+      "paired_case": "baseline-name-invisible-function-sibling",
+      "requirements": [
+        "N06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 21
+          },
+          "end": {
+            "line": 1,
+            "column": 23
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Function #f calls sibling #g",
+        "edits": [
+          {
+            "index": 8,
+            "removed": [
+              "nop"
+            ],
+            "inserted": [
+              "#g",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "name-invisible-ancestor",
@@ -80,7 +299,41 @@
       "valid": false,
       "requirement": "Cannot call ancestor/parent function (which also prevents recursion)",
       "explanation": "Inner function tries to call outer function (ancestor)",
-      "paired_case": "baseline-name-invisible-ancestor"
+      "paired_case": "baseline-name-invisible-ancestor",
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 45
+          },
+          "end": {
+            "line": 1,
+            "column": 51
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Inner function tries to call outer function (ancestor)",
+        "edits": [
+          {
+            "index": 14,
+            "removed": [
+              "nop"
+            ],
+            "inserted": [
+              "#outer",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "type-num-as-instr",
@@ -89,7 +342,42 @@
       "expected_code": "TYPE-INSTR-CALL",
       "valid": false,
       "requirement": "num function results cannot be discarded",
-      "explanation": "Calling num function as instruction"
+      "explanation": "Calling num function as instruction",
+      "paired_case": "baseline-type-num-as-instr",
+      "requirements": [
+        "T04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 37
+          },
+          "end": {
+            "line": 1,
+            "column": 43
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Calling num function as instruction",
+        "edits": [
+          {
+            "index": 14,
+            "removed": [
+              "nop"
+            ],
+            "inserted": [
+              "#f",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      },
+      "planning_anchor": "E04"
     },
     {
       "id": "type-void-in-term",
@@ -98,7 +386,41 @@
       "expected_code": "TYPE-TERM-CALL",
       "valid": false,
       "requirement": "void function cannot be used in numeric context",
-      "explanation": "Using void #f() in assignment"
+      "explanation": "Using void #f() in assignment",
+      "paired_case": "baseline-type-void-in-term",
+      "requirements": [
+        "T04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 40
+          },
+          "end": {
+            "line": 1,
+            "column": 46
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Using void #f() in assignment",
+        "edits": [
+          {
+            "index": 14,
+            "removed": [
+              "0"
+            ],
+            "inserted": [
+              "#f",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "type-void-in-print",
@@ -107,7 +429,42 @@
       "expected_code": "TYPE-TERM-CALL",
       "valid": false,
       "requirement": "void function cannot be printed as numeric",
-      "explanation": "Using void #f() in print"
+      "explanation": "Using void #f() in print",
+      "paired_case": "baseline-type-void-in-print",
+      "requirements": [
+        "T04",
+        "T08"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 40
+          },
+          "end": {
+            "line": 1,
+            "column": 46
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Using void #f() in print",
+        "edits": [
+          {
+            "index": 13,
+            "removed": [
+              "0"
+            ],
+            "inserted": [
+              "#f",
+              "(",
+              ")"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "numeric-mod-div-conflict",
@@ -116,7 +473,51 @@
       "expected_code": "FLOAT-INT-CONFLICT",
       "valid": false,
       "requirement": "mod and div cannot coexist",
-      "explanation": "Both mod and div in program"
+      "explanation": "Both mod and div in program",
+      "paired_case": "baseline-numeric-mod-div-conflict",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 19
+          },
+          "end": {
+            "line": 1,
+            "column": 22
+          }
+        },
+        {
+          "start": {
+            "line": 1,
+            "column": 31
+          },
+          "end": {
+            "line": 1,
+            "column": 34
+          }
+        }
+      ],
+      "expected_message": "A float-integer-conflict might perhaps be possible",
+      "fault": {
+        "concept": "Both mod and div in program",
+        "edits": [
+          {
+            "index": 12,
+            "removed": [
+              "mul"
+            ],
+            "inserted": [
+              "div"
+            ]
+          }
+        ]
+      },
+      "planning_anchor": "E05"
     },
     {
       "id": "numeric-decimal-mod-conflict",
@@ -125,7 +526,39 @@
       "expected_code": "DECIMAL-WITH-MOD",
       "valid": false,
       "requirement": "Decimal literals cannot be used with mod",
-      "explanation": "Decimal literal with mod operator"
+      "explanation": "Decimal literal with mod operator",
+      "paired_case": "baseline-numeric-decimal-mod-conflict",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 21
+          },
+          "end": {
+            "line": 1,
+            "column": 24
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Decimal literal with mod operator",
+        "edits": [
+          {
+            "index": 8,
+            "removed": [
+              "1"
+            ],
+            "inserted": [
+              "2.1"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "valid-empty",
@@ -134,7 +567,13 @@
       "expected_code": null,
       "valid": true,
       "requirement": "Empty programs are valid",
-      "explanation": "Minimal valid program"
+      "explanation": "Minimal valid program",
+      "requirements": [
+        "T09"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "valid-ancestor-shadow",
@@ -143,7 +582,14 @@
       "expected_code": null,
       "valid": true,
       "requirement": "Ancestor shadowing is allowed",
-      "explanation": "Inner scope shadows outer #x"
+      "explanation": "Inner scope shadows outer #x",
+      "requirements": [
+        "N02",
+        "N09"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "valid-direct-child-call",
@@ -152,7 +598,14 @@
       "expected_code": null,
       "valid": true,
       "requirement": "Direct child function calls are allowed",
-      "explanation": "Main calls direct child #f"
+      "explanation": "Main calls direct child #f",
+      "requirements": [
+        "N06",
+        "T04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "valid-mod-only",
@@ -161,7 +614,13 @@
       "expected_code": null,
       "valid": true,
       "requirement": "mod alone is valid",
-      "explanation": "Only mod, no div"
+      "explanation": "Only mod, no div",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "valid-div-only",
@@ -170,7 +629,13 @@
       "expected_code": null,
       "valid": true,
       "requirement": "div alone is valid",
-      "explanation": "Only div, no mod"
+      "explanation": "Only div, no mod",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "valid-arithmetic",
@@ -180,7 +645,14 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in arithmetic",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-arithmetic"
+      "paired_case": "invalid-arithmetic",
+      "requirements": [
+        "T04",
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-arithmetic",
@@ -190,7 +662,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in arithmetic",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-arithmetic"
+      "paired_case": "valid-arithmetic",
+      "requirements": [
+        "T04",
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 46
+          },
+          "end": {
+            "line": 1,
+            "column": 52
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 2,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 10,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "valid-negation",
@@ -200,7 +713,14 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in negation",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-negation"
+      "paired_case": "invalid-negation",
+      "requirements": [
+        "T04",
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-negation",
@@ -210,7 +730,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in negation",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-negation"
+      "paired_case": "valid-negation",
+      "requirements": [
+        "T04",
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 46
+          },
+          "end": {
+            "line": 1,
+            "column": 52
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 1,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 9,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "valid-comparison",
@@ -220,7 +781,14 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in comparison",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-comparison"
+      "paired_case": "invalid-comparison",
+      "requirements": [
+        "T04",
+        "T07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-comparison",
@@ -230,7 +798,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in comparison",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-comparison"
+      "paired_case": "valid-comparison",
+      "requirements": [
+        "T04",
+        "T07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 44
+          },
+          "end": {
+            "line": 1,
+            "column": 50
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 1,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 9,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "valid-argument",
@@ -240,7 +849,16 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in argument",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-argument"
+      "paired_case": "invalid-argument",
+      "requirements": [
+        "T01",
+        "T02",
+        "T03",
+        "T04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-argument",
@@ -250,7 +868,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in argument",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-argument"
+      "paired_case": "valid-argument",
+      "requirements": [
+        "T03",
+        "T04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 67
+          },
+          "end": {
+            "line": 1,
+            "column": 73
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 1,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 9,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "valid-loop-condition",
@@ -260,7 +919,14 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in loop-condition",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-loop-condition"
+      "paired_case": "invalid-loop-condition",
+      "requirements": [
+        "T04",
+        "T07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-loop-condition",
@@ -270,7 +936,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in loop-condition",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-loop-condition"
+      "paired_case": "valid-loop-condition",
+      "requirements": [
+        "T04",
+        "T07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 43
+          },
+          "end": {
+            "line": 1,
+            "column": 49
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 1,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 9,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "valid-uncalled-return",
@@ -280,7 +987,14 @@
       "valid": true,
       "requirement": "Part 2b numeric TERM call in uncalled-return",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "invalid-uncalled-return"
+      "paired_case": "invalid-uncalled-return",
+      "requirements": [
+        "T04",
+        "T10"
+      ],
+      "policy": "provisional:D06",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "invalid-uncalled-return",
@@ -290,7 +1004,48 @@
       "valid": false,
       "requirement": "Part 2b numeric TERM call in uncalled-return",
       "explanation": "Paired num/void declaration isolates the call-result type",
-      "paired_case": "valid-uncalled-return"
+      "paired_case": "valid-uncalled-return",
+      "requirements": [
+        "T04",
+        "T10"
+      ],
+      "policy": "provisional:D06",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 60
+          },
+          "end": {
+            "line": 1,
+            "column": 66
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Paired num/void declaration isolates the call-result type",
+        "edits": [
+          {
+            "index": 7,
+            "removed": [
+              "num"
+            ],
+            "inserted": [
+              "void"
+            ]
+          },
+          {
+            "index": 15,
+            "removed": [
+              "(",
+              "2",
+              ")"
+            ],
+            "inserted": []
+          }
+        ]
+      }
     },
     {
       "id": "cross-uncalled-mod-div",
@@ -299,7 +1054,50 @@
       "expected_code": "FLOAT-INT-CONFLICT",
       "valid": false,
       "requirement": "Part 2b entire-tree numeric policy",
-      "explanation": "Uncalled and nested return terms are included"
+      "explanation": "Uncalled and nested return terms are included",
+      "paired_case": "baseline-cross-uncalled-mod-div",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 29
+          },
+          "end": {
+            "line": 1,
+            "column": 32
+          }
+        },
+        {
+          "start": {
+            "line": 1,
+            "column": 71
+          },
+          "end": {
+            "line": 1,
+            "column": 74
+          }
+        }
+      ],
+      "expected_message": "A float-integer-conflict might perhaps be possible",
+      "fault": {
+        "concept": "Uncalled and nested return terms are included",
+        "edits": [
+          {
+            "index": 26,
+            "removed": [
+              "mul"
+            ],
+            "inserted": [
+              "div"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "nested-uncalled-decimal-mod",
@@ -308,7 +1106,39 @@
       "expected_code": "DECIMAL-WITH-MOD",
       "valid": false,
       "requirement": "Part 2b entire-tree numeric policy",
-      "explanation": "Uncalled and nested return terms are included"
+      "explanation": "Uncalled and nested return terms are included",
+      "paired_case": "baseline-nested-uncalled-decimal-mod",
+      "requirements": [
+        "T06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 8,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 44
+          },
+          "end": {
+            "line": 1,
+            "column": 47
+          }
+        }
+      ],
+      "fault": {
+        "concept": "Uncalled and nested return terms are included",
+        "edits": [
+          {
+            "index": 16,
+            "removed": [
+              "1"
+            ],
+            "inserted": [
+              "0.1"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "baseline-name-undeclared-variable",
@@ -318,7 +1148,14 @@
       "valid": true,
       "requirement": "Variables must be declared before use",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-undeclared-variable"
+      "paired_case": "name-undeclared-variable",
+      "requirements": [
+        "N02",
+        "N10"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-duplicate-variable",
@@ -328,7 +1165,13 @@
       "valid": true,
       "requirement": "Variables in one scope must have distinct names",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-duplicate-variable"
+      "paired_case": "name-duplicate-variable",
+      "requirements": [
+        "N04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-duplicate-function",
@@ -338,7 +1181,13 @@
       "valid": true,
       "requirement": "Function names must be unique in F_DECL",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-duplicate-function"
+      "paired_case": "name-duplicate-function",
+      "requirements": [
+        "N07"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-duplicate-parameter",
@@ -348,7 +1197,13 @@
       "valid": true,
       "requirement": "Parameters must have distinct names",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-duplicate-parameter"
+      "paired_case": "name-duplicate-parameter",
+      "requirements": [
+        "N04"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-parameter-mask",
@@ -358,7 +1213,13 @@
       "valid": true,
       "requirement": "Local variables may not mask parameters",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-parameter-mask"
+      "paired_case": "name-parameter-mask",
+      "requirements": [
+        "N05"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-invisible-function-self",
@@ -368,7 +1229,14 @@
       "valid": true,
       "requirement": "Self-recursion is forbidden",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-invisible-function-self"
+      "paired_case": "name-invisible-function-self",
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-invisible-function-sibling",
@@ -378,7 +1246,13 @@
       "valid": true,
       "requirement": "Sibling function calls are forbidden",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-invisible-function-sibling"
+      "paired_case": "name-invisible-function-sibling",
+      "requirements": [
+        "N06"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
     },
     {
       "id": "baseline-name-invisible-ancestor",
@@ -388,7 +1262,750 @@
       "valid": true,
       "requirement": "Cannot call ancestor/parent function (which also prevents recursion)",
       "explanation": "Valid baseline for one-fault negative",
-      "paired_case": "name-invisible-ancestor"
+      "paired_case": "name-invisible-ancestor",
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-type-num-as-instr",
+      "file": "adversarial/baseline-type-num-as-instr.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T04"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for type-num-as-instr",
+      "policy": "confirmed",
+      "paired_case": "type-num-as-instr",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-type-void-in-term",
+      "file": "adversarial/baseline-type-void-in-term.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T04"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for type-void-in-term",
+      "policy": "confirmed",
+      "paired_case": "type-void-in-term",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-type-void-in-print",
+      "file": "adversarial/baseline-type-void-in-print.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T04",
+        "T08"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for type-void-in-print",
+      "policy": "confirmed",
+      "paired_case": "type-void-in-print",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-numeric-mod-div-conflict",
+      "file": "adversarial/baseline-numeric-mod-div-conflict.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for numeric-mod-div-conflict",
+      "policy": "confirmed",
+      "paired_case": "numeric-mod-div-conflict",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-numeric-decimal-mod-conflict",
+      "file": "adversarial/baseline-numeric-decimal-mod-conflict.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for numeric-decimal-mod-conflict",
+      "policy": "confirmed",
+      "paired_case": "numeric-decimal-mod-conflict",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-cross-uncalled-mod-div",
+      "file": "adversarial/baseline-cross-uncalled-mod-div.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for cross-uncalled-mod-div",
+      "policy": "confirmed",
+      "paired_case": "cross-uncalled-mod-div",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "baseline-nested-uncalled-decimal-mod",
+      "file": "adversarial/baseline-nested-uncalled-decimal-mod.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06"
+      ],
+      "requirement": "",
+      "explanation": "Valid positive partner for nested-uncalled-decimal-mod",
+      "policy": "confirmed",
+      "paired_case": "nested-uncalled-decimal-mod",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "name-sideways-local",
+      "file": "adversarial/name-sideways-local.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "valid": false,
+      "requirements": [
+        "N02",
+        "N03"
+      ],
+      "requirement": "N02, N03",
+      "explanation": "One invalid name/binding in sideways-local",
+      "policy": "confirmed",
+      "paired_case": "valid-sideways-local",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 71
+          },
+          "end": {
+            "line": 1,
+            "column": 78
+          }
+        }
+      ],
+      "fault": {
+        "concept": "One invalid name/binding in sideways-local",
+        "edits": [
+          {
+            "index": 0,
+            "removed": [
+              "#hidden"
+            ],
+            "inserted": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-sideways-local",
+      "file": "adversarial/valid-sideways-local.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N02",
+        "N03"
+      ],
+      "requirement": "N02, N03",
+      "explanation": "Legal partner for sideways-local",
+      "policy": "confirmed",
+      "paired_case": "name-sideways-local",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "name-cousin-local",
+      "file": "adversarial/name-cousin-local.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "valid": false,
+      "requirements": [
+        "N01",
+        "N02",
+        "N03"
+      ],
+      "requirement": "N01, N02, N03",
+      "explanation": "One invalid name/binding in cousin-local",
+      "policy": "confirmed",
+      "paired_case": "valid-cousin-local",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 90
+          },
+          "end": {
+            "line": 1,
+            "column": 97
+          }
+        }
+      ],
+      "fault": {
+        "concept": "One invalid name/binding in cousin-local",
+        "edits": [
+          {
+            "index": 0,
+            "removed": [
+              "#hidden"
+            ],
+            "inserted": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-cousin-local",
+      "file": "adversarial/valid-cousin-local.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N01",
+        "N02",
+        "N03"
+      ],
+      "requirement": "N01, N02, N03",
+      "explanation": "Legal partner for cousin-local",
+      "policy": "confirmed",
+      "paired_case": "name-cousin-local",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "name-deep-descendant-call",
+      "file": "adversarial/name-deep-descendant-call.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-INVISIBLE-FUNCTION",
+      "valid": false,
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "requirement": "N06, N08",
+      "explanation": "One invalid name/binding in deep-descendant-call",
+      "policy": "confirmed",
+      "paired_case": "valid-deep-descendant-call",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 68
+          },
+          "end": {
+            "line": 1,
+            "column": 74
+          }
+        }
+      ],
+      "fault": {
+        "concept": "One invalid name/binding in deep-descendant-call",
+        "edits": [
+          {
+            "index": 20,
+            "removed": [
+              "#parent"
+            ],
+            "inserted": [
+              "#child"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-deep-descendant-call",
+      "file": "adversarial/valid-deep-descendant-call.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "requirement": "N06, N08",
+      "explanation": "Legal partner for deep-descendant-call",
+      "policy": "confirmed",
+      "paired_case": "name-deep-descendant-call",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "name-function-overloading",
+      "file": "adversarial/name-function-overloading.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-DUPLICATE-FUNCTION",
+      "valid": false,
+      "requirements": [
+        "N07"
+      ],
+      "requirement": "N07",
+      "explanation": "One invalid name/binding in function-overloading",
+      "policy": "confirmed",
+      "paired_case": "valid-function-overloading",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 38
+          },
+          "end": {
+            "line": 1,
+            "column": 40
+          }
+        }
+      ],
+      "fault": {
+        "concept": "One invalid name/binding in function-overloading",
+        "edits": [
+          {
+            "index": 12,
+            "removed": [
+              "#g"
+            ],
+            "inserted": [
+              "#f"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-function-overloading",
+      "file": "adversarial/valid-function-overloading.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N07"
+      ],
+      "requirement": "N07",
+      "explanation": "Legal partner for function-overloading",
+      "policy": "confirmed",
+      "paired_case": "name-function-overloading",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "name-uncalled-undeclared",
+      "file": "adversarial/name-uncalled-undeclared.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "valid": false,
+      "requirements": [
+        "N02",
+        "N10",
+        "T10"
+      ],
+      "requirement": "N02, N10, T10",
+      "explanation": "One invalid name/binding in uncalled-undeclared",
+      "policy": "confirmed",
+      "paired_case": "valid-uncalled-undeclared",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 34
+          },
+          "end": {
+            "line": 1,
+            "column": 42
+          }
+        }
+      ],
+      "fault": {
+        "concept": "One invalid name/binding in uncalled-undeclared",
+        "edits": [
+          {
+            "index": 6,
+            "removed": [
+              "#missing"
+            ],
+            "inserted": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-uncalled-undeclared",
+      "file": "adversarial/valid-uncalled-undeclared.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N02",
+        "N10",
+        "T10"
+      ],
+      "requirement": "N02, N10, T10",
+      "explanation": "Legal partner for uncalled-undeclared",
+      "policy": "confirmed",
+      "paired_case": "name-uncalled-undeclared",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-bare-name",
+      "file": "adversarial/valid-bare-name.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N02",
+        "N09",
+        "T05"
+      ],
+      "requirement": "N02, N09, T05",
+      "explanation": "valid bare name",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-distinct-siblings",
+      "file": "adversarial/valid-distinct-siblings.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N01",
+        "N04",
+        "N09"
+      ],
+      "requirement": "N01, N04, N09",
+      "explanation": "valid distinct siblings",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-current-ancestor",
+      "file": "adversarial/valid-current-ancestor.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N02",
+        "N09",
+        "T10"
+      ],
+      "requirement": "N02, N09, T10",
+      "explanation": "valid current ancestor",
+      "policy": "provisional:D06",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-same-name-child",
+      "file": "adversarial/valid-same-name-child.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N06",
+        "N08"
+      ],
+      "requirement": "N06, N08",
+      "explanation": "valid same name child",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-string-dots-with-mod",
+      "file": "adversarial/valid-string-dots-with-mod.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06",
+        "T08"
+      ],
+      "requirement": "T06, T08",
+      "explanation": "valid string dots with mod",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "valid-decimal-division",
+      "file": "adversarial/valid-decimal-division.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "T06"
+      ],
+      "requirement": "T06",
+      "explanation": "valid decimal division",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "provisional-separate-namespaces",
+      "file": "adversarial/provisional-separate-namespaces.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N07",
+        "N09"
+      ],
+      "requirement": "N07, N09",
+      "explanation": "provisional separate namespaces",
+      "policy": "provisional:D06",
+      "expected_status": 0,
+      "expected_locations": []
+    },
+    {
+      "id": "planning-E01",
+      "file": "adversarial/planning-E01.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N02",
+        "N09"
+      ],
+      "requirement": "N02, N09: ancestor access and legal shadowing",
+      "explanation": "Original planning anchor E01: N02, N09: ancestor access and legal shadowing",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E01"
+    },
+    {
+      "id": "planning-E02",
+      "file": "adversarial/planning-E02.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-UNDECLARED-VARIABLE",
+      "valid": false,
+      "requirements": [
+        "N03"
+      ],
+      "requirement": "N03: sibling lookup is forbidden",
+      "explanation": "Original planning anchor E02: N03: sibling lookup is forbidden",
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 68
+          },
+          "end": {
+            "line": 1,
+            "column": 70
+          }
+        }
+      ],
+      "paired_case": "planning-E02-positive",
+      "fault": {
+        "concept": "N03: sibling lookup is forbidden",
+        "edits": [
+          {
+            "index": 0,
+            "removed": [
+              "#x"
+            ],
+            "inserted": []
+          }
+        ]
+      },
+      "planning_anchor": "E02"
+    },
+    {
+      "id": "planning-E02-positive",
+      "file": "adversarial/planning-E02-positive.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N03"
+      ],
+      "requirement": "N03: sibling lookup is forbidden",
+      "explanation": "One-rule positive repair for E02",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "paired_case": "planning-E02"
+    },
+    {
+      "id": "planning-E03",
+      "file": "adversarial/planning-E03.spl",
+      "phase": "name_analysis",
+      "expected_code": "NAME-PARAMETER-MASK",
+      "valid": false,
+      "requirements": [
+        "N05"
+      ],
+      "requirement": "N05: local may not mask its own parameter",
+      "explanation": "Original planning anchor E03: N05: local may not mask its own parameter",
+      "policy": "confirmed",
+      "expected_status": 7,
+      "expected_locations": [
+        {
+          "start": {
+            "line": 1,
+            "column": 20
+          },
+          "end": {
+            "line": 1,
+            "column": 22
+          }
+        }
+      ],
+      "paired_case": "planning-E03-positive",
+      "fault": {
+        "concept": "N05: local may not mask its own parameter",
+        "edits": [
+          {
+            "index": 7,
+            "removed": [
+              "#y"
+            ],
+            "inserted": [
+              "#x"
+            ]
+          }
+        ]
+      },
+      "planning_anchor": "E03"
+    },
+    {
+      "id": "planning-E03-positive",
+      "file": "adversarial/planning-E03-positive.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "N05"
+      ],
+      "requirement": "N05: local may not mask its own parameter",
+      "explanation": "One-rule positive repair for E03",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "paired_case": "planning-E03"
+    },
+    {
+      "id": "planning-E06",
+      "file": "adversarial/planning-E06.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "G05",
+        "G06",
+        "T06"
+      ],
+      "requirement": "G05-T06: division of integer-looking literals",
+      "explanation": "Original planning anchor E06: G05-T06: division of integer-looking literals",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E06"
+    },
+    {
+      "id": "planning-E07",
+      "file": "adversarial/planning-E07.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "G07",
+        "G08"
+      ],
+      "requirement": "G08: Boolean composition counterexample",
+      "explanation": "Original planning anchor E07: G08: Boolean composition counterexample",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E07"
+    },
+    {
+      "id": "planning-E08",
+      "file": "adversarial/planning-E08.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "G09"
+      ],
+      "requirement": "G09: pre-test and post-test behavior",
+      "explanation": "Original planning anchor E08: G09: pre-test and post-test behavior",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E08"
+    },
+    {
+      "id": "planning-E09",
+      "file": "adversarial/planning-E09.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "F03",
+        "F04",
+        "F05",
+        "F07"
+      ],
+      "requirement": "F03-F07: repeated numeric calls containing a loop",
+      "explanation": "Original planning anchor E09: F03-F07: repeated numeric calls containing a loop",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E09"
+    },
+    {
+      "id": "planning-E10",
+      "file": "adversarial/planning-E10.spl",
+      "phase": "success",
+      "expected_code": null,
+      "valid": true,
+      "requirements": [
+        "F06",
+        "F08"
+      ],
+      "requirement": "F06-F08: child captures the current parent local",
+      "explanation": "Original planning anchor E10: F06-F08: child captures the current parent local",
+      "policy": "confirmed",
+      "expected_status": 0,
+      "expected_locations": [],
+      "planning_anchor": "E10"
     }
   ]
 }

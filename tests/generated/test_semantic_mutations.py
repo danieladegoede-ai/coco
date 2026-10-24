@@ -24,6 +24,14 @@ class SemanticMutationTests(unittest.TestCase):
                         check_types(resolve_names(tree))
                     self.assertEqual(caught.exception.code, mutation.expected_code)
                     self.assertEqual(mutation.seed, seed)
+                    from spl_frontend.tree_walkers import iter_leaves
+                    original = parse(tokenize(SourceFile(Path("original.spl"), source)), SyntaxTree())
+                    words = [leaf.contents for leaf in iter_leaves(original)]
+                    self.assertTrue(mutation.edits)
+                    for edit in reversed(mutation.edits):
+                        self.assertEqual(tuple(words[edit.index:edit.index+len(edit.removed)]), edit.removed)
+                        words[edit.index:edit.index+len(edit.removed)] = edit.inserted
+                    self.assertEqual(words, [leaf.contents for leaf in iter_leaves(tree)])
                     self.assertEqual(generate_mutation(source, kind, seed), mutation)
 
     def test_strings_are_never_mutated_as_operator_substrings(self):
