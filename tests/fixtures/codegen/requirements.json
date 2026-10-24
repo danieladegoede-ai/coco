@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "owner": "u21434019 / CheriseHeyl",
+  "scope": [
+    "#26",
+    "#27",
+    "#28",
+    "#34"
+  ],
+  "note": "N/T rows are upstream-owned dependency evidence, G rows are the owned backend evidence, and F rows require the separately owned template/inliner/driver. 'Blocked' is not a pass. Evidence is local to this uploaded dependency snapshot; no PR review or tutor decision is implied.",
+  "requirements": [
+    {
+      "id": "N01",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py",
+        "tests/integration/test_name_analysis_pipeline.py"
+      ],
+      "note": "Scope annotations for main, function bodies, branches and loops."
+    },
+    {
+      "id": "N02",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Nearest-ancestor variable lookup and exact resolved identities."
+    },
+    {
+      "id": "N03",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Reject sibling/cousin lookup while permitting a distinct global fallback."
+    },
+    {
+      "id": "N04",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Variable/formal duplicate domains and duplicate declarations."
+    },
+    {
+      "id": "N05",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Own-parameter masking rejection; nested shadowing rules."
+    },
+    {
+      "id": "N06",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Direct-child calls allowed; self/sibling/ancestor/deep-descendant visibility checked."
+    },
+    {
+      "id": "N07",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Function namespace and duplicate function declarations."
+    },
+    {
+      "id": "N08",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Recursive/cyclic call hierarchy safeguards."
+    },
+    {
+      "id": "N09",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis_pipeline.py"
+      ],
+      "note": "Stable binding/renaming identity across recompilation and tree round trips."
+    },
+    {
+      "id": "N10",
+      "area": "names",
+      "owner": "u20598425",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_name_analysis.py"
+      ],
+      "note": "Structured name diagnostics and no unexpected library output."
+    },
+    {
+      "id": "T01",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Node attributes and function signatures."
+    },
+    {
+      "id": "T02",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Numeric variables/formals and function return kinds."
+    },
+    {
+      "id": "T03",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Calls and ordered INPUT terms."
+    },
+    {
+      "id": "T04",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Procedure INSTR calls versus numeric TERM calls."
+    },
+    {
+      "id": "T05",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Assignment and term leaves."
+    },
+    {
+      "id": "T06",
+      "area": "numeric-policy",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_numeric_policy.py",
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "All arithmetic productions."
+    },
+    {
+      "id": "T07",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Boolean comparisons/composition and control conditions."
+    },
+    {
+      "id": "T08",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Output and simple instructions."
+    },
+    {
+      "id": "T09",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Structural and nullable productions."
+    },
+    {
+      "id": "T10",
+      "area": "types",
+      "owner": "u20620111",
+      "status": "upstream-owned-not-claimed",
+      "evidence": [
+        "tests/unit/test_type_analysis.py"
+      ],
+      "note": "Whole-program checking, including uncalled bodies/returns."
+    },
+    {
+      "id": "G01",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/unit/test_codegen_terms.py",
+        "E01-empty-program"
+      ],
+      "note": "Algorithm order and nullable ALGO."
+    },
+    {
+      "id": "G02",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py",
+        "E05-exact-string-and-print-order"
+      ],
+      "note": "Exact numeric/string print output."
+    },
+    {
+      "id": "G03",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py"
+      ],
+      "note": "Nop/comment have no runtime effect."
+    },
+    {
+      "id": "G04",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/unit/test_codegen_terms.py",
+        "E04-self-reading-assignment"
+      ],
+      "note": "RHS evaluation before assignment."
+    },
+    {
+      "id": "G05",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py"
+      ],
+      "note": "NAME/NUM and all six arithmetic operators."
+    },
+    {
+      "id": "G06",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/unit/test_target_writer.py",
+        "E02-fractional-division",
+        "E03-integer-modulo"
+      ],
+      "note": "Every storage/literal follows selected int/float mode."
+    },
+    {
+      "id": "G07",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/integration/test_codegen_control_flow.py",
+        "E06-nested-not-or-false-fallthrough"
+      ],
+      "note": "Branching uses comparison/goto and no ELSE."
+    },
+    {
+      "id": "G08",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/unit/test_boolean_codegen.py",
+        "E07-nested-short-circuit-truth-table"
+      ],
+      "note": "Boolean jump translation and short circuit."
+    },
+    {
+      "id": "G09",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/integration/test_codegen_control_flow.py",
+        "E08-pretest-zero-iterations",
+        "E09-posttest-guaranteed-first-iteration",
+        "E10-all-loop-polarities"
+      ],
+      "note": "All four loop variants and initial polarities."
+    },
+    {
+      "id": "G10",
+      "area": "code-generation",
+      "owner": "u21434019",
+      "status": "implemented-tested",
+      "evidence": [
+        "tests/unit/test_codegen_ir.py",
+        "tests/unit/test_target_inspector.py"
+      ],
+      "note": "Fresh structural names/storage/labels and safe clone/remap."
+    },
+    {
+      "id": "F01",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Exactly one MAIN across all expanded functions. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F02",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Inactive code-mine templates. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F03",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Ordered complete INPUT terms. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F04",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Capture all actuals before formal population. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F05",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Inline procedure calls and numeric return continuations. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F06",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Children translated before their calling parent. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F07",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Fresh per-call storage and labels. Final integration requires #29/#30/#31."
+    },
+    {
+      "id": "F08",
+      "area": "function-inlining",
+      "owner": "u21448842",
+      "status": "blocked-dependency",
+      "evidence": [
+        "src/spl_frontend/codegen.py:CallEmitter"
+      ],
+      "note": "Captured writes use the current ancestor instance. Final integration requires #29/#30/#31."
+    }
+  ]
+}

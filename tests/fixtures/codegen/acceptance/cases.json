@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "description": "Hand-checked source-to-C++ executable anchors for the u21434019 backend. Expected output strings are specified independently of the code generator.",
+  "target_dialect": "C++17 (D01 proposal; tutor confirmation remains pending)",
+  "cases": [
+    {
+      "id": "E01-empty-program",
+      "requirements": [
+        "G01"
+      ],
+      "source": ": : ",
+      "expected_stdout": "",
+      "semantic_expectation": "accepted",
+      "purpose": "Minimal checked program renders, compiles, and exits with no output."
+    },
+    {
+      "id": "E02-fractional-division",
+      "requirements": [
+        "G05",
+        "G06"
+      ],
+      "source": ": : print ( div ( 5 2 ) ) ; ",
+      "expected_stdout": "2.5",
+      "semantic_expectation": "accepted-float-mode",
+      "purpose": "Integer-looking operands must be divided in the selected floating numeric mode."
+    },
+    {
+      "id": "E03-integer-modulo",
+      "requirements": [
+        "G05",
+        "G06"
+      ],
+      "source": ": : print ( mod ( 5 2 ) ) ; ",
+      "expected_stdout": "1",
+      "semantic_expectation": "accepted-integer-mode",
+      "purpose": "Modulo is exact integer arithmetic, in a distinct compilation from division."
+    },
+    {
+      "id": "E04-self-reading-assignment",
+      "requirements": [
+        "G04"
+      ],
+      "source": "#x : : #x = 4 ; #x = add ( #x 1 ) ; print ( #x ) ; ",
+      "expected_stdout": "5",
+      "semantic_expectation": "accepted",
+      "purpose": "The RHS is evaluated from the old value before assigning the destination."
+    },
+    {
+      "id": "E05-exact-string-and-print-order",
+      "requirements": [
+        "G02"
+      ],
+      "source": ": : print \"alpha\" ; print \"\" ; print \"omega\" ; ",
+      "expected_stdout": "alphaomega",
+      "semantic_expectation": "accepted",
+      "purpose": "Output order is stable, and print adds no implicit spaces or newline."
+    },
+    {
+      "id": "E06-nested-not-or-false-fallthrough",
+      "requirements": [
+        "G07",
+        "G08"
+      ],
+      "source": ": : if or ( not ( eq ( 1 1 ) ) eq ( 1 2 ) ) then { print \"bad\" ; } else { print \"ok\" ; } ; ",
+      "expected_stdout": "ok",
+      "semantic_expectation": "accepted",
+      "purpose": "False Boolean paths must reach the false destination; a false OR not may not fall into the true branch."
+    },
+    {
+      "id": "E07-nested-short-circuit-truth-table",
+      "requirements": [
+        "G07",
+        "G08"
+      ],
+      "source": ": : if and ( eq ( 1 1 ) or ( eq ( 1 2 ) not ( eq ( 1 2 ) ) ) ) then { print \"t\" ; } else { print \"f\" ; } ; if and ( eq ( 1 2 ) eq ( 1 1 ) ) then { print \"t\" ; } else { print \"f\" ; } ; if not ( or ( eq ( 1 2 ) eq ( 1 1 ) ) ) then { print \"t\" ; } else { print \"f\" ; } ; ",
+      "expected_stdout": "tff",
+      "semantic_expectation": "accepted",
+      "purpose": "Nested AND/OR/NOT decisions are evaluated by explicit label transfers."
+    },
+    {
+      "id": "E08-pretest-zero-iterations",
+      "requirements": [
+        "G09"
+      ],
+      "source": "#x : : #x = 0 ; while eq ( 1 2 ) do { #x = add ( #x 1 ) ; } ; print ( #x ) ; ",
+      "expected_stdout": "0",
+      "semantic_expectation": "accepted",
+      "purpose": "Pre-test while may execute its body zero times."
+    },
+    {
+      "id": "E09-posttest-guaranteed-first-iteration",
+      "requirements": [
+        "G09"
+      ],
+      "source": "#x : : #x = 0 ; do { #x = add ( #x 1 ) ; } while lesser ( #x 0 ) ; print ( #x ) ; ",
+      "expected_stdout": "1",
+      "semantic_expectation": "accepted",
+      "purpose": "Post-test while always executes its body at least once."
+    },
+    {
+      "id": "E10-all-loop-polarities",
+      "requirements": [
+        "G09",
+        "G10"
+      ],
+      "source": "#x : : #x = 0 ; until eq ( 1 1 ) do { #x = add ( #x 1 ) ; } ; print ( #x ) ; #x = 0 ; do { #x = add ( #x 1 ) ; } until eq ( #x 1 ) ; print ( #x ) ; ",
+      "expected_stdout": "01",
+      "semantic_expectation": "accepted",
+      "purpose": "Pre-test until exits immediately when true, and post-test until exits after the first matching iteration."
+    }
+  ]
+}
