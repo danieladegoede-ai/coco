@@ -27,18 +27,15 @@ and [handoff/acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md) before edi
 
 ## Current implementation status
 
-At the 18 October documentation refresh, main still runs the integrated P1
-source reader, lexer, parser, tree/XML and CLI. **The final P2 command is not
-integrated yet.** #21/#22 are implemented for review in [PR #37](https://github.com/RudolphLamp/coco/pull/37);
-#23 is implemented for review in [PR #38](https://github.com/RudolphLamp/coco/pull/38),
-stacked on #37. Inspect live branch/PR state before importing their modules.
-Documentation on main does not merge those implementations or approve them.
+Foundation/names (#37/#38), numeric/type analysis (#41) and structured
+algorithm generation (#40) are merged. This branch adds the focused
+[#29 template/environment handoff](agent_tasks/p2/part_3b_templates.md).
+The public CLI still runs the P1 frontend until #31 integrates the full driver;
+executable main-call expansion remains #30. Inspect current modules and PRs
+before importing an API. Native packaging and administration remain separate.
 
-The pending name branch's last recorded local check was 363 tests plus 10/10
-CLI cases on macOS Python 3.14.0. Hosted Actions failed before starting jobs;
-Windows/Linux checks are unverified. Later issues implement types, generation,
-inlining, full driver and the native package. Preserve frontend regression
-coverage while adding the new stages.
+Local checks are platform-specific. Hosted Actions has been failing before
+starting jobs; no Windows/Linux runtime pass is inferred from that failure.
 
 ## Confirmed decisions
 

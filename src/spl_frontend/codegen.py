@@ -156,7 +156,11 @@ class CodeGenerator:
             if len(children) == 1:
                 leaf = children[0]
                 if leaf.kind is NodeKind.INNER and leaf.contents == "CALL":
-                    fragments.append(self._emit_call(leaf.node_id, result, environment))
+                    planner = getattr(self.call_emitter, "plan_call", None)
+                    if callable(planner):
+                        tasks.extend(reversed(planner(leaf.node_id, result, environment or {}, self.context)))
+                    else:
+                        fragments.append(self._emit_call(leaf.node_id, result, environment))
                     continue
                 if leaf.kind is NodeKind.LEAF:
                     if leaf.contents.startswith("#"):

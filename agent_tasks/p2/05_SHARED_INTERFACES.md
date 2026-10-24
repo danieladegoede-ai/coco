@@ -4,6 +4,14 @@ Updated 18 October 2026. Read this before one module chooses representations
 that another owner must consume. The official 2026 sheets and actual tutor
 answers take precedence. An implemented API can still await team review.
 
+## Current template handoff (24 October)
+
+The implemented #29 API and structural clone/capture contract are documented
+in [Part 3b templates](part_3b_templates.md). It consumes the actual checked
+model and backend from merged #37/#38/#41/#40. The 18 October snapshots below
+remain historical interface records. Main-call inlining and full CLI
+integration are separate #30/#31 tasks.
+
 ## Availability and authoritative implementation
 
 On this documentation refresh, main contains P1 implementation. Foundation
