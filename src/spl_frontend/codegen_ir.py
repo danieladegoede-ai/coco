@@ -14,11 +14,12 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 import re
 from types import MappingProxyType
 from typing import TypeAlias
 
-from spl_frontend.semantic_model import NumericMode, Symbol, SymbolKind
+from spl_frontend.semantic_model import NumericMode, SourceSpan, Symbol, SymbolKind
 
 
 class CodegenError(ValueError):
@@ -30,15 +31,26 @@ class CodegenError(ValueError):
         message: str,
         *,
         node_id: int | None = None,
+        path: Path | None = None,
+        span: SourceSpan | None = None,
     ) -> None:
         super().__init__(message)
         self.code = code
         self.message = message
         self.node_id = node_id
+        self.span = span
+        self.path = span.path if span is not None else path
 
     def render(self) -> str:
-        location = f"node[{self.node_id}]: " if self.node_id is not None else ""
-        return f"codegen[{self.code}]: {location}{self.message}"
+        if self.span is not None:
+            location = f"{self.span.path}:{self.span.line}:{self.span.column}: "
+        elif self.path is not None:
+            node = f":node[{self.node_id}]" if self.node_id is not None else ""
+            location = f"{self.path}{node}: "
+        else:
+            location = f"node[{self.node_id}]: " if self.node_id is not None else ""
+        return f"{location}codegen[{self.code}]: {self.message}"
+
 
 
 def _positive(value: object, label: str) -> None:

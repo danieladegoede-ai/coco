@@ -22,9 +22,11 @@ SPL.txt -> existing lexer/parser -> validated syntax tree
 ```
 
 Documentation on main does not mean all these passes are merged. Check the
-live branch, source files, issues and PRs before importing an API. As of
-18 October, #37 contains #21/#22 and #38 contains #23; both await review/merge.
-The public main-branch CLI still runs P1 until #31 integrates the full compiler.
+live branch, source files, issues and PRs before importing an API. Foundation,
+names, numeric/types, backend and templates are merged through #37/#38/#41/#40/#42.
+This branch adds the full driver on top of the #30 inlining PR. Read the
+[current command/API guide](agent_tasks/p2/part_3b_driver.md); the dated personal
+packets below remain historical task allocations.
 
 ## Required reading before editing
 

@@ -27,15 +27,15 @@ and [handoff/acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md) before edi
 
 ## Current implementation status
 
-Foundation/names (#37/#38), numeric/type analysis (#41) and structured
-algorithm generation (#40) are merged. This branch adds the focused
-[#29 template/environment handoff](agent_tasks/p2/part_3b_templates.md).
-The public CLI still runs the P1 frontend until #31 integrates the full driver;
-executable main-call expansion remains #30. Inspect current modules and PRs
-before importing an API. Native packaging and administration remain separate.
-
-Local checks are platform-specific. Hosted Actions has been failing before
-starting jobs; no Windows/Linux runtime pass is inferred from that failure.
+Foundation/names (#37/#38), numeric/type analysis (#41), algorithm generation
+(#40) and templates (#42) are merged. This branch builds on the #30 inlining
+PR and integrates the [full compiler command](agent_tasks/p2/part_3b_driver.md).
+The default command produces checked `tree.xml` and `program.cpp`; use
+`--frontend` for deliberate P1 syntax-only testing. See the
+[inlining API](agent_tasks/p2/part_3b_inlining.md) and
+[template/environment API](agent_tasks/p2/part_3b_templates.md) for library use.
+Native packaging and administration remain separate. Local checks are platform
+specific; hosted Actions has been failing before starting jobs.
 
 ## Confirmed decisions
 
@@ -78,7 +78,7 @@ syntax tree still uses the original grammar's node names.
 
 ## Required syntax-tree output
 
-For valid input, the program must create `tree.xml`.
+For fully valid input, the default command creates `tree.xml` and `program.cpp`.
 
 The tree contains:
 
@@ -142,7 +142,7 @@ historical references; the current P2 guides supersede their scope/deadlines.
 Do not commit `SPL.txt`, `tree.xml`, Python caches, virtual environments,
 packaged executables or private course material.
 
-## Run the integrated front end during development
+## Run the compiler during development
 
 From the repository root, create `SPL.txt` in the directory where you will run
 the command. The smallest valid program is `: : `, with a space after each
@@ -158,10 +158,10 @@ You may pass one input path instead of using `SPL.txt`:
 PYTHONPATH=src python3 -m spl_frontend path/to/input.txt
 ```
 
-Successful runs return zero and write a fresh `tree.xml` in the current
-directory. Errors are printed to standard error and return a nonzero status.
-The driver removes an old `tree.xml` before attempting a new compilation, so
-an input failure does not leave the previous result looking current. Do not
+Successful runs return zero and write fresh `tree.xml` and `program.cpp`
+in the current directory. Errors are printed to standard error and return a nonzero status.
+The full driver invalidates both outputs before an attempt after protecting
+input/output aliases. Phase failures leave no stale successful-looking output. Do not
 put the literal `$` at the end of `SPL.txt`; it is only a grammar meta-symbol.
 These Python commands are for development; the submission executable must be
 tested separately on the tutors' target platform.
@@ -224,7 +224,7 @@ For the larger edge corpus and deterministic grammar coverage case:
 PYTHONPATH=src python3 -m unittest tests.integration.test_edge_corpus -v
 PYTHONPATH=src python3 -m unittest tests.generated.test_generate_valid_spl -v
 python3 tools/generate_valid_spl.py --coverage SPL.txt
-PYTHONPATH=src python3 -m spl_frontend
+PYTHONPATH=src python3 -m spl_frontend --frontend
 ```
 
 The edge corpus currently checks more than 300 distinct source files through

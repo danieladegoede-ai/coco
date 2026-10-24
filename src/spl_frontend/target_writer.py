@@ -85,7 +85,16 @@ class TargetWriter:
         if not isinstance(program, TargetProgram):
             raise CodegenError("WRITE-PROGRAM", "TargetWriter requires a TargetProgram.")
         program.validate()
-        lines = ["#include <iostream>", "", "int main() {"]
+        lines = []
+        for section in program.code_mine:
+            lines.append("")
+            lines.extend(_comment_lines(f"--- BEGIN CODE MINE: {section.name} ---"))
+            # Never use an outer /* ... */ block: arbitrary templates may contain
+            # comment terminators and must remain completely non-executable.
+            lines.extend(_comment_lines(section.text))
+            lines.extend(_comment_lines(f"--- END CODE MINE: {section.name} ---"))
+
+        lines.extend(["#include <iostream>", "", "int main() {"])
 
         # No declaration is emitted among the jumps/labels. Empty initialization
         # provides deterministic values even where the source language permits an
@@ -110,13 +119,6 @@ class TargetWriter:
         lines.append("    return 0;")
         lines.append("}")
 
-        for section in program.code_mine:
-            lines.append("")
-            lines.extend(_comment_lines(f"--- BEGIN CODE MINE: {section.name} ---"))
-            # Never use an outer /* ... */ block: arbitrary templates may contain
-            # comment terminators and must remain completely non-executable.
-            lines.extend(_comment_lines(section.text))
-            lines.extend(_comment_lines(f"--- END CODE MINE: {section.name} ---"))
 
         return "\n".join(lines) + "\n"
 

@@ -5,6 +5,10 @@ semantic analysis in #41 and structural backend in #40. It implements reusable
 function templates and lexical environments. Executable main-call integration
 belongs to #30, and the full public compiler driver belongs to #31.
 
+Executable call expansion is now available through the
+[#30 inlining API](part_3b_inlining.md). The preparation API below remains
+compatible; #31 separately integrates the default compiler command.
+
 ## Public API
 
 ```python

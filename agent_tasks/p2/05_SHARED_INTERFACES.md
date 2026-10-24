@@ -12,6 +12,14 @@ model and backend from merged #37/#38/#41/#40. The 18 October snapshots below
 remain historical interface records. Main-call inlining and full CLI
 integration are separate #30/#31 tasks.
 
+## Inlining and full command implementation
+
+The [inlining API](part_3b_inlining.md) and
+[full compiler/CLI guide](part_3b_driver.md) record the actual #30/#31
+implementation on this branch. P1 status codes remain and name/type/generation
+add 7/8/9. Source generation runs all passes; `--frontend` explicitly preserves
+syntax-only regression use. D01-D08 below remain pending.
+
 ## Availability and authoritative implementation
 
 On this documentation refresh, main contains P1 implementation. Foundation

@@ -46,7 +46,7 @@ class PipelineIntegrationTests(unittest.TestCase):
 
     def _run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [sys.executable, "-m", "spl_frontend", *args],
+            [sys.executable, "-m", "spl_frontend", "--frontend", *args],
             cwd=self.workdir,
             env=self._env(),
             capture_output=True,
