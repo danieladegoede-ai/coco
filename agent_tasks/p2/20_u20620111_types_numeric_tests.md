@@ -1,5 +1,12 @@
 # u20620111 / Kuda / Kuda21: numeric policy, types, semantic generator and adversarial tests
 
+> Release instruction, 25 October: the Speaker finalized D01-D08 without
+> tutor consultation and appointed this AI as main technical reviewer. Use
+> [the final release contract](../../release/P2_RELEASE_DECISIONS.md). The dated
+> allocations/proposals below are historical and add no consultation or
+> named-peer technical-review gate. A33 personal signatures/upload remain real
+> personal actions.
+
 Updated 18 October 2026. Primary issues: **#24, #25, #32, #33**. This packet contains
 the detailed issue requirements locally so your AI can work without this
 conversation. Read live issues/PRs for subsequent changes and actual status.

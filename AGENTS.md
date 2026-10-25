@@ -5,7 +5,7 @@
 P1 earned full marks. Current authorized work is COS341 2026 Parts 2a, 2b,
 3a and 3b: names/scopes, types, target generation and function inlining.
 The goal is the 1st Class assessment, up to 6/6 P2 points. The final date is
-Sunday 25 October 2026; the portal closing hour is still unconfirmed.
+Sunday 25 October 2026; use the cutoff shown in the First Class upload slot.
 
 Start with **[agent_tasks/p2/00_START_HERE.md](agent_tasks/p2/00_START_HERE.md)**.
 It selects the correct personal packet, explains branches/dependencies and
@@ -35,7 +35,7 @@ packets below remain historical task allocations.
 1. Root README and the P2 start guide.
 2. Your student-number packet and its current GitHub issues.
 3. [Shared interfaces](agent_tasks/p2/05_SHARED_INTERFACES.md), including
-   implemented-versus-proposed API status and pending tutor decisions.
+   implemented API status and the final release decisions.
 4. [Handoff and acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md).
 5. The official private 2026 sheets/announcements relevant to your issue,
    the P1 shared contracts and grammar reference under agent_tasks.
@@ -56,6 +56,14 @@ the C++ designation and GNU toolchain preference. Use the native build/test
 workflow and LaTeX manual. This supersedes earlier exclusion of packaging/manual
 work. Personal approvals/signatures and actual portal submission must remain
 truthful; do not tick or sign for members without their own consent/signatures.
+
+The Speaker subsequently instructed that no tutor consultation is available
+and appointed this AI as the main technical reviewer. D01-D08 are now final
+release choices in `release/P2_RELEASE_DECISIONS.md`; no consultation or
+additional named-peer review blocks their implementation. Historical packets
+and dated audits retain their context but cannot reopen those questions.
+This technical-review authorization does not supply another member's personal
+signature or a portal receipt required by A33.
 
 ## Ownership
 
@@ -92,7 +100,8 @@ existing modules. Do not implement another owner's issue to hide a dependency.
   Report real input locations, or node IDs for XML without original tokens.
 - Check input/output aliasing before deletion. Failed compiles must not leave
   misleading stale or partial outputs. Coordinate any XML lifecycle change.
-- Keep tutor-dependent decisions visibly provisional. Do not invent a tutor
+- Apply the final release choices without reopening consultation. Distinguish
+  lecturer requirements from implementation decisions; do not invent a tutor
   answer, team approval, signature, test pass, clean-machine result or upload.
 - Keep private course material, inputs/outputs, caches, environments, binaries
   and ZIPs out of source commits. Use temporary/ignored output directories.
@@ -118,7 +127,7 @@ An issue is ready for integration only after its real dependencies, tests and
 review criteria are satisfied. A formal block permits independent fixtures and
 explicitly stacked development; it does not permit claiming full completion.
 Open a focused PR, link the issue/parent PR, name the reviewer, and give paths,
-commit, exact checks/results, provisional decisions and remaining gates.
+commit, exact checks/results, final release decisions and remaining gates.
 
 ## Contract changes and precedence
 

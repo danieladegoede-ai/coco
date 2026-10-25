@@ -1,5 +1,12 @@
 # P2 baseline and verification
 
+> Release instruction, 25 October: the Speaker finalized D01-D08 without
+> tutor consultation and appointed this AI as main technical reviewer. Use
+> [the final release contract](../../release/P2_RELEASE_DECISIONS.md). The dated
+> allocations/proposals below are historical and add no consultation or
+> named-peer technical-review gate. A33 personal signatures/upload remain real
+> personal actions.
+
 17 October 2026, #21/#22, branch `feat/u20598425-p2-foundation`.
 
 ## Provenance

@@ -4,17 +4,14 @@ Updated 18 October 2026. Read this before one module chooses representations
 that another owner must consume. The official 2026 sheets and actual tutor
 answers take precedence. An implemented API can still await team review.
 
-## Release update (25 October, supplied Announcement 34)
+## Final release contract (25 October)
 
-A34 explicitly accepts the C++ designation and asks for human-readable target
-source plus g++/gcc compatibility. D01 is resolved for this release: prefer
-g++ C++17, with gcc's explicit C++ frontend/libstdc++ command documented and
-GNU 13 compatibility tested by CI. [Release decisions](../../release/P2_RELEASE_DECISIONS.md)
-record the adopted D02-D07 implementation choices and supported D08 build
-platforms. Those choices are not falsely attributed to new tutor answers.
-The historical question table below remains context, not an instruction to
-block this authorized release. Personal signatures, the portal closing hour
-and a real upload receipt cannot be supplied by technical inference.
+The Speaker instructed completion without tutor consultation and designated
+this AI as the main technical reviewer. All D01-D08 choices are settled in the
+[final release contract](../../release/P2_RELEASE_DECISIONS.md). Use that
+contract and the implemented APIs. Historical interface snapshots below retain
+their dates; they add no consultation or named-peer technical review gate.
+A33's personal signatures and actual First Class upload remain personal actions.
 
 ## Current template handoff (24 October)
 
@@ -30,16 +27,15 @@ The [inlining API](part_3b_inlining.md) and
 [full compiler/CLI guide](part_3b_driver.md) record the actual #30/#31
 implementation on this branch. P1 status codes remain and name/type/generation
 add 7/8/9. Source generation runs all passes; `--frontend` explicitly preserves
-syntax-only regression use. D01-D08 below remain pending.
+syntax-only regression use. D01-D08 are finalized in the release contract.
 
-## Availability and authoritative implementation
+## Original interface snapshots and current implementation
 
-On this documentation refresh, main contains P1 implementation. Foundation
-code is in [#37](https://github.com/RudolphLamp/coco/pull/37); names are in
-[#38](https://github.com/RudolphLamp/coco/pull/38). Do not assume a module exists
-on main because its signature appears here. Inspect/fetch the appropriate
-branch; after merge, inspect main. Never add a duplicate semantic model merely
-to bypass a pending dependency.
+The current release branch includes the complete P2 pipeline and native
+builds. Foundation/names/types/backend/templates/inlining/driver are integrated.
+The immutable links below preserve the original interface handoffs; they are
+historical snapshots rather than missing dependencies. Use current source and
+[the full driver guide](part_3b_driver.md) for current APIs/statuses.
 
 Implemented source/contracts for comparison:
 
@@ -68,9 +64,8 @@ The as-built lexer raises FrontendError; parse has the optional path shown
 above. Do not implement against outdated illustrative exception names.
 
 Current statuses: success 0, usage 2, input 3, lexical 4, syntax 5, tree 6,
-internal 70. Michele owns the coordinated P2 phases/status additions in #31;
-7/8/9 are proposals, not already-reserved public behavior. Preserve actual
-input paths and traceback-free expected errors.
+names 7, types 8, generation 9 and internal 70. These are implemented public
+behavior. Preserve actual input paths and traceback-free expected errors.
 
 ## Foundation records implemented in #22
 
@@ -177,10 +172,11 @@ callers. Uncalled declarations still have entries. Call-site bindings stay
 in the resolved map. Defensive cycle/visibility checks protect replacement
 snapshots; they do not introduce legal recursion.
 
-## Backend interfaces to agree before integration
+## Integrated backend interface boundaries
 
-These are proposals for Cherise/Michele/Kuda to settle in focused PR review,
-not implemented imports promised by main. Keep the final public model small.
+The following original boundaries are implemented in the current release.
+Use the linked implementation guides and actual source signatures; no
+additional interface consultation blocks this release.
 
 - #24 returns immutable whole-program numeric facts plus one selected mode.
   #25 combines those facts with production checking into CheckedProgram.
@@ -216,24 +212,15 @@ must not make gotos invalid C++. Define every label once, with a legal following
 statement, and resolve every jump. Avoid text replacement in identifiers,
 strings or comments. Code-mine content remains safely non-executable.
 
-## Tutor decisions
+<a id="tutor-decisions"></a>
+## Final release decisions
 
-Unanswered at the documentation refresh. Record actual date, answer/source,
-affected owners/tests and resulting implementation change after consultation.
-Do not replace an unanswered row with an inferred approval.
+The former question table has been retired. D01-D08 are closed implementation
+choices in [P2_RELEASE_DECISIONS.md](../../release/P2_RELEASE_DECISIONS.md),
+with their specification basis and concrete acceptance cases. No consultation
+is required. The original anchor remains so older references still resolve.
 
-| ID | Question and isolated current proposal | Responsible members |
-| --- | --- | --- |
-| D01 | Sheets say C but show iostream/cout. Propose C++ and program.cpp; confirm dialect, filename and compile/run commands. | Speaker, Cherise, Michele |
-| D02 | Part 3b's pN=aN copy appears reversed. Propose cloned formal = captured actual; demonstrate a nonzero argument. | Speaker, Michele |
-| D03 | Confirm emit_bool(B,T,F) explicit true/false transfers with comparison/goto lowering; demonstrate nested not/or. | Speaker, Cherise |
-| D04 | Confirm arity and evaluation order. Propose matching counts, left-to-right actual capture and short-circuit Booleans. | Speaker, Kuda, Michele |
-| D05 | Propose int with mod; float with div or decimals; otherwise int. Confirm output formatting. Only the explicit global conflicts reject. | Speaker, Kuda |
-| D06 | Confirm variable/function same spelling and return-TERM visibility. Keep separate namespaces and body-scope returns without invented restrictions. | Speaker, Rudolph |
-| D07 | Are renamed tree/type/symbol-table files required, with what schema? Keep inspectable maps without inventing output-file requirements. | Speaker |
-| D08 | Confirm tutor OS/CPU, commands, extra files, Linux artifact, group filenames, signature method and portal closing hour. | Speaker, Michele |
-
-Confirmed numeric restrictions do not wait for D05: both mod/div anywhere must
-reject with the exact required message, and mod forbids any decimal NUM.
-Confirmed names do not wait for D06: nearest-ancestor variables, no sideways
-lookup, own-parameter masking and immediate-F_DECL calls remain mandatory.
+Confirmed numeric restrictions remain mandatory: both mod/div anywhere reject
+with the exact message, and mod forbids any decimal NUM. Confirmed names remain
+nearest-ancestor variables, no sideways lookup, own-parameter masking and
+immediate-F_DECL calls. Final choices preserve these rules.

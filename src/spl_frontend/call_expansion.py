@@ -74,8 +74,10 @@ class TemplateCallEmitter:
         if numeric != (destination is not None):
             self.fail("GEN-CALL-CONTEXT", "Call continuation disagrees with return kind.", call_node_id)
         actuals = tuple(iter_list_items(self.tree, inputs.node_id))
-        if len(actuals) != len(template.formal_symbol_ids):
-            self.fail("GEN-ARITY", f"Provisional D04 policy requires {len(template.formal_symbol_ids)} arguments; got {len(actuals)}.", call_node_id)
+        expected = len(template.formal_symbol_ids)
+        if len(actuals) != expected:
+            noun = "argument" if expected == 1 else "arguments"
+            self.fail("GEN-ARITY", f"Function expects {expected} {noun}; got {len(actuals)}.", call_node_id)
         capture_slots = tuple(self.context.new_storage(StorageKind.CAPTURE) for _ in actuals)
         storage_map = {slot: self.context.allocator.new_storage(slot.kind, slot.value_type)
                        for slot in template.declarations}

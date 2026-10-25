@@ -1,5 +1,12 @@
 # P2 source audit and 500 complete-system regressions — 24 October 2026
 
+> Release instruction, 25 October: the Speaker finalized D01-D08 without
+> tutor consultation and appointed this AI as main technical reviewer. Use
+> [the final release contract](../../release/P2_RELEASE_DECISIONS.md). The dated
+> allocations/proposals below are historical and add no consultation or
+> named-peer technical-review gate. A33 personal signatures/upload remain real
+> personal actions.
+
 This review starts from main `3e44bdb281523e87b0015b5fde5cd9115a7c7717`
 (PR #45). It covers the source pipeline for Parts 2a, 2b, 3a and 3b,
 including actual compilation and execution of generated targets. It does not

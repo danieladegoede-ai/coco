@@ -110,16 +110,16 @@ group-2/
 The archive is named \texttt{group-2-candidate.zip} while declarations remain unsigned. Its SHA-256 receipt is supplied \emph{outside} the ZIP. Never rename a Linux binary to \texttt{.exe}, and do not use an executable from a different OS. Build logs and per-case reports are available from the matching GitHub Actions run; \texttt{manifest.json} records the tested binary hashes and the source commit printed on page 1. No test result is a personal approval.
 
 \heading{9. Implemented language decisions}
-The following operational decisions complete the release contract. Announcement 34 confirms the target-language/compiler preference; the other details are implementation choices based on the specification's translation guidelines and tested behavior, not invented tutor responses.
+The compiler uses the following final language and output rules. They follow the supplied specifications, Announcement 34's target-language clarification and the tested release contract.
 \begin{itemize}
 \item Variables use nearest-current/ancestor scope; sibling and cousin declarations are invisible. Calls target only the current P's immediate function declarations. Duplicate declarations, own-parameter masking, overloads and recursion are rejected.
 \item Functions are statically inlined. Actuals are evaluated left to right into fresh captures before copying to cloned formals. Numeric calls copy their return value into the caller continuation; void calls have no numeric result. Actual/formal counts must match. Boolean \texttt{and}/\texttt{or} short circuit; \texttt{not} reverses the branch destinations.
 \item All numbers use one mode: \texttt{int} unless division or decimal NUM selects \texttt{float}. Any \texttt{mod} plus \texttt{div} is rejected with the specified conflict message; \texttt{mod} with any decimal NUM is rejected. Strings do not select numeric mode.
 \item Native integers and single-precision floats are used, with normal \texttt{std::cout} output (six significant digits for floats). Arbitrary precision, overflow and division by zero are not promised. Programs used in acceptance initialize their values and terminate. Static inlining has an explicit 1,000,000-instruction resource guard.
-\item Variable/function names use separate namespaces; returns resolve in the function body's scope. Symbol/type data are internal maps. The published assessment outputs are \texttt{tree.xml} and \texttt{program.cpp}; no additional symbol-table schema was supplied.
+\item Variable/function names use separate namespaces; returns resolve in the function body's scope. Symbol/type data are internal maps. The published assessment outputs are \texttt{tree.xml} and \texttt{program.cpp}.
 \end{itemize}
 \heading{10. Final submission procedure}
-Each of the four members must personally sign \emph{both} following declarations after reviewing this release. Incorporate the signed pages into the final manual, reassemble and verify the final ZIP, and upload \textbf{only to the First Class slot}. Retain the portal receipt and compare the downloaded ZIP's hash. Announcement 33 gives 25 October 2026; it does not supply a closing hour. Check the actual portal instead of assuming a time. Do not upload to both categories.
+Each of the four members must personally sign \emph{both} following declarations after reviewing this release. Incorporate the signed pages into the final manual, reassemble and verify \texttt{group-2.zip}, and upload \textbf{only to the First Class slot} on 25 October 2026 before its displayed cutoff. Retain the portal receipt and compare the downloaded ZIP's hash. Do not upload to both categories.
 
 \newpage
 {\LARGE\bfseries\color{navy} Declaration 1: submission category}\par

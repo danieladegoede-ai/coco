@@ -4,9 +4,20 @@ PR: https://github.com/danieladegoede-ai/coco/pull/1
 
 Reviewed starting head: `96464479146864ab3d82e8f96245ae2082c4aed7`.
 Review fixes: `b0573d0` (exact PDF/native/GNU evidence binding).
-The compiler under `src/` remains identical to the audited upstream P2 source
-`c2fb92c3c78764322a4c42db84a8941fe12fe51e`; this review did not replace a pass
-or change language semantics. Both repository histories remain present.
+At that review head, `src/` matched the audited upstream P2 source
+`c2fb92c3c78764322a4c42db84a8941fe12fe51e`. The subsequent final-decision update
+changes documentation/comments and the arity diagnostic's wording, while
+preserving the passes and language semantics. Both histories remain present.
+
+## Final-decision update requested by the Speaker
+
+The Speaker instructed completion without tutor consultation and designated
+this AI as main technical reviewer. All D01-D08 release choices are now final
+in [P2_RELEASE_DECISIONS.md](P2_RELEASE_DECISIONS.md). Historical consultation
+and named-peer technical-review allocations do not block the release. The
+supported platforms and launch commands are fixed in the tested manual.
+This settles the technical questions; A33's actual signatures and upload
+remain personal completion actions, not questions for a tutor.
 
 ## Verdict and scope
 
@@ -42,9 +53,10 @@ Required completion: each member personally signs both declarations after
 reviewing this release; incorporate those pages, verify the exact final PDF
 and ZIP, name the submission `group-2.zip`, upload only in the First Class
 slot, retain the receipt and compare the downloaded archive's SHA-256.
-The exact portal closing hour and tutor computer's OS/CPU were not provided;
-the manual states the tested platforms rather than inventing confirmations.
-These personal/external items remain in original-repository #35/#36.
+The manual states the supported, tested platforms and the submission date;
+the Speaker uses the cutoff displayed in the First Class slot. No consultation
+or tutor-machine confirmation blocks the supported release. Personal submission
+actions remain in original-repository #36.
 
 ### R2 - FIXED: a replaced PDF could pass assembly
 
@@ -121,7 +133,8 @@ arity, left-to-right actual evaluation, short circuiting, separate variable/
 function namespaces, body-scope returns, native int/float representation and
 `tree.xml`/`program.cpp` output policy remain explicitly documented choices in
 [P2_RELEASE_DECISIONS.md](P2_RELEASE_DECISIONS.md). This review does not convert
-those choices into dated tutor confirmations.
+those choices into dated tutor confirmations. The Speaker has now finalized
+them without consultation; no unresolved language decision remains.
 
 ## Complete requirement trace
 
@@ -237,8 +250,8 @@ review.
    manifest with the earlier candidate's files.
 2. Every member must personally sign both declarations. Reinspect the final
    signed PDF and regenerate/check the actual submission archive and checksum.
-3. Confirm the live upload cutoff and tutor platform, submit only in First
-   Class, retain the portal receipt and verify the downloaded ZIP.
+3. Submit only in First Class before its displayed cutoff, retain the portal
+   receipt and verify the downloaded ZIP. Use the documented supported platform.
 
 The Windows x64, Linux x64 and macOS arm64 builds have concrete CI evidence;
 that does not prove an unspecified tutor OS/CPU. The numerical corpus uses

@@ -4,9 +4,9 @@ Group 2 earned full marks for P1. Current work targets **P2 1st Class**:
 Parts 2a (names/scopes), 2b (types), 3a (algorithm target generation) and 3b
 (function inlining), including correct executable target behavior.
 
-The final date is **Sunday 25 October 2026**; the portal closing hour is
-unconfirmed. Internal targets aim for a tested native candidate on 23 October
-and personally signed, reviewed, verified submission on 24 October.
+The final date is **Sunday 25 October 2026**. Submit before the cutoff displayed
+in the First Class slot. The dated planning targets below are historical;
+the release contract and current test evidence govern the final package.
 
 ## Start your AI here
 
@@ -22,7 +22,7 @@ copyable AI prompt for every member:
 | Michele / u21448842 | #29, #30, #31, #35 | [Templates, inlining, driver and native release](agent_tasks/p2/40_u21448842_inlining_driver_release.md) |
 
 [Tracker #20](https://github.com/RudolphLamp/coco/issues/20) holds the live work
-allocation. Read [shared interfaces/tutor questions](agent_tasks/p2/05_SHARED_INTERFACES.md)
+allocation. Read [shared interfaces and release decisions](agent_tasks/p2/05_SHARED_INTERFACES.md)
 and [handoff/acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md) before editing.
 
 ## Current implementation status
@@ -63,8 +63,8 @@ and distinguishes tested technical behavior from the remaining A33 actions.
 
 The implementation language is Python 3.11 or later. The final submission must
 still be packaged as a runnable executable for the tutors' target computer.
-The exact operating system, processor architecture, upload format and run
-command must be confirmed before the release is built.
+The release targets Windows x64, Linux x64 and macOS arm64 with the exact
+filenames and commands in the tested launch manual.
 
 ### Separate lexer and parser
 
@@ -253,8 +253,8 @@ missing separators and repeated instruction combinations. The generated
 coverage program exercises every original grammar production. Seeded programs
 have independent limits for expansion count (`max_size`) and concrete-tree node
 count (`max_nodes`, default 1000). `SPL.txt` and `tree.xml` are ignored local
-artifacts; do not commit them. Executable-only cases still require the packaged
-release candidate, and unconfirmed tutor choices remain provisional.
+artifacts; do not commit them. Executable-only cases run against the packaged
+release candidate. The final release contract settles D01-D08.
 
 ## Historical Phase 1 submission package
 
@@ -283,11 +283,14 @@ The front end is ready only when:
 - the packaged executable runs on a clean target machine; and
 - the uploaded copy is downloaded and tested before the deadline.
 
-## Current tutor questions
+## Final release decisions
 
-The [D01-D08 table](agent_tasks/p2/05_SHARED_INTERFACES.md#tutor-decisions)
-records unanswered P2 questions: target dialect/toolchain, argument-copy
-example, Boolean control-flow invariant, arity/evaluation order, numeric mode/
-formatting, namespaces/return visibility, required semantic files, target OS/
-launch/signature details and the portal cutoff hour. Keep proposals visibly
-provisional until an actual dated answer is recorded.
+The Speaker instructed that this release proceed without tutor consultation.
+All eight [release decisions](release/P2_RELEASE_DECISIONS.md) are settled:
+C++17/GNU commands, actual-to-formal copies, comparison/goto Booleans,
+matching arity and ordered capture, one numeric mode, separate name domains,
+the two published output files and the three supported native platforms.
+The main technical review and tests provide the implementation evidence.
+The dated planning packets preserve historical context; they add no pending
+consultation requirement. A33's personal signatures and actual First Class
+submission remain actions for the members and Speaker.

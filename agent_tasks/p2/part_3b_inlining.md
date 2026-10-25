@@ -39,7 +39,7 @@ budgets each guard runaway static growth. Expected failures are silent
 
 D02 uses formal = captured actual. D04 uses matching arity, left-to-right
 capture and short-circuit Booleans. These are isolated, documented backend
-proposals; Part 2b does not acquire a new arity rule. D01-D08 remain pending.
+release choices; Part 2b does not acquire a new arity rule. D01-D08 are final.
 Native int/float ranges and precision apply; no new overflow/definite-assignment
 rejection or tutor answer is invented.
 

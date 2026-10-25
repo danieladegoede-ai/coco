@@ -86,8 +86,8 @@ and backslash handling.
 
 Inside template preparation, D02 uses formal = captured actual. D04 uses exact
 arity, left-to-right complete TERM capture and short-circuit Booleans. These
-remain documented backend proposals; they are not new Part 2b type rules or
-recorded tutor answers. D01-D08 remain pending.
+are final backend choices; they are not new Part 2b type rules. D01-D08 are
+settled in the release contract and require no consultation.
 
 ## Evidence
 

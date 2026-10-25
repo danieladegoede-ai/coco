@@ -60,10 +60,10 @@ is ready for package/source comparison, but no package result is claimed here.
 
 Runtime int/float ranges and default stream formatting apply; the oracle models
 binary32 rounding and exact output for the bounded initialized corpus. D01-D08
-remain provisional: target cases list their selected runtime policies, and
-source cases depending on unanswered namespace/return questions are tagged.
-The manifests are planning/test evidence, not an official marking rubric or
-an invented tutor approval.
+are settled in the [final release contract](../release/P2_RELEASE_DECISIONS.md).
+Existing policy tags retain the provenance of the original cases; they do not
+indicate a pending consultation or blocked test. The manifests remain
+planning/test evidence rather than an official marking rubric.
 
 ## Expanded 5,000-case audit matrix
 

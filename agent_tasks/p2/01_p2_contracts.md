@@ -1,5 +1,12 @@
 # Additive P2 contracts
 
+> Release instruction, 25 October: the Speaker finalized D01-D08 without
+> tutor consultation and appointed this AI as main technical reviewer. Use
+> [the final release contract](../../release/P2_RELEASE_DECISIONS.md). The dated
+> allocations/proposals below are historical and add no consultation or
+> named-peer technical-review gate. A33 personal signatures/upload remain real
+> personal actions.
+
 Implemented foundation signatures for review under #21/#22, 17 October 2026.
 No all-member approval is claimed. P1 approvals/interfaces remain in
 [`../01_shared_contracts.md`](../01_shared_contracts.md).
@@ -11,7 +18,7 @@ frontend coordinator. The default/optional input path, XML schema and exit
 statuses are unchanged. #31 will add the full `compile_program` entry point
 (or agreed equivalent) and retain a deliberate frontend-only regression API.
 
-Proposed target: `program.cpp` in the output directory (D01/D08 pending).
+Final target: `program.cpp` in the output directory (D01/D08 release contract).
 The final driver checks path aliasing before clearing outputs, invalidates
 stale target source and publishes atomically only after the required passes
 succeed. Keep the existing stale-XML rule until a coordinated change is made.
@@ -194,14 +201,14 @@ emit_bool(bool_node_id, true_label, false_label, expansion_environment)
 
 Hoist declarations and render at the final boundary. The inliner supplies the
 TERM->CALL hook; arithmetic does not implement a second independent inliner.
-Explicit two-outcome jumps remain D03's proposal.
+Explicit two-outcome jumps are the final D03 release choice.
 
 Michele owns FunctionTemplate/ExpansionEnvironment (#29/#30). A template
 identifies the resolved function symbol, ordered parameters, body P/IR, locals,
 return kind/term/location, and ancestor references. An environment maps symbol
 IDs to storage and label IDs to fresh labels, with a parent capture environment.
 Preserve root storage; remap locals/formals/returns per call; capture actuals
-before populating formals; expand children before parents. D02/D04 are pending.
+before populating formals; expand children before parents. D02/D04 are final release choices.
 
 `tests/integration/test_semantic_tree_roundtrip.py` supplies executable fixtures
 for four downstream roles without importing nonexistent backend modules or

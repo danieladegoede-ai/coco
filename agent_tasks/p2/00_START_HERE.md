@@ -1,10 +1,10 @@
 # Start here: Group 2 Phase 2 AI instructions
 
-Updated 18 October 2026 at the Speaker's request. These guides supersede the
+Updated 25 October 2026 at the Speaker's request. These guides supersede the
 September frontend-only task allocation. The goal is a **1st Class** COS341
 2026 submission: Parts **2a, 2b, 3a and 3b**, including correct executable target
 generation, for up to **6/6 P2 points**. P1 earned full marks and stays covered.
-The final date is **Sunday 25 October**; no exact cutoff hour is confirmed.
+The final date is **Sunday 25 October**; use the cutoff displayed in First Class.
 
 ## Choose the member, then the issue
 
@@ -15,28 +15,29 @@ The final date is **Sunday 25 October**; no exact cutoff hour is confirmed.
 | Cherise / u21434019 / CheriseHeyl | #26 IR; #27 arithmetic; #28 Booleans/loops; #34 executable verification | [Cherise](30_u21434019_codegen_verification.md) |
 | Michele / u21448842 / michey-n | #29 templates; #30 inlining; #31 integration; #35 native release | [Michele](40_u21448842_inlining_driver_release.md) |
 
-Each issue has one primary owner and a named reviewer. Reviewing does not
+Each issue retains its original primary owner. The Speaker has designated
+this AI as main technical reviewer for the final release. Reviewing does not
 transfer implementation ownership. Work is tied to issue paths, not exclusive
 ownership of a whole test directory. Do not create overlapping implementations
 or take another member's work because its module has not merged yet.
 
 ## What exists, and where
 
-Snapshot at this refresh; verify live status before editing:
+Current release status; inspect the live branch and PR before editing:
 
 | Work | Location | Meaning |
 | --- | --- | --- |
-| Complete P1 source | main, baseline 0be22db | Existing lexer/parser/XML/CLI regression baseline |
-| #21/#22 foundation | [PR #37](https://github.com/RudolphLamp/coco/pull/37), feat/u20598425-p2-foundation | Implemented for review; 320 local tests passed at original handoff |
-| #23 name analysis | [PR #38](https://github.com/RudolphLamp/coco/pull/38), feat/u20598425-p2-names, based on #37 | Implemented for review; 363 local tests and 10/10 CLI cases passed |
-| #24-#35 passes/tools | Assigned issues; inspect live branches | Requirements, not an assertion of implementation |
-| #36 final release | Assigned issue; final gates pending | Drafting is possible; release waits on tested native artifact and real signatures |
+| Complete P1 source | `src/spl_frontend` | Assessed frontend retained with regression tests |
+| Parts 2a/2b/3a/3b | Integrated source, original issues #21-#34 closed | Names/types, target IR, algorithms, templates, inlining and full driver are implemented |
+| Source acceptance | `tests`, `tools/GENERATED_TARGET.md` | All 38 requirement IDs have evidence; normal discovery includes the 5,000 edge methods |
+| Native builds and exact-package acceptance | [Worker PR #1](https://github.com/danieladegoede-ai/coco/pull/1) | Windows x64, Linux x64 and macOS arm64 pipelines, provenance and extracted-ZIP tests implemented |
+| Manual and declarations | `release/group-2.tex` | Five-page LaTeX manual and both declarations implemented; A33 signatures and actual upload remain personal actions |
 
-The reported checks used macOS arm64 Python 3.14.0. Hosted Actions showed
-startup_failure with zero jobs, including the #38 branch. Windows/Linux and
-Python 3.11 runtime passes were not established by those local runs. Treat
-missing CI jobs as unverified, not successful. Do not make speculative account
-changes or claim a billing diagnosis without evidence.
+Hosted CI has executed real Windows/Linux source tests and all three native
+platforms; the old zero-job startup failures in dated packets are historical.
+Require green checks and matching provenance for the current head before
+using its release candidate. Do not reinterpret historical failures as current
+or mix artifacts from different commits.
 
 ## First actions for an AI
 
@@ -95,12 +96,15 @@ and state exactly which live dependency facts could not be verified.
 - Only a successfully checked program can reach final code generation. Only a
   validated successful target is published. Protect input before output cleanup.
 
-## Decisions still awaiting tutor confirmation
+## Final decisions: no consultation dependency
 
-See [the exact D01-D08 table](05_SHARED_INTERFACES.md#tutor-decisions).
-Do not block confirmed lookup/arithmetic/IR work on unrelated questions, and
-do not present a provisional policy as an official language rule. Isolate each
-proposal so an actual answer can change one boundary and its tests.
+The Speaker instructed completion without tutor consultation and appointed
+this AI as the main technical reviewer. Apply the eight
+[final release decisions](../../release/P2_RELEASE_DECISIONS.md). Their evidence
+is recorded in the main review; no pending tutor question blocks implementation.
+Dated personal packets and schedules below are historical allocations, not
+new instructions to obtain consultation or repeat completed source work.
+A33's genuine personal signatures and First Class upload remain personal actions.
 
 ## Internal working targets
 
@@ -111,7 +115,7 @@ remaining tests honestly; do not mark unfinished work complete to meet a date.
 | --- | --- |
 | 18 Oct | Foundation/names review, numeric/type and IR/template work underway |
 | 19 Oct | Arithmetic plus first target compile/run; type-rule coverage |
-| 20 Oct | Tutor consultation answers recorded; Boolean/loop tests and call integration |
+| 20 Oct | Historical integration target: Boolean/loop tests and call integration |
 | 21 Oct | Complete nested/repeated-call pipeline |
 | 22 Oct | Feature freeze with full required source-based semantic/execution matrix |
 | 23 Oct | Tested native release candidate from one recorded commit |

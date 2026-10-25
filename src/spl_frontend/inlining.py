@@ -38,8 +38,8 @@ class Inliner(TemplateCallEmitter):
 def generate_program(checked: CheckedProgram) -> TargetProgram:
     """Generate a closed program with static calls and inactive code mines.
 
-    D02 uses formal = captured actual. D04's matching arity, left-to-right
-    actual evaluation and short-circuit rules remain explicit proposals.
+    D02 uses formal = captured actual. The final D04 release contract uses
+    matching arity, left-to-right actual evaluation and short-circuit rules.
     Generating source requires no installed target compiler.
     """
     inliner = Inliner(checked)

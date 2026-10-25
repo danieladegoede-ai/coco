@@ -48,8 +48,8 @@ class BooleanCodeGenerator:
 
     The lowering only emits primitive comparisons, labels and goto instructions;
     it never relies on C++ ``&&``, ``||``, ``!`` or ``else``. ``and`` and ``or``
-    short-circuit by routing control to the RHS only when required (the proposed
-    D03/D04 policy in the task packet, kept explicit for tutor review).
+    short-circuit by routing control to the RHS only when required, following
+    the final D03/D04 release contract.
     """
 
     def __init__(self, context: BooleanContext, emit_term: TermEmitter) -> None:

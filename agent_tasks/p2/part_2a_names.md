@@ -1,7 +1,7 @@
 # Part 2a: names, scopes and renaming (#23)
 
-Owner: RudolphLamp / u20598425. Reviewer: Kuda21. Implemented on a branch
-stacked on the #21/#22 foundation PR, with review/merge and tutor D06 pending.
+Original owner: RudolphLamp / u20598425. The name pass is integrated; the
+Speaker's final release contract settles D06 without further consultation.
 Sources reviewed: private 2026 Part 2a pp.1-4 and Announcement 21. The N IDs
 below are the planning requirement IDs, not extra lecturer requirements.
 
@@ -70,11 +70,11 @@ in declaration order before their bodies are processed. All traversal follows
 child links rather than numeric node/record ordering. No global allocator is
 shared across compilations. The traversal and cycle check are iterative.
 
-D06 remains unanswered: variable/function spellings use separate tables with
+D06 is final for this release: variable/function spellings use separate tables with
 no invented cross-kind collision error; numeric return TERM sees body locals,
 parameters, ancestors and direct child functions. Those tests document the
-current proposals. A tutor clarification must update this record and the
-relevant focused tests. No arity, type or definite-assignment rule is added.
+final release behavior. No arity, type or definite-assignment rule is added
+by the name pass. See the final release contract for its test evidence.
 
 ## Diagnostics
 

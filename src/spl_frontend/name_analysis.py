@@ -218,7 +218,7 @@ def resolve_names(
 ) -> ResolvedProgram:
     """Bind all declarations/uses, including uncalled bodies and return TERM.
 
-    D06 remains provisional: distinct variable/function namespaces introduce no
+    The release uses distinct variable/function namespaces, introducing no
     extra cross-kind rejection, and return TERM uses the function body scope.
     With XML only, pass path=xml_path; diagnostics use node IDs, not fake lines.
     """

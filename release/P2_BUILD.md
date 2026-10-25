@@ -6,6 +6,8 @@ retained full baseline plus four disjoint edge shards on Linux/Windows. Native
 builds happen on Windows 2022 x64, Ubuntu 22.04 x64 and macOS 14 arm64, using
 Python 3.13.7 and pinned `packaging/requirements-build.txt` dependencies.
 PyInstaller is not a cross-compiler: each platform builds its own executable.
+The Speaker finalized D01-D08 in [the release contract](P2_RELEASE_DECISIONS.md).
+No tutor consultation or additional policy decision blocks these builds.
 
 ```sh
 python3 -m pip install -r packaging/requirements-build.txt
@@ -64,5 +66,6 @@ Download the `group-2-release-candidate` workflow artifact or the draft release.
 Each member signs both declarations personally. Preserve a signed manual,
 reassemble the final `group-2.zip` with matching updated hashes, review the exact
 archive and upload only in the First Class ClickUp slot. Retain the receipt and
-verify the downloaded copy. The portal closing hour was not provided; no time,
-signature, member consent or upload is invented by this workflow.
+verify the downloaded copy. Submit on 25 October before the cutoff displayed
+in the First Class slot. CI records only actual test/build evidence; personal
+signatures and the real portal receipt remain with the members and Speaker.

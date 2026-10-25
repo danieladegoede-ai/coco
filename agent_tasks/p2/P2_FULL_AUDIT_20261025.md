@@ -1,5 +1,12 @@
 # Expanded P2 source audit — 25 October 2026
 
+> Release instruction, 25 October: the Speaker finalized D01-D08 without
+> tutor consultation and appointed this AI as main technical reviewer. Use
+> [the final release contract](../../release/P2_RELEASE_DECISIONS.md). The dated
+> allocations/proposals below are historical and add no consultation or
+> named-peer technical-review gate. A33 personal signatures/upload remain real
+> personal actions.
+
 The expanded audit starts at merged main
 `3b46695aad7274fde1f5b801415714cee31c43c5` (PR #46). It retains the previous
 1,188 tests, adds **5,000 edge-matrix methods** and **ten numeric-boundary

@@ -54,7 +54,7 @@ class InliningTests(unittest.TestCase):
             generate_program(checked(': void #f ( #a ) { : : return } : #f ( ) ; '))
         self.assertEqual(raised.exception.code, "GEN-ARITY")
         self.assertIsNotNone(raised.exception.span)
-        self.assertIn("D04", raised.exception.message)
+        self.assertEqual(raised.exception.message, "Function expects 1 argument; got 0.")
 
     def test_bounded_expansion_reports_a_deliberate_error(self):
         with patch("spl_frontend.inlining.MAX_EXPANDED_INSTRUCTIONS", 1):

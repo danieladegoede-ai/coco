@@ -63,10 +63,10 @@ mod+decimal (`DECIMAL-WITH-MOD`). The type wrapper preserves this exact message
 and the real source location. The scan does not require a decimal point on
 integer-looking literals under div.
 
-## Explicit provisional choices
+## Final release choices
 
-These are implementation choices, **not tutor confirmations**. D01-D08 remain
-recorded centrally in `00_p2_decisions.md`.
+The Speaker finalized these implementation choices without further consultation.
+D01-D08 are recorded in the final release contract linked by `00_p2_decisions.md`.
 
 - D05: integer with mod; float with div or any decimal literal; otherwise integer.
   The first two whole-tree restrictions are explicit sheet rules. Selecting a
