@@ -5,6 +5,7 @@ avoids serial native-compiler overhead and can partition edges into CI shards.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor,as_completed
 import json
@@ -34,6 +35,7 @@ def main() -> int:
     parser.add_argument('--shard-index',type=int,default=0)
     parser.add_argument('--shard-count',type=int,default=1)
     parser.add_argument('--ids',nargs='+')
+    parser.add_argument('--executable',type=Path,help='Run edge CLI stages through this exact packaged binary')
     parser.add_argument('--report',type=Path,default=ROOT/'build'/'edge5000-report.json')
     parser.add_argument('--write-inventory',action='store_true')
     args=parser.parse_args()
@@ -48,7 +50,10 @@ def main() -> int:
     selected=[c for i,c in enumerate(CASES) if i%args.shard_count==args.shard_index and (args.ids is None or c.case_id in args.ids)]
     if args.ids and set(args.ids)!={c.case_id for c in selected}:parser.error('unknown ID or ID outside selected shard')
     if args.suite!='baseline' and not selected:parser.error('empty test selection')
-    report={'platform':platform.platform(),'python':sys.version,'workers':args.workers,
+    executable=args.executable.resolve() if args.executable else None
+    if executable is not None and not executable.is_file():parser.error('packaged executable does not exist')
+    executable_hash=hashlib.sha256(executable.read_bytes()).hexdigest() if executable else None
+    report={'executable':str(executable) if executable else None,'executable_sha256':executable_hash,'platform':platform.platform(),'python':sys.version,'workers':args.workers,
             'shard_index':args.shard_index,'shard_count':args.shard_count,'baseline':None,'results':[]}
     cxx=shutil.which('c++') or shutil.which('g++') or shutil.which('clang++')
     report['target_compiler']=cxx
@@ -64,7 +69,9 @@ def main() -> int:
     if args.suite!='baseline':
         from tests.edge5000.test_matrix import Edge5000Tests
         def run(case):
-            tick=time.monotonic();test=Edge5000Tests(f'test_{case.case_id}_{case.family}');result=unittest.TestResult();test.run(result)
+            tick=time.monotonic();test=Edge5000Tests(f'test_{case.case_id}_{case.family}')
+            if executable:test.compiler_command=[str(executable)]
+            result=unittest.TestResult();test.run(result)
             return {'id':case.case_id,'family':case.family,'passed':result.wasSuccessful() and not result.skipped,
                     'run':result.testsRun,'skipped':result.skipped,'elapsed':round(time.monotonic()-tick,3),
                     'evidence':getattr(test,'edge_evidence',{}),'failures':[v for _,v in result.errors+result.failures]}
@@ -75,6 +82,7 @@ def main() -> int:
                 if not row['passed']:print('FAIL',row['id'],*row['failures'],flush=True)
                 if time.monotonic()-last>=15:
                     print(f"Edges {len(report['results'])}/{len(selected)}; failures {sum(not x['passed'] for x in report['results'])}",flush=True);last=time.monotonic()
+    if executable and hashlib.sha256(executable.read_bytes()).hexdigest()!=executable_hash:raise RuntimeError('Packaged binary changed during testing')
     report['results'].sort(key=lambda r:r['id'])
     report['elapsed_seconds']=round(time.monotonic()-start,3)
     report['edge_run']=len(report['results']);report['edge_passed']=sum(r['passed'] for r in report['results'])

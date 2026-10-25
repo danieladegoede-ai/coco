@@ -1,0 +1,155 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,array,booktabs,longtable,enumitem,fancyhdr,listings,xcolor}
+\usepackage[hidelinks]{hyperref}
+\input{build-info.tex}
+\definecolor{navy}{HTML}{17324D}
+\definecolor{pale}{HTML}{EDF3F8}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\textbf{COS341 2026 / Group 2 / P2}}
+\fancyhead[R]{\small First Class candidate}
+\fancyfoot[L]{\footnotesize Native compiler launch manual}
+\fancyfoot[R]{\thepage}
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,frame=single,rulecolor=\color{navy},backgroundcolor=\color{pale},aboveskip=5pt,belowskip=5pt}
+\newcommand{\heading}[1]{\vspace{5pt}{\large\bfseries\color{navy}#1}\par}
+\newcommand{\signrow}[2]{\par\noindent\textbf{#1}\quad\texttt{#2}\par\vspace{14pt}Signature: \rule{92mm}{0.4pt}\quad Date: \rule{25mm}{0.4pt}\par\vspace{18pt}}
+\begin{document}
+{\LARGE\bfseries\color{navy} SPL compiler: launch and assess}\par
+{\large Group 2 --- First Class / Parts 2a, 2b, 3a and 3b}\par
+\textbf{Build source:} \texttt{\SourceCommit}\par
+\textbf{Category:} First Class, maximum 6/6 P2 points, in addition to P1.\par
+\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Release candidate.} The two declarations at the end require each member's personal signature before submission. Printed names and automated test results are not signatures.}}
+
+\heading{1. Choose the executable for your computer}
+Extract the whole archive and open a terminal \textbf{inside its \texttt{group-2} folder}. The compiler includes its Python runtime; do not install Python or rebuild the compiler. A separate C++ toolchain is required to run the program it generates.
+
+\begin{tabular}{@{}p{25mm}p{50mm}p{69mm}@{}}\toprule
+Computer & Compiler file & Native build / compatibility target\\\midrule
+Windows x64 & \texttt{group-2.exe} & Windows x64; tested on Windows Server 2022\\
+Linux x64 & \texttt{group-2} & Linux x86-64; Ubuntu 22.04 baseline (glibc 2.35+)\\
+macOS Apple Silicon & \texttt{macos/group-2} & macOS arm64; macOS 14 or later\\\bottomrule
+\end{tabular}\par\medskip
+The Unix files have \textbf{no extension}. A Finder label such as ``Unix Executable File'' is not a portable format: use the correct platform row. The macOS program is ad-hoc signed, not Apple notarized; use the operating system's normal opening procedure for a trusted educational executable if prompted.
+
+\heading{2. Windows (PowerShell or Command Prompt)}
+\begin{lstlisting}
+.\group-2.exe
+g++ -std=c++17 program.cpp -o program.exe
+.\program.exe
+\end{lstlisting}
+\heading{3. Linux}
+\begin{lstlisting}
+chmod +x group-2
+./group-2
+g++ -std=c++17 program.cpp -o program
+./program
+\end{lstlisting}
+\heading{4. macOS Apple Silicon}
+\begin{lstlisting}
+chmod +x macos/group-2
+./macos/group-2
+g++ -std=c++17 program.cpp -o program
+./program
+\end{lstlisting}
+\textbf{Expected example output:} \texttt{result:3:4} (without an extra newline). The supplied \texttt{SPL.txt} calls a numeric function twice; its nested procedure updates its current parent's local variable inside a loop.
+
+\newpage
+\heading{5. Input, output and errors}
+With no argument the compiler reads \texttt{SPL.txt} in the \emph{current directory}. To use a different ASCII source file, pass one path, quoted when it contains spaces:
+\begin{lstlisting}
+.\group-2.exe "path\to\input with spaces.spl"
+./group-2 "path/to/input with spaces.spl"
+./macos/group-2 "path/to/input with spaces.spl"
+\end{lstlisting}
+Successful compilation is silent, returns exit status 0, and writes \texttt{tree.xml} and \texttt{program.cpp} in the current directory. The XML retains original token spellings and tree IDs. The C++ file is human-readable and includes a commented, inactive function code mine followed by one executable \texttt{main}. Run the C++ compilation command before expecting screen output from the SPL program.
+
+\textbf{Input rules.} Every token, including the last, must end in a space or supported newline (LF, CR or CRLF). Tabs, non-ASCII input, a literal \texttt{\$}, uppercase user names, spaces inside strings, and unsupported tokens are rejected. Names begin with \texttt{\#}; numeric zero is \texttt{0}, not \texttt{-0}. Decimals must end in a nonzero fractional digit. Preserve the trailing newline when editing the example.
+
+\begin{tabular}{@{}p{17mm}p{128mm}@{}}\toprule
+Status & Meaning\\\midrule
+0 & Complete compiler success; fresh XML and C++ outputs are available.\\
+2 / 3 & Incorrect command usage / input or path-alias problem.\\
+4 / 5 / 6 & Lexical / syntax / tree error.\\
+7 / 8 & Name or scope error / type or whole-program numeric conflict.\\
+9 & Code-generation or output-publication error.\\
+70 & Unexpected internal failure or an OS error preventing output cleanup.\\\bottomrule
+\end{tabular}\par\medskip
+Diagnostics go to stderr and identify the input path and source location. Ordinary failed full compilations remove both old outputs so they cannot be mistaken for current results. Input/output alias rejection occurs before deletion and preserves the source. An OS error that prevents cleanup is reported explicitly.
+
+\heading{6. Demonstrate a semantic rejection}
+\begin{lstlisting}
+.\group-2.exe examples\invalid-names.spl
+./group-2 examples/invalid-names.spl
+\end{lstlisting}
+Use the equivalent macOS path when needed. This example reads undeclared \texttt{\#missing}: expect status 7 and \texttt{NAME-UNDECLARED-VARIABLE}, with neither output left behind. Re-run the compiler without an argument to restore the valid example's outputs.
+
+\heading{7. Target compiler preference (Announcement 34)}
+\textbf{Use \texttt{g++} with C++17.} The lecturer permits the C++ designation; \texttt{std::cout} requires C++ support. The generated file is intended for visual inspection before its run-test. The release pipeline checks the target corpus using both GNU C++ 13 and the GNU C 13 driver with explicit C++ language/link options:
+\begin{lstlisting}
+gcc -x c++ -std=c++17 program.cpp -lstdc++ -o program
+\end{lstlisting}
+On Windows use \texttt{-o program.exe}. Install a GNU toolchain that supplies both the C++ frontend and \texttt{libstdc++}. The compiler executable itself does not invoke or require \texttt{g++}; that tool is needed only for the generated program.
+
+\newpage
+\heading{8. Release contents and provenance}
+The candidate archive contains this complete documented layout:
+\begin{lstlisting}
+group-2/
+  group-2.pdf              This manual and two personal declarations
+  group-2.exe              Windows x64 compiler
+  group-2                  Linux x64 compiler (no extension)
+  macos/group-2            macOS arm64 compiler (no extension)
+  SPL.txt                  Valid repeated/nested-call example
+  examples/invalid-names.spl
+  manifest.json            Source commit, platforms and SHA-256 hashes
+\end{lstlisting}
+The archive is named \texttt{group-2-candidate.zip} while declarations remain unsigned. Its SHA-256 receipt is supplied \emph{outside} the ZIP. Never rename a Linux binary to \texttt{.exe}, and do not use an executable from a different OS. Build logs and per-case reports are available from the matching GitHub Actions run; \texttt{manifest.json} records the tested binary hashes and the source commit printed on page 1. No test result is a personal approval.
+
+\heading{9. Implemented language decisions}
+The following operational decisions complete the release contract. Announcement 34 confirms the target-language/compiler preference; the other details are implementation choices based on the specification's translation guidelines and tested behavior, not invented tutor responses.
+\begin{itemize}
+\item Variables use nearest-current/ancestor scope; sibling and cousin declarations are invisible. Calls target only the current P's immediate function declarations. Duplicate declarations, own-parameter masking, overloads and recursion are rejected.
+\item Functions are statically inlined. Actuals are evaluated left to right into fresh captures before copying to cloned formals. Numeric calls copy their return value into the caller continuation; void calls have no numeric result. Actual/formal counts must match. Boolean \texttt{and}/\texttt{or} short circuit; \texttt{not} reverses the branch destinations.
+\item All numbers use one mode: \texttt{int} unless division or decimal NUM selects \texttt{float}. Any \texttt{mod} plus \texttt{div} is rejected with the specified conflict message; \texttt{mod} with any decimal NUM is rejected. Strings do not select numeric mode.
+\item Native integers and single-precision floats are used, with normal \texttt{std::cout} output (six significant digits for floats). Arbitrary precision, overflow and division by zero are not promised. Programs used in acceptance initialize their values and terminate. Static inlining has an explicit 1,000,000-instruction resource guard.
+\item Variable/function names use separate namespaces; returns resolve in the function body's scope. Symbol/type data are internal maps. The published assessment outputs are \texttt{tree.xml} and \texttt{program.cpp}; no additional symbol-table schema was supplied.
+\end{itemize}
+\heading{10. Final submission procedure}
+Each of the four members must personally sign \emph{both} following declarations after reviewing this release. Incorporate the signed pages into the final manual, reassemble and verify the final ZIP, and upload \textbf{only to the First Class slot}. Retain the portal receipt and compare the downloaded ZIP's hash. Announcement 33 gives 25 October 2026; it does not supply a closing hour. Check the actual portal instead of assuming a time. Do not upload to both categories.
+
+\newpage
+{\LARGE\bfseries\color{navy} Declaration 1: submission category}\par
+\textbf{COS341 2026 --- Group 2 --- Part 2}\par
+\textbf{Release source:} \texttt{\SourceCommit}
+
+We, the undersigned members of Group 2, personally declare that we agree to submit this project in the \textbf{First Class category}, for a maximum of \textbf{6/6 Part 2 points} in addition to the already obtained parser points. Our submission includes Parts \textbf{2a, 2b, 3a and 3b}, including the generation of human-readable executable target code.
+
+Each member signs personally below. An unsigned row, a printed name or a tick does not constitute that person's signature or consent.
+\par\vspace{14pt}
+\signrow{Rudolph}{u20598425}
+\signrow{Kuda}{u20620111}
+\signrow{Cherise}{u21434019}
+\signrow{Michele}{u21448842}
+\vfill
+\textit{Announcement 33 requires unanimous category agreement and each member's personal signature. This generated candidate deliberately leaves those signatures blank.}
+
+\newpage
+{\LARGE\bfseries\color{navy} Declaration 2: complete ZIP contents}\par
+\textbf{COS341 2026 --- Group 2 --- Part 2}\par
+\textbf{Release source:} \texttt{\SourceCommit}
+
+We, the undersigned members of Group 2, personally declare that each of us is fully aware of the \textbf{whole contents of the final submission ZIP}, including the compiler executables, this manual and its declarations, the supplied examples and the release manifest. We have reviewed the release described in this manual and \textbf{agree to its submission in this form} in the First Class category.
+
+Each member signs personally below after reviewing the actual release. The Speaker must preserve the final archive and its checksum/receipt. Any material change to the agreed contents requires renewed accurate review and agreement.
+\par\vspace{14pt}
+\signrow{Rudolph}{u20598425}
+\signrow{Kuda}{u20620111}
+\signrow{Cherise}{u21434019}
+\signrow{Michele}{u21448842}
+\vfill
+\textit{This section is an uncompleted personal declaration until all four members have signed it. No automated system has signed or approved on their behalf.}
+\end{document}

@@ -12,7 +12,8 @@ class Edge5000Tests(unittest.TestCase):
 
 
 def method(case: EdgeCase):
-    def run(self: Edge5000Tests) -> None:exercise(self,case)
+    def run(self: Edge5000Tests) -> None:
+        exercise(self,case,compiler_command=getattr(self,'compiler_command',None))
     run.__doc__=case.scenario
     return run
 

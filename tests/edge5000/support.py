@@ -36,7 +36,8 @@ def _checked(source: str, path: Path):
     return tree,compile_tree(tree,path=path)
 
 
-def exercise(test: unittest.TestCase, case: EdgeCase) -> None:
+def exercise(test: unittest.TestCase, case: EdgeCase, *, compiler_command: list[str] | None = None) -> None:
+    compiler = list(compiler_command) if compiler_command is not None else CLI
     evidence={'compiler_runs':0,'native_compiles':0,'native_runs':0,'partner_checks':0,'api_checks':0}
     test.edge_evidence=evidence
     logs=[]
@@ -55,7 +56,7 @@ def exercise(test: unittest.TestCase, case: EdgeCase) -> None:
             return result
         def cli(path: Path|None=None,frontend: bool=False):
             evidence['compiler_runs']+=1
-            return process('compiler',CLI+(['--frontend'] if frontend else [])+([str(path)] if path else []))
+            return process('compiler',compiler+(['--frontend'] if frontend else [])+([str(path)] if path else []))
         def good(result):
             test.assertEqual(result.returncode,0,result.stderr)
             test.assertEqual(result.stdout,'');test.assertEqual(result.stderr,'')

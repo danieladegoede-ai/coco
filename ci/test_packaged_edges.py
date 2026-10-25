@@ -1,4 +1,4 @@
-"""Run every documented SPL edge case against a packaged native executable."""
+"""Legacy P1 syntax-only regression: run every documented SPL edge case against a packaged native executable."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def check_case(executable: Path, case: Edge) -> str | None:
 
         try:
             result = subprocess.run(
-                [str(executable)],
+                [str(executable), "--frontend"],
                 cwd=workdir,
                 capture_output=True,
                 timeout=30,
@@ -69,7 +69,7 @@ def check_explicit_input_path(executable: Path) -> str | None:
         (workdir / "SPL.txt").write_bytes(b": : ")
         try:
             result = subprocess.run(
-                [str(executable), "SPL.txt"],
+                [str(executable), "--frontend", "SPL.txt"],
                 cwd=workdir,
                 capture_output=True,
                 timeout=30,

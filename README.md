@@ -45,9 +45,13 @@ adds a 5,000-case edge matrix and ten native numeric-boundary anchors.
 then the edge matrix with bounded parallel native compilation. Normal unittest
 discovery still includes every test; CI uses four disjoint edge shards.
 
-Native executable packaging (#35), the submission manual/declarations (#36)
-and hosted-platform verification remain separate. These source checks do not
-claim those external release actions or a full-marks outcome.
+Native packaging and the LaTeX launch manual are now implemented on the release
+branch in `danieladegoede-ai/coco`. See [release decisions](release/P2_RELEASE_DECISIONS.md)
+and [build/release commands](release/P2_BUILD.md). The workflow creates Windows
+x64, Linux x64 and macOS arm64 executables, verifies their exact hashes against
+the full packaged corpus, tests GNU 13 target compatibility and assembles a
+candidate ZIP. Eight personal signatures and the actual First Class portal
+receipt remain personal actions; machine results are not member approvals.
 
 ## Confirmed decisions
 

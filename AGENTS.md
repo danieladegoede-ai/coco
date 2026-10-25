@@ -47,6 +47,16 @@ The packet includes local task detail. If a necessary course source is
 unavailable, use the recorded confirmed rules, isolate uncertain policy and
 report the missing evidence precisely.
 
+## Authorized native release work (25 October)
+
+The Speaker explicitly authorized #35/#36 implementation on
+`danieladegoede-ai/coco`, synchronizing the tested P2 source from
+`RudolphLamp/coco`. Read `release/P2_RELEASE_DECISIONS.md`: supplied A34 resolves
+the C++ designation and GNU toolchain preference. Use the native build/test
+workflow and LaTeX manual. This supersedes earlier exclusion of packaging/manual
+work. Personal approvals/signatures and actual portal submission must remain
+truthful; do not tick or sign for members without their own consent/signatures.
+
 ## Ownership
 
 | Member | Current issues | Detailed packet |

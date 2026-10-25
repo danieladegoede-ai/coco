@@ -37,3 +37,11 @@ tests/fixtures/semantic_oracle/
 
 # Project specification PDFs (not code)
 project_specs/
+# P2 generated documentation/target artifacts
+/output/
+/program.cpp
+/group-2.zip
+/group-2-candidate.zip
+
+# Document preview intermediates
+/tmp/
