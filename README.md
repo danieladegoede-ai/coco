@@ -53,6 +53,10 @@ the full packaged corpus, tests GNU 13 target compatibility and assembles a
 candidate ZIP. Eight personal signatures and the actual First Class portal
 receipt remain personal actions; machine results are not member approvals.
 
+The [main review of worker PR #1](release/PR1_MAIN_REVIEW_20261025.md) traces all
+38 requirement IDs to implementation/tests, records the release-evidence fixes
+and distinguishes tested technical behavior from the remaining A33 actions.
+
 ## Confirmed decisions
 
 ### Python
