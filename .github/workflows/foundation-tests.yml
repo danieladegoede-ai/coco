@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11.14'
+          python-version: '3.11.9'
       - name: Require a target C++ compiler for execution checks
         run: python -c "import shutil; assert any(shutil.which(x) for x in ('c++', 'g++', 'clang++')), 'C++ compiler required for target execution tests'"
       - name: Run source, semantic and executable-target tests
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11.14'
+          python-version: '3.11.9'
       - name: Require a target C++ compiler
         run: python -c "import shutil; assert any(shutil.which(x) for x in ('c++', 'g++', 'clang++')), 'C++ compiler required'"
       - name: Run one disjoint quarter of all 5000 edge cases

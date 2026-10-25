@@ -1,10 +1,10 @@
 # Native P2 build and release workflow
 
 The `P2 native build, full tests and release candidate` workflow runs on main,
-release branches, pull requests and manual dispatch. The source job calls the
+release branches, pull requests and manual dispatch. The source job uses the cross-platform Python 3.11.9 distribution and calls the
 retained full baseline plus four disjoint edge shards on Linux/Windows. Native
 builds happen on Windows 2022 x64, Ubuntu 22.04 x64 and macOS 14 arm64, using
-Python 3.11.14 and pinned `packaging/requirements-build.txt` dependencies.
+Python 3.13.7 and pinned `packaging/requirements-build.txt` dependencies.
 PyInstaller is not a cross-compiler: each platform builds its own executable.
 
 ```sh
