@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+from contextlib import chdir
 from pathlib import Path
 import subprocess
 import sys
@@ -198,11 +199,15 @@ class ExecutableSemanticsAcceptanceTests(unittest.TestCase):
     def test_external_compiler_failure_is_separate_from_target_compile_status(self):
         with tempfile.TemporaryDirectory(prefix="spl-compiler-failure-") as temporary:
             artifacts = Path(temporary) / "evidence"
-            report = verify_case(
-                ": : ", "", case_id="intentional-compiler-failure", target_compiler=TARGET_CXX,
-                compiler_command=[os.path.relpath(sys.executable), "-c", "import sys; print('compiler fixture failure'); sys.exit(7)"],
-                artifacts=artifacts,
-            )
+            # A relative executable still exercises normalization, but its
+            # starting directory must share the interpreter's drive on Windows.
+            # contextlib restores cwd even if the compiler check raises.
+            with chdir(Path(sys.executable).parent):
+                report = verify_case(
+                    ": : ", "", case_id="intentional-compiler-failure", target_compiler=TARGET_CXX,
+                    compiler_command=[os.path.relpath(sys.executable), "-c", "import sys; print('compiler fixture failure'); sys.exit(7)"],
+                    artifacts=artifacts,
+                )
             self.assertFalse(report.passed)
             self.assertEqual(report.failure_stage, "compiler-process")
             self.assertEqual(report.compiler_status, 7)

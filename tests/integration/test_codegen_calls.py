@@ -16,7 +16,7 @@ from tests.unit.test_function_templates import checked
 from tools.target_inspector import inspect_target, tokenize_cpp_executable
 
 
-CXX = shutil.which("clang++") or shutil.which("g++") or shutil.which("c++")
+CXX = shutil.which("g++") or shutil.which("c++") or shutil.which("clang++")
 
 
 @unittest.skipUnless(CXX, "A C++ compiler is required to execute generated targets.")
@@ -34,7 +34,7 @@ class CodegenCallExecutionTests(unittest.TestCase):
             source = Path(directory) / "program.cpp"
             binary = Path(directory) / "program"
             source.write_text(target)
-            compiled = subprocess.run([CXX, "-std=c++11", "-pedantic-errors", str(source), "-o", str(binary)],
+            compiled = subprocess.run([CXX, "-std=c++17", "-pedantic-errors", str(source), "-o", str(binary)],
                                       capture_output=True, text=True, timeout=30)
             self.assertEqual(compiled.returncode, 0, compiled.stderr + "\n" + target)
             run = subprocess.run([str(binary)], capture_output=True, text=True, timeout=5)

@@ -1,6 +1,6 @@
 """Compile the LaTeX manual twice; retain PDF and reproducible source metadata."""
 from __future__ import annotations
-import argparse,json,re,shutil,subprocess,tempfile
+import argparse,json,re,shutil,subprocess,sys,tempfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -10,7 +10,7 @@ def main() -> int:
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,default=ROOT/'output/pdf');p.add_argument('--engine',help='pdflatex or tectonic executable');a=p.parse_args()
  engine=a.engine or shutil.which('pdflatex') or shutil.which('tectonic')
  if not engine:p.error('Install pdflatex (texlive-latex-extra) or supply --engine /path/to/tectonic')
- engine=str(Path(engine).resolve());commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+ engine=str(Path(engine).absolute());commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
  output=a.output.resolve();output.mkdir(parents=True,exist_ok=True)
  with tempfile.TemporaryDirectory(prefix='group2 latex ') as directory:
   work=Path(directory);shutil.copy2(ROOT/'release/group-2.tex',work/'group-2.tex')
@@ -20,7 +20,11 @@ def main() -> int:
    subprocess.run(command,cwd=work,check=True)
   else:
    command=[engine,'-interaction=nonstopmode','-halt-on-error','group-2.tex']
-   for _ in range(2):subprocess.run(command,cwd=work,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+   for _ in range(2):
+    try:subprocess.run(command,cwd=work,check=True,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as exc:
+     print(exc.stdout,file=sys.stderr)
+     raise
   log=(work/'group-2.log').read_text(errors='replace')
   if 'Overfull \\hbox' in log or 'Overfull \\vbox' in log:raise RuntimeError('LaTeX overfull layout; inspect the manual before delivery')
   shutil.copy2(work/'group-2.pdf',output/'group-2.pdf');(output/'latex.log').write_text(log)
