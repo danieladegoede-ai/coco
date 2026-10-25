@@ -39,6 +39,12 @@ records the original-sheet/announcement review, parser nesting fix and
 500 additional complete-system tests with independently calculated outcomes.
 Run them through normal unittest discovery or `python3 tools/run_system_500.py`.
 
+The [25 October expanded audit](agent_tasks/p2/P2_FULL_AUDIT_20261025.md)
+adds a 5,000-case edge matrix and ten native numeric-boundary anchors.
+`python3 tools/run_edge_5000.py --suite all` runs the retained baseline first,
+then the edge matrix with bounded parallel native compilation. Normal unittest
+discovery still includes every test; CI uses four disjoint edge shards.
+
 Native executable packaging (#35), the submission manual/declarations (#36)
 and hosted-platform verification remain separate. These source checks do not
 claim those external release actions or a full-marks outcome.

@@ -64,3 +64,41 @@ remain provisional: target cases list their selected runtime policies, and
 source cases depending on unanswered namespace/return questions are tagged.
 The manifests are planning/test evidence, not an official marking rubric or
 an invented tutor approval.
+
+## Expanded 5,000-case audit matrix
+
+The additional deterministic edge corpus lives in `tests/edge5000/`; the
+review inventory is `tests/fixtures/edge5000/index.jsonl`. Every method has a
+stable EDGE00001–EDGE05000 ID, a distinct source fingerprint, explicit expected
+stdout or failure code/location, a profile and requirement tags. These 5,000
+sources do not repeat the earlier SYS0001–SYS0500 corpus. A matrix case can
+cover multiple layout/control/operand axes; it is not 5,000 distinct language
+productions. The accompanying ten `test_numeric_boundaries` methods test safe
+int32/binary32 representation anchors under the recorded D05 interpretation.
+
+```sh
+# Full coverage, retained tests serially then the edge class in bounded threads:
+python3 tools/run_edge_5000.py --suite all --workers 6
+# Edges only; real public CLI + native target execution on successful cases:
+python3 tools/run_edge_5000.py --suite edges --workers 6
+# One case, with retained input/stage evidence on failure:
+python3 tools/run_edge_5000.py --ids EDGE01501
+# CI partition: repeat for shard-index 0, 1, 2 and 3:
+python3 tools/run_edge_5000.py --shard-count 4 --shard-index 0 --workers 2
+# Regenerate review inventory after an intentional factory change:
+python3 tools/run_edge_5000.py --write-inventory
+```
+
+Normal `PYTHONPATH=src python3 -m unittest discover -s tests -v` includes all
+methods too, and runs them serially. The bounded runner executes the exact
+same unittest methods, with temporary directories/subprocess cwd per case;
+legacy tests run serially because some change their process cwd. Never thread
+the historical suite. JSON reports include tested IDs, skips, separate CLI/
+native/API counters, per-case results, toolchain and timings. Failures retain
+source, expected results, commands/statuses/logs, positive partners where
+applicable and a reproduction command in `build/edge5000-failures/EDGE00001/`.
+A missing C++ compiler or unavailable required filesystem operation is reported
+as an actual failure; a source-only result is not silently called a native pass.
+
+See [the expanded audit](../agent_tasks/p2/P2_FULL_AUDIT_20261025.md) for the
+source review, exact counts, interpretations and remaining release gates.
