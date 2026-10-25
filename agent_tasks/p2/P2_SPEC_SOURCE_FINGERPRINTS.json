@@ -1,0 +1,100 @@
+{
+  "review_date": "2026-10-24",
+  "inputs": [
+    {
+      "filename": "Prac-Spec-Syntax (1).pdf",
+      "bytes": 70464,
+      "sha256": "8f8a544f8d5471e5799071047b4f6d043609109504b04643e02050281fc27ffa"
+    },
+    {
+      "filename": "Prac-Spec-2a.pdf",
+      "bytes": 300739,
+      "sha256": "d28982a48bd70376376db42e1f9b44acbc043610c89c02491ead3c0b41e3ea89"
+    },
+    {
+      "filename": "Prac-Spec-2a (1).pdf",
+      "bytes": 300739,
+      "sha256": "d28982a48bd70376376db42e1f9b44acbc043610c89c02491ead3c0b41e3ea89"
+    },
+    {
+      "filename": "Prac-Spec-2b.pdf",
+      "bytes": 65127,
+      "sha256": "c4dd98caae5edecc37928d5e576955e8a15e2f60a6ca8c0340865bf207373ba7"
+    },
+    {
+      "filename": "Prac-Spec-3a.pdf",
+      "bytes": 93999,
+      "sha256": "487cdb989e96a7eaa74c78de0175fc9376d5d306415f8b9150c56975d5fc4240"
+    },
+    {
+      "filename": "Prac-Spec-3b.pdf",
+      "bytes": 72704,
+      "sha256": "8cc7f3faaca32bfe4af53a9cd55aad4966e184fc16f23aaa063201e91000e200"
+    },
+    {
+      "filename": "assoument1.txt",
+      "bytes": 1731,
+      "sha256": "605f9b243bdc89199698b302da60259f75364aa7078f9c467feafc940456d77e"
+    },
+    {
+      "filename": "assoument2.txt",
+      "bytes": 450,
+      "sha256": "cff184cc84717bc7d7f8069cfe3d35d6e92f4cb3f9975c4ea56503b2539fc84b"
+    },
+    {
+      "filename": "assoument3.txt",
+      "bytes": 468,
+      "sha256": "f362345c649d44c774c1ee38288ba500d9945cd4fa78c850be825171d38eb940"
+    },
+    {
+      "filename": "assoument4.txt",
+      "bytes": 1656,
+      "sha256": "73d4abd107d984e6bdb92e1670109f9060c8cfec47ef43b6fae6ac46ecf861ba"
+    },
+    {
+      "filename": "assoument5.txt",
+      "bytes": 16811,
+      "sha256": "618884ca639b42007006316c1ca9742cc90df84b33d93afa353aa8a24ad83ad9"
+    },
+    {
+      "filename": "assoument6.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "filename": "assoument7.txt",
+      "bytes": 1656,
+      "sha256": "73d4abd107d984e6bdb92e1670109f9060c8cfec47ef43b6fae6ac46ecf861ba"
+    },
+    {
+      "filename": "assoument8.txt",
+      "bytes": 2238,
+      "sha256": "d6f18ce8ed6419c7eaaba98a4f27d8ec47bf2f5b8fd3296d8c047fab17886c2a"
+    },
+    {
+      "filename": "assoument9.txt",
+      "bytes": 650,
+      "sha256": "b5dabe3031756fa4a5e0bc4f9c009e17819ed93fafd619f322c95ebcac00a178"
+    },
+    {
+      "filename": "assoument10.txt",
+      "bytes": 666,
+      "sha256": "e7016d588af9716334a160665dde62727697970effdf72bb7cca3f203a5bf2b1"
+    },
+    {
+      "filename": "assoument11.txt",
+      "bytes": 1373,
+      "sha256": "24e375feca427068f5c76c0e9e69ad1feeeb783d446c642bb32c3a3a427f9d71"
+    },
+    {
+      "filename": "assoument12.txt",
+      "bytes": 1733,
+      "sha256": "f083cf30ca3da84a89943451689e804aa92adca11897a2699c0cfdb5c9fa4e04"
+    },
+    {
+      "filename": "assoument13.txt",
+      "bytes": 3015,
+      "sha256": "f72f5fba95e82da4375b3b096deab4bd3a2313fe396e8ae150ae09dc5a9a0941"
+    }
+  ]
+}

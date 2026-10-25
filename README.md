@@ -34,6 +34,11 @@ acceptance runners and reproducible failure replay commands are described in
 [tools/GENERATED_TARGET.md](tools/GENERATED_TARGET.md), with semantic cases and
 all 38 original planning IDs linked to executable evidence.
 
+The [24 October source/spec audit](agent_tasks/p2/P2_SPEC_AUDIT_20261024.md)
+records the original-sheet/announcement review, parser nesting fix and
+500 additional complete-system tests with independently calculated outcomes.
+Run them through normal unittest discovery or `python3 tools/run_system_500.py`.
+
 Native executable packaging (#35), the submission manual/declarations (#36)
 and hosted-platform verification remain separate. These source checks do not
 claim those external release actions or a full-marks outcome.
