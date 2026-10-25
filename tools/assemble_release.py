@@ -13,6 +13,11 @@ def sha(path: Path) -> str:return hashlib.sha256(path.read_bytes()).hexdigest()
 def validate_artifacts(artifacts: Path,commit: str) -> dict:
     from tests.edge5000.cases import CASES
     required={c.case_id for c in CASES}
+    semantic_ids={c['id'] for c in json.loads((ROOT/'tests/fixtures/semantics/cases.json').read_text())['cases']}
+    target_ids={c['id'] for c in json.loads((ROOT/'tests/fixtures/codegen/acceptance/cases.json').read_text())['cases']}
+    def complete(rows,expected):
+        ids=[r.get('case_id') for r in rows]
+        return len(ids)==len(expected) and set(ids)==expected and all(r.get('passed') for r in rows)
     result={}
     for platform in ('windows','linux','macos'):
         directory=artifacts/f'native-{platform}'
@@ -23,6 +28,8 @@ def validate_artifacts(artifacts: Path,commit: str) -> dict:
         if manifest['os']!=platform or manifest['sha256']!=sha(binary):raise ValueError('Native platform/hash mismatch')
         acceptance=json.loads((directory/'acceptance.json').read_text())
         if not acceptance['passed'] or acceptance['executable_sha256']!=sha(binary):raise ValueError('Native acceptance evidence missing or hash mismatch')
+        if not complete(acceptance.get('semantic_reports',[]),semantic_ids) or not complete(acceptance.get('target_reports',[]),target_ids):raise ValueError('Native semantic/target acceptance corpus incomplete')
+        if not acceptance.get('unchanged_binary') or acceptance.get('clean_launch',{}).get('status')!=0:raise ValueError('Native clean-launch or unchanged-binary gate failed')
         ids=[]
         for shard in range(4):
             path=artifacts/f'package-evidence-{platform}-{shard}'/f'package-{platform}-{shard}.json'
@@ -35,7 +42,7 @@ def validate_artifacts(artifacts: Path,commit: str) -> dict:
         if len(ids)!=5000 or len(set(ids))!=5000 or set(ids)!=required:raise ValueError('Packaged corpus coverage is incomplete or duplicated')
         result[platform]=manifest
     gcc=json.loads((artifacts/'gcc13-evidence/gcc13.json').read_text())
-    if set(gcc)!={'g++13','gcc13'} or not all(all(c['passed'] for c in r['reports']) for r in gcc.values()):raise ValueError('GNU 13 compatibility gate did not pass')
+    if set(gcc)!={'g++13','gcc13'} or not all(complete(r.get('reports',[]),target_ids) for r in gcc.values()):raise ValueError('GNU 13 compatibility gate did not pass')
     manual=json.loads((artifacts/'user-manual/manual-manifest.json').read_text())
     if manual['source_commit']!=commit or manual['pages']!=5:raise ValueError('Manual provenance/page count mismatch')
     return result

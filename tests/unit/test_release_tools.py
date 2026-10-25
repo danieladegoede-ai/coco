@@ -4,7 +4,7 @@ import hashlib,json,struct,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 from tools.build_native import binary_identity
-from tools.assemble_release import validate_artifacts
+from tools.assemble_release import validate_artifacts,ROOT
 
 
 class NativeIdentityTests(unittest.TestCase):
@@ -33,17 +33,19 @@ class ReleaseEvidenceTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
         from tests.edge5000.cases import CASES
+        semantic=[{'case_id':r['id'],'passed':True} for r in json.loads((ROOT/'tests/fixtures/semantics/cases.json').read_text())['cases']]
+        targets=[{'case_id':r['id'],'passed':True} for r in json.loads((ROOT/'tests/fixtures/codegen/acceptance/cases.json').read_text())['cases']]
         for platform in ('windows','linux','macos'):
             directory=self.root/f'native-{platform}';directory.mkdir()
             filename='group-2.exe' if platform=='windows' else 'group-2';binary=directory/filename;binary.write_bytes(platform.encode())
             digest=hashlib.sha256(binary.read_bytes()).hexdigest()
             self.write(directory/'build-manifest.json',{'dirty':False,'source_commit':'commit','os':platform,'sha256':digest})
-            self.write(directory/'acceptance.json',{'passed':True,'executable_sha256':digest})
+            self.write(directory/'acceptance.json',{'passed':True,'executable_sha256':digest,'unchanged_binary':True,'clean_launch':{'status':0},'semantic_reports':semantic,'target_reports':targets})
             for shard in range(4):
                 path=self.root/f'package-evidence-{platform}-{shard}'/f'package-{platform}-{shard}.json'
                 self.write(path,{'passed':True,'executable_sha256':digest,'shard_count':4,'shard_index':shard,
                     'results':[{'id':c.case_id,'passed':True,'skipped':[],'run':1} for i,c in enumerate(CASES) if i%4==shard]})
-        self.write(self.root/'gcc13-evidence/gcc13.json',{'g++13':{'reports':[{'passed':True}]},'gcc13':{'reports':[{'passed':True}]}})
+        self.write(self.root/'gcc13-evidence/gcc13.json',{'g++13':{'reports':targets},'gcc13':{'reports':targets}})
         self.write(self.root/'user-manual/manual-manifest.json',{'source_commit':'commit','pages':5})
     def write(self,path,data):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data))
     def change(self,path,fn):
@@ -75,4 +77,18 @@ class ReleaseEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
     def test_manual_wrong_commit_is_rejected(self):
         self.change(self.root/'user-manual/manual-manifest.json',lambda d:d.update(source_commit='old'))
+        with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
+
+    def test_empty_gcc_reports_are_rejected(self):
+        self.change(self.root/'gcc13-evidence/gcc13.json',lambda d:d['gcc13'].update(reports=[]))
+        with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
+    def test_missing_semantic_acceptance_is_rejected(self):
+        self.change(self.root/'native-linux/acceptance.json',lambda d:d['semantic_reports'].pop())
+        with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
+    def test_duplicate_target_acceptance_is_rejected(self):
+        def duplicate(d):d['target_reports'][1]=dict(d['target_reports'][0])
+        self.change(self.root/'native-macos/acceptance.json',duplicate)
+        with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
+    def test_failed_clean_launch_is_rejected(self):
+        self.change(self.root/'native-windows/acceptance.json',lambda d:d['clean_launch'].update(status=70))
         with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
