@@ -1,12 +1,12 @@
-"""Write a validated syntax tree using a provisional, isolated XML schema.
+"""Write a validated syntax tree using the established P1 XML schema.
 
-The unconfirmed schema is ``<syntax_tree>`` with one ``<root>``, ``<inner>``
+The schema is ``<syntax_tree>`` with one ``<root>``, ``<inner>``
 or ``<leaf>`` entry per node. Entries appear in ascending node-ID order.
 Each entry has ``<id>`` and ``<contents>``; non-roots also have ``<parent>``.
 Root and inner entries always have ``<children>``, containing ordered
 ``<child>`` IDs or an empty ``<children />`` element. Output uses UTF-8,
-two-space indentation, LF newlines and a final LF. The exact tag schema and
-nullable-production appearance still require tutor confirmation.
+two-space indentation, LF newlines and a final LF. P2 preserves this schema
+and nullable-production appearance from the assessed P1 compiler.
 
 The writer validates before publication, writes, flushes and syncs a unique
 temporary sibling, checks that temporary XML and its decoded contents, then

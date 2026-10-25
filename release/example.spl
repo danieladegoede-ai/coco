@@ -1,0 +1,11 @@
+#x :
+num #count ( #n ) {
+  #i :
+  void #tick ( ) { : : #i = add ( #i 1 ) ; return }
+  : #i = 0 ;
+  while lesser ( #i #n ) do { #tick ( ) ; } ;
+  return ( #i )
+}
+: #x = #count ( 3 ) ;
+print "result:" ; print ( #x ) ; print ":" ;
+print ( #count ( add ( #x 1 ) ) ) ;

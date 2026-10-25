@@ -1,56 +1,221 @@
-name: Test and build Group 2 SPL front end
+name: P2 native build, full tests and release candidate
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/p2-*']
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: p2-release-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  packaged-edge-tests:
+  source:
+    uses: ./.github/workflows/foundation-tests.yml
+
+  native:
+    name: Native ${{ matrix.platform }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            build_name: group-2.splc
-            executable: dist/group-2.splc
-            artifact: group-2-linux-executable
           - os: windows-2022
-            build_name: group-2
-            executable: dist/group-2.exe
-            artifact: group-2-windows-exe
+            platform: windows
+            executable: group-2.exe
+          - os: ubuntu-22.04
+            platform: linux
+            executable: group-2
+          - os: macos-14
+            platform: macos
+            executable: group-2
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'
+      - name: Install pinned build-only dependencies
+        run: python -m pip install -r packaging/requirements-build.txt
+      - name: Compile Python and build a native one-file executable
+        run: |
+          python -m compileall -q src tests tools ci packaging
+          python tools/build_native.py --output dist/native
+      - name: Test exact artifact with no checkout/runtime dependency
+        run: python ci/test_packaged_p2.py --executable dist/native/${{ matrix.executable }} --report dist/native/acceptance.json
+      - name: Retain tested executable and its provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.platform }}
+          path: dist/native/
+          if-no-files-found: error
+          compression-level: 0
+      - name: Preserve failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-failures-${{ matrix.platform }}
+          path: build/*-failures/
+          if-no-files-found: ignore
+
+  packaged-edges:
+    needs: native
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-2022, platform: windows, executable: group-2.exe, shard: 0}
+          - {os: windows-2022, platform: windows, executable: group-2.exe, shard: 1}
+          - {os: windows-2022, platform: windows, executable: group-2.exe, shard: 2}
+          - {os: windows-2022, platform: windows, executable: group-2.exe, shard: 3}
+          - {os: ubuntu-22.04, platform: linux, executable: group-2, shard: 0}
+          - {os: ubuntu-22.04, platform: linux, executable: group-2, shard: 1}
+          - {os: ubuntu-22.04, platform: linux, executable: group-2, shard: 2}
+          - {os: ubuntu-22.04, platform: linux, executable: group-2, shard: 3}
+          - {os: macos-14, platform: macos, executable: group-2, shard: 0}
+          - {os: macos-14, platform: macos, executable: group-2, shard: 1}
+          - {os: macos-14, platform: macos, executable: group-2, shard: 2}
+          - {os: macos-14, platform: macos, executable: group-2, shard: 3}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-${{ matrix.platform }}
+          path: build/tested-native
+      - name: Restore Unix executable permission
+        if: runner.os != 'Windows'
+        run: chmod +x build/tested-native/group-2
+      - name: Run all cases in this disjoint quarter against the exact binary
+        run: python tools/run_edge_5000.py --executable build/tested-native/${{ matrix.executable }} --workers 4 --shard-count 4 --shard-index ${{ matrix.shard }} --report build/package-${{ matrix.platform }}-${{ matrix.shard }}.json
+      - name: Retain per-case package evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-evidence-${{ matrix.platform }}-${{ matrix.shard }}
+          path: |
+            build/package-*.json
+            build/edge5000-failures/
+          if-no-files-found: error
+
+  gcc13:
+    needs: native
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Run all source, generated, and integration tests
-        env:
-          PYTHONPATH: src
-        run: python -m unittest discover -s tests -v
-
-      - name: Compile Python sources and tests
-        run: python -m compileall -q src tests tools ci
-
-      - name: Build native executable
-        run: |
-          python -m pip install pyinstaller
-          python -m PyInstaller --clean --noconfirm --onefile --name "${{ matrix.build_name }}" --paths src src/spl_frontend/__main__.py
-
-      - name: Test every SPL.txt edge case against executable
-        run: python ci/test_packaged_edges.py --executable "${{ matrix.executable }}"
-
-      - name: Run packaged black-box lifecycle tests
-        run: python tools/black_box_test.py --executable "${{ matrix.executable }}"
-
-      - name: Upload tested executable
-        uses: actions/upload-artifact@v4
+          python-version: '3.13.7'
+      - uses: actions/download-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: ${{ matrix.executable }}
+          name: native-linux
+          path: build/gcc-native
+      - run: chmod +x build/gcc-native/group-2 ci/gcc_cpp.py
+      - name: Check readable generated targets with g++13 and gcc13
+        run: |
+          g++-13 --version
+          gcc-13 --version
+          python ci/test_gcc13.py --executable build/gcc-native/group-2 --report build/gcc13.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gcc13-evidence
+          path: build/gcc13.json
+          if-no-files-found: error
+
+  manual:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'
+      - name: Install LaTeX and PDF inspection tools
+        run: sudo apt-get update && sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended poppler-utils
+      - name: Build manual from LaTeX and verify its text/page count
+        run: python tools/build_manual.py --output output/pdf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-manual
+          path: output/pdf/
+          if-no-files-found: error
+
+  assemble:
+    needs: [source, native, packaged-edges, gcc13, manual]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'
+      - uses: actions/download-artifact@v4
+        with:
+          path: build/artifacts
+      - name: Verify hashes and full case coverage; assemble unsigned candidate
+        run: python tools/assemble_release.py --artifacts build/artifacts --output dist/release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: group-2-release-candidate
+          path: dist/release/
           if-no-files-found: error
           compression-level: 0
+
+  extracted:
+    needs: assemble
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-2022, platform: windows}
+          - {os: ubuntu-22.04, platform: linux}
+          - {os: macos-14, platform: macos}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'
+      - uses: actions/download-artifact@v4
+        with:
+          name: group-2-release-candidate
+          path: build/candidate
+      - name: Follow the manual from an extracted archive outside checkout
+        run: python ci/test_extracted_release.py --archive build/candidate/group-2-candidate.zip --platform ${{ matrix.platform }} --report build/extracted-${{ matrix.platform }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extracted-${{ matrix.platform }}-evidence
+          path: build/extracted-*.json
+          if-no-files-found: error
+
+  publish-candidate:
+    needs: [assemble, extracted]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: group-2-release-candidate
+          path: candidate
+      - name: Publish a draft for personal review, not a claimed submission
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          CANDIDATE_TAG: p2-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          gh release create "$CANDIDATE_TAG" candidate/* --target "${{ github.sha }}" --draft --title "Group 2 P2 tested candidate - personal signatures pending" --notes-file candidate/REMAINING_PERSONAL_ACTIONS.txt

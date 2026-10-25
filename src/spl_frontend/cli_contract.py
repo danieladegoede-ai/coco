@@ -8,6 +8,7 @@ from pathlib import Path
 
 DEFAULT_INPUT_PATH = Path("SPL.txt")
 DEFAULT_OUTPUT_PATH = Path("tree.xml")
+DEFAULT_TARGET_PATH = Path("program.cpp")
 EXECUTABLE_NAME = "splc"
 
 

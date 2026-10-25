@@ -1,0 +1,1 @@
+: void #parent ( ) { : void #child ( ) { : : return } : return } : #parent ( ) ;

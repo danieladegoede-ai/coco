@@ -1,0 +1,71 @@
+name: P2 compiler source and target execution tests
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  source-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+      - name: Require a target C++ compiler for execution checks
+        run: python -c "import shutil; assert any(shutil.which(x) for x in ('c++', 'g++', 'clang++')), 'C++ compiler required for target execution tests'"
+      - name: Run source, semantic and executable-target tests
+        env:
+          PYTHONPATH: src
+        run: python tools/run_edge_5000.py --suite baseline --report build/baseline-report.json
+      - name: Compile Python sources
+        run: python -m compileall -q src tests tools
+      - name: Check source CLI as a subprocess
+        env:
+          PYTHONPATH: src
+        run: python tools/black_box_test.py
+      - name: Retain baseline evidence and failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiler-evidence-${{ matrix.os }}
+          path: |
+            build/baseline-report.json
+            build/*-failures/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  edge-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+        shard: [0, 1, 2, 3]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+      - name: Require a target C++ compiler
+        run: python -c "import shutil; assert any(shutil.which(x) for x in ('c++', 'g++', 'clang++')), 'C++ compiler required'"
+      - name: Run one disjoint quarter of all 5000 edge cases
+        run: python tools/run_edge_5000.py --suite edges --workers 2 --shard-count 4 --shard-index ${{ matrix.shard }} --report build/edge5000-${{ matrix.shard }}.json
+      - name: Retain per-case evidence and failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge-evidence-${{ matrix.os }}-${{ matrix.shard }}
+          path: |
+            build/edge5000-*.json
+            build/edge5000-failures/
+          if-no-files-found: ignore
+          retention-days: 7

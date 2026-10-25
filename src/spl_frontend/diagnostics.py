@@ -12,6 +12,9 @@ class DiagnosticPhase(str, Enum):
     LEXER = "lexer"
     SYNTAX = "syntax"
     TREE = "tree"
+    NAME = "name"
+    TYPE = "type"
+    GENERATION = "generation"
     INTERNAL = "internal"
 
 
@@ -22,6 +25,9 @@ class ExitCode(IntEnum):
     LEXICAL_ERROR = 4
     SYNTAX_ERROR = 5
     TREE_ERROR = 6
+    NAME_ERROR = 7
+    TYPE_ERROR = 8
+    GENERATION_ERROR = 9
     INTERNAL_ERROR = 70
 
 

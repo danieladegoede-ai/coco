@@ -1,0 +1,871 @@
+{
+  "schema_version": 2,
+  "owner": "u21434019 / CheriseHeyl",
+  "scope": [
+    "#31",
+    "#33",
+    "#34"
+  ],
+  "note": "Original 38 planning IDs, not an official rubric. Concrete test methods and semantic/target case IDs identify source-based evidence. Native package reruns and submission documents remain #35/#36.",
+  "requirements": [
+    {
+      "id": "N01",
+      "description": "Create a scope hierarchy by nested P/function bodies. Track scope identity as well as depth.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_empty_program_has_one_scope_and_complete_annotations",
+        "tests/unit/test_name_analysis.py::test_sibling_locals_with_same_spelling_are_distinct"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_empty_program_has_one_scope_and_complete_annotations",
+        "tests/unit/test_name_analysis.py::test_sibling_locals_with_same_spelling_are_distinct"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-cousin-local",
+        "valid-cousin-local",
+        "valid-distinct-siblings"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "N02",
+      "description": "A variable use must resolve in its current scope or an ancestor; choose the nearest matching declaration.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_current_outer_global_and_nearest_shadowing"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_current_outer_global_and_nearest_shadowing"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-undeclared-variable",
+        "valid-ancestor-shadow",
+        "baseline-name-undeclared-variable",
+        "name-sideways-local",
+        "valid-sideways-local",
+        "name-cousin-local",
+        "valid-cousin-local",
+        "name-uncalled-undeclared",
+        "valid-uncalled-undeclared",
+        "valid-bare-name",
+        "valid-current-ancestor",
+        "planning-E01"
+      ],
+      "target_cases": [
+        "E01-ancestor-access-and-legal-shadowing"
+      ],
+      "planning_anchors": [
+        "E01"
+      ]
+    },
+    {
+      "id": "N03",
+      "description": "Never search sideways into sibling functions or their descendants. [A21]",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_announcement_21_cousin_uses_ancestor_not_sideways_declaration"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_announcement_21_cousin_uses_ancestor_not_sideways_declaration"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-sideways-local",
+        "valid-sideways-local",
+        "name-cousin-local",
+        "valid-cousin-local",
+        "planning-E02",
+        "planning-E02-positive"
+      ],
+      "target_cases": [],
+      "planning_anchors": [
+        "E02"
+      ]
+    },
+    {
+      "id": "N04",
+      "description": "Reject duplicate variable names in one declaration scope, including duplicate parameters.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_duplicate_locals_and_parameters_and_parameter_masking"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_duplicate_locals_and_parameters_and_parameter_masking"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-duplicate-variable",
+        "name-duplicate-parameter",
+        "baseline-name-duplicate-variable",
+        "baseline-name-duplicate-parameter",
+        "valid-distinct-siblings"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "N05",
+      "description": "A function body local may not mask a parameter of that same function.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_child_local_and_parameter_may_shadow_ancestor_parameter",
+        "tests/unit/test_name_analysis.py::test_duplicate_locals_and_parameters_and_parameter_masking"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_child_local_and_parameter_may_shadow_ancestor_parameter",
+        "tests/unit/test_name_analysis.py::test_duplicate_locals_and_parameters_and_parameter_masking"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-parameter-mask",
+        "baseline-name-parameter-mask",
+        "planning-E03",
+        "planning-E03-positive"
+      ],
+      "target_cases": [],
+      "planning_anchors": [
+        "E03"
+      ]
+    },
+    {
+      "id": "N06",
+      "description": "Calls from a P algorithm may target only functions declared in the immediate F_DECL of that P.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_undeclared_self_sibling_mutual_ancestor_and_deep_calls_fail"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_undeclared_self_sibling_mutual_ancestor_and_deep_calls_fail"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-invisible-function-self",
+        "name-invisible-function-sibling",
+        "name-invisible-ancestor",
+        "valid-direct-child-call",
+        "baseline-name-invisible-function-self",
+        "baseline-name-invisible-function-sibling",
+        "baseline-name-invisible-ancestor",
+        "name-deep-descendant-call",
+        "valid-deep-descendant-call",
+        "valid-same-name-child"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "N07",
+      "description": "Function names in the applicable F_DECL must be unique; no overloading.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_duplicate_functions_reject_overloading_by_parameters_or_return_type"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_duplicate_functions_reject_overloading_by_parameters_or_return_type"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-duplicate-function",
+        "baseline-name-duplicate-function",
+        "name-function-overloading",
+        "valid-function-overloading",
+        "provisional-separate-namespaces"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "N08",
+      "description": "No direct or indirect recursion. Strict child-only visibility is the primary rule.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_guard_rejects_indirect_cycle_in_modified_binding_snapshot"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_guard_rejects_indirect_cycle_in_modified_binding_snapshot"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-invisible-function-self",
+        "name-invisible-ancestor",
+        "baseline-name-invisible-function-self",
+        "baseline-name-invisible-ancestor",
+        "name-deep-descendant-call",
+        "valid-deep-descendant-call",
+        "valid-same-name-child"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "N09",
+      "description": "Consistently rename every declaration and use: same entity, same internal name; different entities, different internal names.",
+      "tests": [
+        "tests/integration/test_name_analysis_pipeline.py::test_record_and_node_number_order_do_not_control_binding"
+      ],
+      "evidence": [
+        "tests/integration/test_name_analysis_pipeline.py::test_record_and_node_number_order_do_not_control_binding"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-ancestor-shadow",
+        "valid-bare-name",
+        "valid-distinct-siblings",
+        "valid-current-ancestor",
+        "provisional-separate-namespaces",
+        "planning-E01"
+      ],
+      "target_cases": [
+        "E01-ancestor-access-and-legal-shadowing"
+      ],
+      "planning_anchors": [
+        "E01"
+      ]
+    },
+    {
+      "id": "N10",
+      "description": "Reject rule violations with appropriate messages; accept compliant programs without name errors.",
+      "tests": [
+        "tests/unit/test_name_analysis.py::test_source_diagnostic_points_to_the_specific_repeated_occurrence",
+        "tests/integration/test_full_compiler.py::test_all_semantic_manifest_cases_through_final_cli"
+      ],
+      "evidence": [
+        "tests/unit/test_name_analysis.py::test_source_diagnostic_points_to_the_specific_repeated_occurrence",
+        "tests/integration/test_full_compiler.py::test_all_semantic_manifest_cases_through_final_cli"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "name-undeclared-variable",
+        "baseline-name-undeclared-variable",
+        "name-uncalled-undeclared",
+        "valid-uncalled-undeclared"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T01",
+      "description": "Attributes and symbols",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_check_is_repeatable_and_does_not_mutate_resolved_tree_or_symbols"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_check_is_repeatable_and_does_not_mutate_resolved_tree_or_symbols"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-argument"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T02",
+      "description": "Variables and functions",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_variable_type_is_numeric",
+        "tests/unit/test_type_analysis.py::test_void_function_type_is_procedure",
+        "tests/unit/test_type_analysis.py::test_num_function_type_is_numeric"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_variable_type_is_numeric",
+        "tests/unit/test_type_analysis.py::test_void_function_type_is_procedure",
+        "tests/unit/test_type_analysis.py::test_num_function_type_is_numeric"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-argument"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T03",
+      "description": "Calls and INPUT",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_function_with_multiple_parameters",
+        "tests/integration/test_codegen_calls.py::test_multiple_whole_term_actuals"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_function_with_multiple_parameters",
+        "tests/integration/test_codegen_calls.py::test_multiple_whole_term_actuals"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-argument",
+        "invalid-argument"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T04",
+      "description": "Call context",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_num_function_as_instruction_fails",
+        "tests/unit/test_type_analysis.py::test_void_function_in_term_fails"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_num_function_as_instruction_fails",
+        "tests/unit/test_type_analysis.py::test_void_function_in_term_fails"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "type-num-as-instr",
+        "type-void-in-term",
+        "type-void-in-print",
+        "valid-direct-child-call",
+        "valid-arithmetic",
+        "invalid-arithmetic",
+        "valid-negation",
+        "invalid-negation",
+        "valid-comparison",
+        "invalid-comparison",
+        "valid-argument",
+        "invalid-argument",
+        "valid-loop-condition",
+        "invalid-loop-condition",
+        "valid-uncalled-return",
+        "invalid-uncalled-return",
+        "baseline-type-num-as-instr",
+        "baseline-type-void-in-term",
+        "baseline-type-void-in-print"
+      ],
+      "target_cases": [],
+      "planning_anchors": [
+        "E04"
+      ]
+    },
+    {
+      "id": "T05",
+      "description": "Assignment / leaves",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_simple_assignment"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_simple_assignment"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-bare-name"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T06",
+      "description": "Arithmetic",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_nested_arithmetic",
+        "tests/unit/test_numeric_policy.py::test_mod_and_div_conflict_exact_message",
+        "tests/unit/test_numeric_policy.py::test_mod_with_decimal_conflict"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_nested_arithmetic",
+        "tests/unit/test_numeric_policy.py::test_mod_and_div_conflict_exact_message",
+        "tests/unit/test_numeric_policy.py::test_mod_with_decimal_conflict"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "numeric-mod-div-conflict",
+        "numeric-decimal-mod-conflict",
+        "valid-mod-only",
+        "valid-div-only",
+        "valid-arithmetic",
+        "invalid-arithmetic",
+        "valid-negation",
+        "invalid-negation",
+        "cross-uncalled-mod-div",
+        "nested-uncalled-decimal-mod",
+        "baseline-numeric-mod-div-conflict",
+        "baseline-numeric-decimal-mod-conflict",
+        "baseline-cross-uncalled-mod-div",
+        "baseline-nested-uncalled-decimal-mod",
+        "valid-string-dots-with-mod",
+        "valid-decimal-division",
+        "planning-E06"
+      ],
+      "target_cases": [
+        "E06-division-of-integer-looking-literals"
+      ],
+      "planning_anchors": [
+        "E05",
+        "E06"
+      ]
+    },
+    {
+      "id": "T07",
+      "description": "Booleans / control",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_and",
+        "tests/unit/test_type_analysis.py::test_do_until_loop",
+        "tests/integration/test_codegen_control_flow.py::test_and_or_truth_tables_not_and_all_comparisons"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_and",
+        "tests/unit/test_type_analysis.py::test_do_until_loop",
+        "tests/integration/test_codegen_control_flow.py::test_and_or_truth_tables_not_and_all_comparisons"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-comparison",
+        "invalid-comparison",
+        "valid-loop-condition",
+        "invalid-loop-condition"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T08",
+      "description": "Output / simple instructions",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_print_numeric",
+        "tests/unit/test_type_analysis.py::test_print_string",
+        "tests/unit/test_type_analysis.py::test_nop_instruction",
+        "tests/unit/test_type_analysis.py::test_comment_instruction"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_print_numeric",
+        "tests/unit/test_type_analysis.py::test_print_string",
+        "tests/unit/test_type_analysis.py::test_nop_instruction",
+        "tests/unit/test_type_analysis.py::test_comment_instruction"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "type-void-in-print",
+        "baseline-type-void-in-print",
+        "valid-string-dots-with-mod"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T09",
+      "description": "Structural productions",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_empty_program",
+        "tests/unit/test_type_analysis.py::test_void_function_as_instruction"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_empty_program",
+        "tests/unit/test_type_analysis.py::test_void_function_as_instruction"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-empty"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "T10",
+      "description": "Complete traversal",
+      "tests": [
+        "tests/unit/test_type_analysis.py::test_uncalled_function_numeric_conflict_detected",
+        "tests/integration/test_full_compiler.py::test_all_semantic_manifest_cases_through_final_cli"
+      ],
+      "evidence": [
+        "tests/unit/test_type_analysis.py::test_uncalled_function_numeric_conflict_detected",
+        "tests/integration/test_full_compiler.py::test_all_semantic_manifest_cases_through_final_cli"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "valid-uncalled-return",
+        "invalid-uncalled-return",
+        "name-uncalled-undeclared",
+        "valid-uncalled-undeclared",
+        "valid-current-ancestor"
+      ],
+      "target_cases": [],
+      "planning_anchors": []
+    },
+    {
+      "id": "G01",
+      "description": "Preserve ALGO instruction order; empty ALGO terminates cleanly. Emit readable statements and newlines.",
+      "tests": [
+        "tests/unit/test_target_writer.py::test_minimal_program_is_valid_and_has_exactly_one_main_and_return",
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix"
+      ],
+      "evidence": [
+        "tests/unit/test_target_writer.py::test_minimal_program_is_valid_and_has_exactly_one_main_and_return",
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "B01-empty-program"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "G02",
+      "description": "print STRING writes the string; print(TERM) computes into a temporary and writes its value.",
+      "tests": [
+        "tests/integration/test_executable_semantics.py::test_all_hand_computed_backend_anchors_compile_and_execute"
+      ],
+      "evidence": [
+        "tests/integration/test_executable_semantics.py::test_all_hand_computed_backend_anchors_compile_and_execute"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "B05-exact-string-and-print-order"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "G03",
+      "description": "nop becomes a harmless comment; comment STRING becomes a target comment.",
+      "tests": [
+        "tests/integration/test_codegen_arithmetic.py::test_comments_do_not_interfere_with_executable_output"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py::test_comments_do_not_interfere_with_executable_output"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "C12-mine_annotations_are_comment_safe_and_target_still_compiles"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "G04",
+      "description": "Assignment computes the TERM first, then stores it in the renamed target variable.",
+      "tests": [
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "B04-self-reading-assignment"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "G05",
+      "description": "NAME and NUM terms copy into a result location. Operators map to %, /, +, -, *, and unary -.",
+      "tests": [
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix",
+        "tests/unit/test_codegen_terms.py::test_division_of_integer_looking_literals_is_fractional"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_arithmetic.py::test_issue_arithmetic_anchor_matrix",
+        "tests/unit/test_codegen_terms.py::test_division_of_integer_looking_literals_is_fractional"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E06"
+      ],
+      "target_cases": [
+        "B02-fractional-division",
+        "B03-integer-modulo",
+        "E06-division-of-integer-looking-literals"
+      ],
+      "planning_anchors": [
+        "E06"
+      ]
+    },
+    {
+      "id": "G06",
+      "description": "Every generated variable has the selected whole-program int or float type.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_float_arguments_locals_and_returns_use_one_selected_mode"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_float_arguments_locals_and_returns_use_one_selected_mode"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E06"
+      ],
+      "target_cases": [
+        "B02-fractional-division",
+        "B03-integer-modulo",
+        "C15-float_arguments_locals_and_returns_use_one_selected_mode",
+        "E06-division-of-integer-looking-literals"
+      ],
+      "planning_anchors": [
+        "E06"
+      ]
+    },
+    {
+      "id": "G07",
+      "description": "Translate branches using labels and goto; no executable ELSE command.",
+      "tests": [
+        "tests/integration/test_codegen_control_flow.py::test_nested_branch_inside_loop_preserves_control_flow"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_control_flow.py::test_nested_branch_inside_loop_preserves_control_flow"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E07"
+      ],
+      "target_cases": [
+        "B06-nested-not-or-false-fallthrough",
+        "B07-nested-short-circuit-truth-table",
+        "E07-Boolean-composition-counterexample"
+      ],
+      "planning_anchors": [
+        "E07"
+      ]
+    },
+    {
+      "id": "G08",
+      "description": "Lower Boolean composition into jumps, not target and/or/not or &&////! expressions.",
+      "tests": [
+        "tests/integration/test_codegen_control_flow.py::test_and_or_truth_tables_not_and_all_comparisons",
+        "tests/generated/test_compiled_semantics.py::test_hand_checked_precision_remainder_and_short_circuit_anchors"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_control_flow.py::test_and_or_truth_tables_not_and_all_comparisons",
+        "tests/generated/test_compiled_semantics.py::test_hand_checked_precision_remainder_and_short_circuit_anchors"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E07"
+      ],
+      "target_cases": [
+        "B06-nested-not-or-false-fallthrough",
+        "B07-nested-short-circuit-truth-table",
+        "C13-short_circuit_skips_calls_and_loop_conditions_reevaluate_them",
+        "E07-Boolean-composition-counterexample"
+      ],
+      "planning_anchors": [
+        "E07"
+      ]
+    },
+    {
+      "id": "G09",
+      "description": "Support pre-test while, pre-test until, post-test while and post-test until.",
+      "tests": [
+        "tests/integration/test_codegen_control_flow.py::test_all_four_loop_forms_zero_one_and_repeated_iterations"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_control_flow.py::test_all_four_loop_forms_zero_one_and_repeated_iterations"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E08"
+      ],
+      "target_cases": [
+        "B08-pretest-zero-iterations",
+        "B09-posttest-guaranteed-first-iteration",
+        "B10-all-loop-polarities",
+        "C13-short_circuit_skips_calls_and_loop_conditions_reevaluate_them",
+        "E08-pre-test-and-post-test-behavior"
+      ],
+      "planning_anchors": [
+        "E08"
+      ]
+    },
+    {
+      "id": "G10",
+      "description": "Use resolved internal names, fresh temporaries and unique labels throughout.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_repeated_loop_function_has_fresh_jump_targets",
+        "tests/generated/test_compiled_semantics.py::test_seeded_complete_programs_match_model_oracle_and_full_cli"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_repeated_loop_function_has_fresh_jump_targets",
+        "tests/generated/test_compiled_semantics.py::test_seeded_complete_programs_match_model_oracle_and_full_cli"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "B10-all-loop-polarities",
+        "C08-repeated_loop_function_has_fresh_jump_targets",
+        "C14-repeated_compilations_are_deterministic_and_independent"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "F01",
+      "description": "Emit one root main, the needed declarations and return 0. Nested P bodies supply templates, not nested main definitions.",
+      "tests": [
+        "tests/unit/test_target_writer.py::test_minimal_program_is_valid_and_has_exactly_one_main_and_return",
+        "tests/integration/test_codegen_calls.py::test_grandchild_updates_current_grandparent_and_global"
+      ],
+      "evidence": [
+        "tests/unit/test_target_writer.py::test_minimal_program_is_valid_and_has_exactly_one_main_and_return",
+        "tests/integration/test_codegen_calls.py::test_grandchild_updates_current_grandparent_and_global"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "C11-uncalled_function_code_mine_produces_no_output_or_state_change",
+        "C12-mine_annotations_are_comment_safe_and_target_still_compiles"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "F02",
+      "description": "Build reusable, non-executable templates keyed by resolved function symbol. Retain the code-mine concept in the generated output.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_uncalled_function_code_mine_produces_no_output_or_state_change",
+        "tests/integration/test_codegen_calls.py::test_mine_annotations_are_comment_safe_and_target_still_compiles"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_uncalled_function_code_mine_produces_no_output_or_state_change",
+        "tests/integration/test_codegen_calls.py::test_mine_annotations_are_comment_safe_and_target_still_compiles"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [],
+      "target_cases": [
+        "C11-uncalled_function_code_mine_produces_no_output_or_state_change",
+        "C12-mine_annotations_are_comment_safe_and_target_still_compiles"
+      ],
+      "planning_anchors": []
+    },
+    {
+      "id": "F03",
+      "description": "Walk the recursive INPUT chain to count ordered TERM arguments.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_zero_and_one_argument_return_nonzero_value_copy",
+        "tests/integration/test_codegen_calls.py::test_multiple_whole_term_actuals"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_zero_and_one_argument_return_nonzero_value_copy",
+        "tests/integration/test_codegen_calls.py::test_multiple_whole_term_actuals"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E09"
+      ],
+      "target_cases": [
+        "C01-zero_and_one_argument_return_nonzero_value_copy",
+        "C02-multiple_whole_term_actuals",
+        "C09-calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+        "E09-repeated-numeric-calls-containing-a-loop"
+      ],
+      "planning_anchors": [
+        "E09"
+      ]
+    },
+    {
+      "id": "F04",
+      "description": "Evaluate actual arguments into fresh capture temporaries before populating the cloned formal parameters.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_all_actuals_are_captured_before_later_argument_side_effects",
+        "tests/integration/test_codegen_calls.py::test_actuals_evaluate_left_to_right"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_all_actuals_are_captured_before_later_argument_side_effects",
+        "tests/integration/test_codegen_calls.py::test_actuals_evaluate_left_to_right"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E09"
+      ],
+      "target_cases": [
+        "C02-multiple_whole_term_actuals",
+        "C03-all_actuals_are_captured_before_later_argument_side_effects",
+        "C04-actuals_evaluate_left_to_right",
+        "E09-repeated-numeric-calls-containing-a-loop"
+      ],
+      "planning_anchors": [
+        "E09"
+      ]
+    },
+    {
+      "id": "F05",
+      "description": "Inline void bodies for instruction calls; inline num bodies and copy the return result into the caller continuation variable.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+        "tests/integration/test_codegen_calls.py::test_void_procedure_returns_no_numeric_value_and_preserves_root_write"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+        "tests/integration/test_codegen_calls.py::test_void_procedure_returns_no_numeric_value_and_preserves_root_write"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E09"
+      ],
+      "target_cases": [
+        "C01-zero_and_one_argument_return_nonzero_value_copy",
+        "C09-calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+        "C10-void_procedure_returns_no_numeric_value_and_preserves_root_write",
+        "C13-short_circuit_skips_calls_and_loop_conditions_reevaluate_them",
+        "C15-float_arguments_locals_and_returns_use_one_selected_mode",
+        "E09-repeated-numeric-calls-containing-a-loop"
+      ],
+      "planning_anchors": [
+        "E09"
+      ]
+    },
+    {
+      "id": "F06",
+      "description": "Expand a child function inside its parent template before the parent is inserted into main.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_grandchild_updates_current_grandparent_and_global"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_grandchild_updates_current_grandparent_and_global"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E10"
+      ],
+      "target_cases": [
+        "C05-child_updates_current_parent_local_on_each_call",
+        "C07-grandchild_updates_current_grandparent_and_global",
+        "C09-calls_in_assignment_print_arithmetic_comparison_actual_and_return",
+        "E10-child-captures-the-current-parent-local"
+      ],
+      "planning_anchors": [
+        "E10"
+      ]
+    },
+    {
+      "id": "F07",
+      "description": "Each expansion has unique labels, temporaries, local/formal storage and return storage.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_repeated_loop_function_has_fresh_jump_targets",
+        "tests/integration/test_codegen_calls.py::test_repeated_compilations_are_deterministic_and_independent"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_repeated_loop_function_has_fresh_jump_targets",
+        "tests/integration/test_codegen_calls.py::test_repeated_compilations_are_deterministic_and_independent"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E09"
+      ],
+      "target_cases": [
+        "C08-repeated_loop_function_has_fresh_jump_targets",
+        "C14-repeated_compilations_are_deterministic_and_independent",
+        "E09-repeated-numeric-calls-containing-a-loop"
+      ],
+      "planning_anchors": [
+        "E09"
+      ]
+    },
+    {
+      "id": "F08",
+      "description": "Captured ancestor variables retain the correct binding under expansion.",
+      "tests": [
+        "tests/integration/test_codegen_calls.py::test_child_updates_current_parent_local_on_each_call",
+        "tests/integration/test_codegen_calls.py::test_nested_parent_shadow_does_not_detach_global"
+      ],
+      "evidence": [
+        "tests/integration/test_codegen_calls.py::test_child_updates_current_parent_local_on_each_call",
+        "tests/integration/test_codegen_calls.py::test_nested_parent_shadow_does_not_detach_global"
+      ],
+      "status": "implemented-tested",
+      "semantic_cases": [
+        "planning-E10"
+      ],
+      "target_cases": [
+        "C05-child_updates_current_parent_local_on_each_call",
+        "C06-nested_parent_shadow_does_not_detach_global",
+        "C07-grandchild_updates_current_grandparent_and_global",
+        "C10-void_procedure_returns_no_numeric_value_and_preserves_root_write",
+        "E10-child-captures-the-current-parent-local"
+      ],
+      "planning_anchors": [
+        "E10"
+      ]
+    }
+  ]
+}

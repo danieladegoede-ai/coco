@@ -1,5 +1,8 @@
 # Team decisions required before implementation
 
+> Historical P1 record. Current P2 work is in [the updated guide](p2/05_SHARED_INTERFACES.md).
+> Preserve this reference; its old allocation/checklist is not current P2 status.
+
 Status: **APPROVED by all four members on 22 September 2026**
 
 The Speaker records the final choices and changes the status to `APPROVED` only
@@ -99,3 +102,14 @@ Suggested reply format:
 ```text
 1A, 2A, 3A, 4C - agree
 ```
+
+## 17 October 2026 - P2 implementation work
+
+The Speaker requested the detailed P2 issue allocation and then implementation
+of #21 and #22. The September approval above remains the P1 historical record.
+It does not assert that all members have approved newly added P2 interfaces.
+
+Current P2 decisions, provisional tutor questions and review status are in
+[`p2/00_p2_decisions.md`](p2/00_p2_decisions.md). Current allocation and work
+packets are linked from [`p2/README.md`](p2/README.md). The older September
+master plan is superseded for scope/deadlines/allocation by the P2 tracker.

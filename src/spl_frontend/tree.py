@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Protocol
@@ -87,6 +87,31 @@ class SyntaxTree:
     def __init__(self) -> None:
         self._nodes: dict[int, TreeNode] = {}
         self._next_id = 1
+
+    @classmethod
+    def from_nodes(cls, nodes: Iterable[TreeNode]) -> SyntaxTree:
+        """Import a validated snapshot without changing IDs or child order.
+
+        Records need not be in creation order. Copy mutable child lists so
+        callers cannot change the imported tree through their input records.
+        No partially validated tree is returned.
+        """
+        tree = cls()
+        for node in nodes:
+            if not isinstance(node, TreeNode):
+                raise ValueError("Imported entries must be TreeNode values.")
+            if not isinstance(node.child_ids, list):
+                raise ValueError("Imported child IDs must be a list.")
+            copied = TreeNode(
+                node.node_id, node.kind, node.contents, node.parent_id,
+                list(node.child_ids),
+            )
+            if copied.node_id in tree._nodes:
+                raise ValueError(f"Duplicate node ID {copied.node_id}.")
+            tree._nodes[copied.node_id] = copied
+        tree.validate()
+        tree._next_id = len(tree._nodes) + 1
+        return tree
 
     @property
     def root(self) -> TreeNode | None:

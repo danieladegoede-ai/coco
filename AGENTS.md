@@ -1,92 +1,140 @@
-# Instructions for AI coding assistants
+# Instructions for Group 2 coding assistants
 
-## Scope
+## Current scope: P2, 1st Class
 
-This repository is for the COS341 SPL front-end assessment only.
+P1 earned full marks. Current authorized work is COS341 2026 Parts 2a, 2b,
+3a and 3b: names/scopes, types, target generation and function inlining.
+The goal is the 1st Class assessment, up to 6/6 P2 points. The final date is
+Sunday 25 October 2026; use the cutoff shown in the First Class upload slot.
 
-The only required pipeline is:
+Start with **[agent_tasks/p2/00_START_HERE.md](agent_tasks/p2/00_START_HERE.md)**.
+It selects the correct personal packet, explains branches/dependencies and
+lists the shared rules. These P2 instructions supersede the old frontend-only
+scope and September allocation in the historical P1 packets. Preserve those
+modules and their regression coverage.
+
+The intended pipeline is:
 
 ```text
-SPL.txt -> source reader -> lexer -> tokens -> parser -> syntax tree -> tree.xml
+SPL.txt -> existing lexer/parser -> validated syntax tree
+        -> names/scopes/renaming -> numeric/type checks
+        -> target IR + function templates/inlining -> validated target source
 ```
 
-Do not add work outside this front-end pipeline.
+Documentation on main does not mean all these passes are merged. Check the
+live branch, source files, issues and PRs before importing an API. Foundation,
+names, numeric/types, backend and templates are merged through #37/#38/#41/#40/#42.
+The full driver and inlining are integrated. Source acceptance uses the
+semantic/target runners in tools/GENERATED_TARGET.md. Preserve the original
+38 requirement IDs and E01-E10 meanings when updating cases. Read the
+[current command/API guide](agent_tasks/p2/part_3b_driver.md); the dated personal
+packets below remain historical task allocations.
 
-## Before changing code
+## Required reading before editing
 
-1. Read `README.md`.
-2. Read every file in `agent_tasks/` marked as shared.
-3. Read the work packet matching the student's number.
-4. Check `agent_tasks/00_team_decisions.md`. Do not implement a proposed
-   contract that the team has not approved.
-5. Inspect the current branch and working tree. Preserve another member's
-   changes and do not rewrite files owned by someone else.
+1. Root README and the P2 start guide.
+2. Your student-number packet and its current GitHub issues.
+3. [Shared interfaces](agent_tasks/p2/05_SHARED_INTERFACES.md), including
+   implemented API status and the final release decisions.
+4. [Handoff and acceptance](agent_tasks/p2/90_HANDOFF_AND_ACCEPTANCE.md).
+5. The official private 2026 sheets/announcements relevant to your issue,
+   the P1 shared contracts and grammar reference under agent_tasks.
+6. Existing code/tests and git status on the actual branch you will edit.
 
-## Sources of truth
+Resolve links relative to the packet location. Do not assume a private Desktop
+path, another person's checkout or a missing PDF exists on a teammate's machine.
+The packet includes local task detail. If a necessary course source is
+unavailable, use the recorded confirmed rules, isolate uncertain policy and
+report the missing evidence precisely.
 
-Use these sources in this order:
+## Authorized native release work (25 October)
 
-1. The official 2026 SPL syntax specification and lecturer announcements.
-2. Approved decisions in `agent_tasks/00_team_decisions.md`.
-3. Shared interfaces in `agent_tasks/01_shared_contracts.md`.
-4. Grammar and lexical reference in `agent_tasks/02_spl_reference.md`.
-5. The relevant individual work packet.
-6. `README.md`.
+The Speaker explicitly authorized #35/#36 implementation on
+`danieladegoede-ai/coco`, synchronizing the tested P2 source from
+`RudolphLamp/coco`. Read `release/P2_RELEASE_DECISIONS.md`: supplied A34 resolves
+the C++ designation and GNU toolchain preference. Use the native build/test
+workflow and LaTeX manual. This supersedes earlier exclusion of packaging/manual
+work. Personal approvals/signatures and actual portal submission must remain
+truthful; do not tick or sign for members without their own consent/signatures.
 
-If two sources conflict, stop and ask the team Speaker. Never silently invent a
-rule.
+The Speaker subsequently instructed that no tutor consultation is available
+and appointed this AI as the main technical reviewer. D01-D08 are now final
+release choices in `release/P2_RELEASE_DECISIONS.md`; no consultation or
+additional named-peer review blocks their implementation. Historical packets
+and dated audits retain their context but cannot reopen those questions.
+This technical-review authorization does not supply another member's personal
+signature or a portal receipt required by A33.
 
 ## Ownership
 
-- `u20598425`: syntax-tree model, XML writer and tree validation.
-- `u20620111`: source loading, tokens and lexer.
-- `u21434019`: parser and syntax diagnostics.
-- `u21448842`: CLI, test generation, black-box testing and executable build.
+| Member | Current issues | Detailed packet |
+| --- | --- | --- |
+| RudolphLamp / u20598425 | #21, #22, #23, #36 | [Foundation, names, release](agent_tasks/p2/10_u20598425_foundation_names_release.md) |
+| Kuda21 / u20620111 | #24, #25, #32, #33 | [Numeric policy, types, semantic tests](agent_tasks/p2/20_u20620111_types_numeric_tests.md) |
+| CheriseHeyl / u21434019 | #26, #27, #28, #34 | [IR, code generation, verification](agent_tasks/p2/30_u21434019_codegen_verification.md) |
+| michey-n / u21448842 | #29, #30, #31, #35 | [Templates, inlining, driver, native release](agent_tasks/p2/40_u21448842_inlining_driver_release.md) |
 
-The exact owned paths and acceptance checks are in the individual work
-packets. Do not edit another member's owned paths without that member's
-agreement.
+Issue/path ownership replaces the old P1 blanket ownership of whole test
+directories. Each issue owns its named tests; multiple members may add
+different tests under tests/integration. Preserve another member's edits.
+P1 source owners remain Rudolph (tree/XML), Kuda (source/tokens/lexer),
+Cherise (parser), Michele (CLI/driver/build). Coordinate changes to their
+existing modules. Do not implement another owner's issue to hide a dependency.
 
-## Shared engineering rules
+## Working rules
 
-- Support Python 3.11 or later.
-- Prefer the Python standard library. Do not add a runtime dependency without
-  written team approval.
-- Use four spaces, type hints, dataclasses and enums where appropriate.
-- Keep source text, tokens and completed tree data deterministic.
-- Do not use mutable global state.
-- Do not print from library modules; return data or raise a structured error.
-- Preserve the original token lexeme and one-based line and column.
-- The literal `$` must never be required in `SPL.txt`.
-- A failed compilation must not leave a stale or partial `tree.xml`.
-- Every implementation change must include relevant tests.
-- Do not commit `SPL.txt`, `tree.xml`, caches, virtual environments, build
-  output or packaged executables to the source branch.
-- Do not create, close or materially change GitHub issues outside the approved
-  allocation unless the Speaker requests it.
+- The user's assigned implementation request authorizes routine work in that
+  issue's owned paths, tests and documentation. Proceed to a concrete PR;
+  do not repeatedly ask whether to begin. Review requirements apply at merge.
+- Support Python 3.11 or later, use standard-library dependencies where
+  practical, four spaces and type hints. No global compilation state.
+- Preserve original lexemes, source positions, tree IDs, ordered child links
+  and the P1 XML contract. Semantic results are side maps, not in-place renames.
+- Distinguish nearest-ancestor variable lookup from direct-child function
+  lookup. Respect the exact numeric conflict rules. Add no unsupported
+  grammar, type, arity or definite-assignment restriction.
+- Use resolved symbol IDs and structural IR references. Avoid raw-text
+  identifier/label replacement. Implement required inlining; no runtime SPL
+  call stack or alternate parser.
+- Libraries return results or structured errors; only CLI code prints errors.
+  Report real input locations, or node IDs for XML without original tokens.
+- Check input/output aliasing before deletion. Failed compiles must not leave
+  misleading stale or partial outputs. Coordinate any XML lifecycle change.
+- Apply the final release choices without reopening consultation. Distinguish
+  lecturer requirements from implementation decisions; do not invent a tutor
+  answer, team approval, signature, test pass, clean-machine result or upload.
+- Keep private course material, inputs/outputs, caches, environments, binaries
+  and ZIPs out of source commits. Use temporary/ignored output directories.
+- Keep changes focused, add meaningful regression tests and report actual
+  commands/results. An interface fixture is not an implemented downstream pass.
 
-## Required verification
+## Verification and handoff
 
-Once tests exist, run from the repository root:
+Run focused tests and the applicable full suite from the repository root:
 
 ```sh
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 python3 -m compileall -q src tests tools
+PYTHONPATH=src python3 tools/black_box_test.py
+git diff --check
 ```
 
-Run the checks relevant to the work packet as well. Report exactly what was
-run and any remaining limitations.
+Use Python >=3.11; the default python3 on a machine may be older. For backend
+work also compile and execute the generated target with timeouts and independent
+expected outputs. See the shared handoff file for native/package gates.
 
-## Contract changes
+An issue is ready for integration only after its real dependencies, tests and
+review criteria are satisfied. A formal block permits independent fixtures and
+explicitly stacked development; it does not permit claiming full completion.
+Open a focused PR, link the issue/parent PR, name the reviewer, and give paths,
+commit, exact checks/results, final release decisions and remaining gates.
 
-Shared interfaces are deliberately small so the four members can work in
-parallel. If a contract must change:
+## Contract changes and precedence
 
-1. Explain why the current contract cannot meet a confirmed requirement.
-2. List every owned module affected by the change.
-3. Get agreement from those owners before editing.
-4. Update `01_shared_contracts.md` in the same pull request.
-5. Add or update integration tests.
-
-Do not make an unannounced breaking change merely because it is convenient for
-one module.
+Official 2026 sheets/announcements take precedence over generic compiler
+examples. Actual dated tutor answers take precedence over a recorded proposal.
+The September all-member approval covers P1 interfaces, not new P2 approvals.
+For a breaking shared-interface change, explain the confirmed requirement,
+identify affected owners, obtain their agreement, update the shared contract
+and integration tests together. Additive implementations may be prepared for
+review within the assigned issue; do not silently redefine another module's API.

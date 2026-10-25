@@ -1,0 +1,1 @@
+#r : num #outer ( ) { : num #inner ( ) { : : return ( 42 ) } : return ( #inner ( ) ) } : #r = #outer ( ) ;

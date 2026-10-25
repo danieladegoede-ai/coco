@@ -1,0 +1,1 @@
+: : if and ( eq ( 1 1 ) or ( larger ( 5 3 ) lesser ( 1 2 ) ) ) then { nop ; } else { nop ; } ;

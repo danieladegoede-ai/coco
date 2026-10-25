@@ -1,0 +1,152 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,array,booktabs,longtable,enumitem,fancyhdr,listings,xcolor}
+\usepackage[hidelinks]{hyperref}
+\input{build-info.tex}
+\definecolor{navy}{HTML}{17324D}
+\definecolor{pale}{HTML}{EDF3F8}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\textbf{COS341 2026 / Group 2 / P2}}
+\fancyhead[R]{\small First Class}
+\fancyfoot[L]{\footnotesize Group 2 user manual}
+\fancyfoot[R]{\thepage}
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,frame=single,rulecolor=\color{navy},backgroundcolor=\color{pale},aboveskip=5pt,belowskip=5pt}
+\newcommand{\heading}[1]{\vspace{5pt}{\large\bfseries\color{navy}#1}\par}
+\newcommand{\signrow}[2]{\par\noindent\textbf{#1}\quad\texttt{#2}\par\vspace{14pt}Signature: \rule{92mm}{0.4pt}\quad Date: \rule{25mm}{0.4pt}\par\vspace{18pt}}
+\begin{document}
+{\LARGE\bfseries\color{navy} Group 2 SPL compiler}\par
+{\large COS341 2026 --- Practical 2 user manual}\par
+I have put this manual together to explain how I run our compiler and the C++ program it produces. Our practical includes Parts 2a, 2b, 3a and 3b, which cover name and scope analysis, type checking, code generation and function inlining. I have prepared it for the \textbf{First Class category}.
+
+\heading{1. Choose the executable for your computer}
+I first extract the ZIP and open a terminal \textbf{inside the \texttt{group-2} folder}. I then choose the executable for my operating system from the table below. The compiler includes its Python runtime. I use a separate C++ compiler to build and run the program it generates.
+
+\begin{tabular}{@{}p{25mm}p{50mm}p{69mm}@{}}\toprule
+Computer & Compiler file & Supported system\\\midrule
+Windows x64 & \texttt{group-2.exe} & Windows x64; tested on Windows Server 2022\\
+Linux x64 & \texttt{group-2} & Linux x86-64; Ubuntu 22.04 baseline (glibc 2.35+)\\
+macOS Apple Silicon & \texttt{macos/group-2} & macOS arm64; macOS 14 or later\\\bottomrule
+\end{tabular}\par\medskip
+The Linux and macOS files have \textbf{no extension}. I use the file for the correct operating system, even if Finder describes both as a ``Unix Executable File''. The macOS build is signed locally rather than notarized by Apple, so macOS may ask me to allow it to open.
+
+\heading{2. Windows (PowerShell or Command Prompt)}
+\begin{lstlisting}
+.\group-2.exe
+g++ -std=c++17 program.cpp -o program.exe
+.\program.exe
+\end{lstlisting}
+\heading{3. Linux}
+\begin{lstlisting}
+chmod +x group-2
+./group-2
+g++ -std=c++17 program.cpp -o program
+./program
+\end{lstlisting}
+\heading{4. macOS Apple Silicon}
+\begin{lstlisting}
+chmod +x macos/group-2
+./macos/group-2
+g++ -std=c++17 program.cpp -o program
+./program
+\end{lstlisting}
+\textbf{Expected example output:} \texttt{result:3:4}, without an extra newline. I have included \texttt{SPL.txt} as a working example. It calls a numeric function twice and uses a nested procedure to update its parent's local variable inside a loop.
+
+\newpage
+\heading{5. Input, output and errors}
+When I run the compiler without an argument, it reads \texttt{SPL.txt} from the current folder. To compile a different ASCII source file, I pass its path as the only argument. I put quotation marks around a path that contains spaces:
+\begin{lstlisting}
+.\group-2.exe "path\to\input with spaces.spl"
+./group-2 "path/to/input with spaces.spl"
+./macos/group-2 "path/to/input with spaces.spl"
+\end{lstlisting}
+If compilation succeeds, the compiler returns status 0 without printing a message. I get two files in the current folder: \texttt{tree.xml}, containing the syntax tree, and \texttt{program.cpp}, containing the generated C++ code. The XML keeps the original tokens and node IDs. The C++ file includes the function code mine as comments and the executable code in one \texttt{main}. I compile and run this C++ file to see my SPL program's output.
+
+\textbf{Writing the input.} I separate every token, including the last one, with a space or newline (LF, CR or CRLF). The language accepts ASCII input, lowercase names beginning with \texttt{\#}, and strings without spaces. Tabs and a literal \texttt{\$} are invalid. I write zero as \texttt{0}; decimals must end in a nonzero fractional digit. I keep the final newline when editing the example.
+
+\begin{tabular}{@{}p{17mm}p{128mm}@{}}\toprule
+Status & Meaning\\\midrule
+0 & Complete compiler success; fresh XML and C++ outputs are available.\\
+2 / 3 & Incorrect command usage / input or path-alias problem.\\
+4 / 5 / 6 & Lexical / syntax / tree error.\\
+7 / 8 & Name or scope error / type or whole-program numeric conflict.\\
+9 & Code-generation or output-publication error.\\
+70 & Unexpected internal failure or an OS error preventing output cleanup.\\\bottomrule
+\end{tabular}\par\medskip
+If there is an error, I get a message on stderr showing the input file and the relevant location. A failed full compilation normally removes both output files. The compiler checks for input/output path collisions before deleting anything, so it preserves my source file. It also reports any operating-system error that prevents it from clearing an old output.
+
+\heading{6. Trying an invalid program}
+I have included a second example so I can check how the compiler reports a name error:
+\begin{lstlisting}
+.\group-2.exe examples\invalid-names.spl
+./group-2 examples/invalid-names.spl
+\end{lstlisting}
+On macOS I use \texttt{./macos/group-2} in the same command. This example uses \texttt{\#missing} without declaring it, so I expect status 7 and \texttt{NAME-UNDECLARED-VARIABLE}. Neither output file should remain. I can run the compiler again without an argument to restore the valid example's outputs.
+
+\heading{7. Compiling the generated C++}
+\textbf{I recommend \texttt{g++} with C++17 for assessment.} Our output uses \texttt{std::cout}, and Announcement 34 allows us to describe it as C++. The generated \texttt{program.cpp} can be inspected before running it. Our tests cover both GNU \texttt{g++} 13 and \texttt{gcc} 13. If I use \texttt{gcc}, I select C++ and link its standard library explicitly:
+\begin{lstlisting}
+gcc -x c++ -std=c++17 program.cpp -lstdc++ -o program
+\end{lstlisting}
+On Windows I use \texttt{-o program.exe}. My GNU toolchain needs the C++ frontend and \texttt{libstdc++}. I only need this toolchain to build the generated program; our SPL compiler itself runs separately.
+
+\newpage
+\heading{8. Files I have included}
+The ZIP contains the following files:
+\begin{lstlisting}
+group-2/
+  group-2.pdf              This manual and two personal declarations
+  group-2.exe              Windows x64 compiler
+  group-2                  Linux x64 compiler (no extension)
+  macos/group-2            macOS arm64 compiler (no extension)
+  SPL.txt                  Valid repeated/nested-call example
+  examples/invalid-names.spl
+  manifest.json            Source commit, platforms and SHA-256 hashes
+\end{lstlisting}
+I have included a SHA-256 checksum alongside the ZIP so I can check that the file has not changed. The \texttt{manifest.json} file records the build version and checksums of the files inside. I keep the Windows, Linux and macOS executables under their supplied names and use the correct one for the computer running the assessment.
+
+\heading{9. How our compiler handles SPL}
+I have summarised the main rules below to explain the compiler's behaviour:
+\begin{itemize}
+\item A variable refers to its nearest declaration in the current scope or an enclosing scope. It cannot refer sideways to a declaration in another function. A function call must refer to a function declared directly inside the current P. Duplicate declarations, a local masking its own parameter, overloading and recursion are rejected.
+\item Functions are inlined. Arguments are evaluated from left to right and saved before being copied into the function's parameters. The number of arguments must match the number of parameters. A numeric call returns its result to the caller; a void call has no numeric result. Boolean \texttt{and}/\texttt{or} use short circuiting, and the generated control flow uses comparisons and jumps.
+\item The whole program uses \texttt{float} if it contains division or a decimal number; otherwise it uses \texttt{int}. A program containing both \texttt{mod} and \texttt{div}, or \texttt{mod} and a decimal number, is rejected. Text inside strings does not affect this check.
+\item The output uses native integers and single-precision floats, with the normal \texttt{std::cout} format (six significant digits for floats). In my examples, I initialise variables, keep values within the native number ranges and avoid division by zero. Inlining is limited to 1,000,000 generated instructions.
+\item Variables and functions have separate naming tables. A return expression uses the function body's scope. Scope and type information are kept internally, while the output files are \texttt{tree.xml} and \texttt{program.cpp}.
+\end{itemize}
+\heading{10. Preparing our submission}
+Before I submit, each member needs to review the files and personally sign \emph{both} declarations on the following pages. I will include the signed pages in this manual, check \texttt{group-2.zip}, and upload it \textbf{only to the First Class slot} on 25 October 2026 before the displayed cutoff. I will keep the receipt and compare the downloaded ZIP's checksum with my original copy.
+\par\medskip
+{\footnotesize Build reference: \texttt{\SourceCommit}}\par
+
+\newpage
+{\LARGE\bfseries\color{navy} Declaration 1: submission category}\par
+\textbf{COS341 2026 --- Group 2 --- Part 2}\par
+By signing below, I confirm that I agree to submit our Group 2 practical in the \textbf{First Class category}, for a maximum of \textbf{6/6 Part 2 points} in addition to our parser points. I understand that our submission includes Parts \textbf{2a, 2b, 3a and 3b}, including the generation of readable C++ code that can be compiled and run.
+
+Each member signs and dates their own row.
+\par\vspace{14pt}
+\signrow{Rudolph}{u20598425}
+\signrow{Kuda}{u20620111}
+\signrow{Cherise}{u21434019}
+\signrow{Michele}{u21448842}
+\vfill
+\textit{This is our declaration of submission category, as required by Announcement 33.}
+
+\newpage
+{\LARGE\bfseries\color{navy} Declaration 2: complete ZIP contents}\par
+\textbf{COS341 2026 --- Group 2 --- Part 2}\par
+By signing below, I confirm that I am fully aware of the \textbf{whole contents of our final submission ZIP}. This includes the compiler executables, this manual and its declarations, the example programs and \texttt{manifest.json}. I have reviewed these files and \textbf{agree to their submission in this form} in the First Class category.
+
+Each member signs and dates their own row after reviewing the same final ZIP. If its contents change, we will review the changes before submitting.
+\par\vspace{14pt}
+\signrow{Rudolph}{u20598425}
+\signrow{Kuda}{u20620111}
+\signrow{Cherise}{u21434019}
+\signrow{Michele}{u21448842}
+\vfill
+\textit{This declaration records my agreement to the ZIP contents under Announcement 33.}
+\end{document}
