@@ -11,8 +11,11 @@ from tests.codegen_support import TARGET_CXX
 class CompiledSemanticTests(unittest.TestCase):
     def assert_case(self, source, expected, case_id, seed=None):
         self.assertEqual("".join(evaluate_source(source)), expected)
+        # A cold GNU compiler on a hosted Windows VM can exceed five seconds.
+        # Keep build/setup time separate from the generated program's runtime.
         report = verify_case(source, expected, case_id=case_id, seed=seed,
-                             target_compiler=TARGET_CXX)
+                             target_compiler=TARGET_CXX, timeout=30,
+                             execution_timeout=5)
         self.assertTrue(report.passed, report.to_json())
 
     def test_seeded_complete_programs_match_model_oracle_and_full_cli(self):
