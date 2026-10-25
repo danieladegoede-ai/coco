@@ -15,10 +15,9 @@ verification on `danieladegoede-ai/coco`. The tested P2 source is imported from
 | D07 extra outputs | Publish original `tree.xml` and readable `program.cpp`; keep internal symbol/type maps. Supplied sources specify no additional public symbol-table schema. |
 | D08 platforms/names/portal | Deliver Windows x64 `.exe`, Linux x64 `group-2` (no extension), supplemental macOS arm64 `macos/group-2`. A33 requires First Class-only upload and two personal declarations. The portal closing hour and actual upload/receipt cannot be fabricated. |
 
-The user asked to tick all names as approving. A33 specifically requires each
-member's **personal signature on each of two declarations**. No other member's
-consent/signature was supplied, so the manual leaves eight signature lines
-blank and the candidate manifest says `submission_ready: false`. This is a
+A33 requires each member's **personal signature on each of two declarations**.
+Personal signatures have not been supplied with the release inputs, so the
+manual leaves eight signature lines blank and the candidate manifest says `submission_ready: false`. This is a
 record of actual status, not an extra approval requirement invented by a tool.
 
 The CI/CD pipeline publishes a **draft candidate** only after source tests,
