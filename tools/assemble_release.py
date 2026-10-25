@@ -12,6 +12,7 @@ def sha(path: Path) -> str:return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def validate_artifacts(artifacts: Path,commit: str) -> dict:
     from tests.edge5000.cases import CASES
+    from tools.build_native import binary_identity
     required={c.case_id for c in CASES}
     semantic_ids={c['id'] for c in json.loads((ROOT/'tests/fixtures/semantics/cases.json').read_text())['cases']}
     target_ids={c['id'] for c in json.loads((ROOT/'tests/fixtures/codegen/acceptance/cases.json').read_text())['cases']}
@@ -24,17 +25,22 @@ def validate_artifacts(artifacts: Path,commit: str) -> dict:
         manifest=json.loads((directory/'build-manifest.json').read_text())
         filename='group-2.exe' if platform=='windows' else 'group-2'
         binary=directory/filename
+        identity=(platform,'arm64' if platform=='macos' else 'x86_64')
+        digest=sha(binary)
         if manifest['dirty'] or manifest['source_commit']!=commit:raise ValueError('Native source provenance is dirty or mismatched')
-        if manifest['os']!=platform or manifest['sha256']!=sha(binary):raise ValueError('Native platform/hash mismatch')
+        if binary_identity(binary)!=identity or (manifest.get('os'),manifest.get('architecture'))!=identity:raise ValueError('Native platform/architecture mismatch')
+        if manifest.get('filename')!=filename or manifest.get('bytes')!=binary.stat().st_size or manifest['sha256']!=digest:raise ValueError('Native filename/size/hash mismatch')
         acceptance=json.loads((directory/'acceptance.json').read_text())
-        if not acceptance['passed'] or acceptance['executable_sha256']!=sha(binary):raise ValueError('Native acceptance evidence missing or hash mismatch')
+        if not acceptance['passed'] or acceptance['executable_sha256']!=digest:raise ValueError('Native acceptance evidence missing or hash mismatch')
+        if tuple(acceptance.get('native_identity',()))!=identity:raise ValueError('Native acceptance platform/architecture mismatch')
         if not complete(acceptance.get('semantic_reports',[]),semantic_ids) or not complete(acceptance.get('target_reports',[]),target_ids):raise ValueError('Native semantic/target acceptance corpus incomplete')
         if not acceptance.get('unchanged_binary') or acceptance.get('clean_launch',{}).get('status')!=0:raise ValueError('Native clean-launch or unchanged-binary gate failed')
+        if acceptance.get('blackbox',{}).get('status')!=0:raise ValueError('Native black-box gate missing or failed')
         ids=[]
         for shard in range(4):
             path=artifacts/f'package-evidence-{platform}-{shard}'/f'package-{platform}-{shard}.json'
             report=json.loads(path.read_text())
-            if not report['passed'] or report['executable_sha256']!=sha(binary):raise ValueError('Packaged edge evidence failed or binary changed')
+            if not report['passed'] or report['executable_sha256']!=digest:raise ValueError('Packaged edge evidence failed or binary changed')
             if report['shard_count']!=4 or report['shard_index']!=shard:raise ValueError('Unexpected shard identity')
             for case in report['results']:
                 if not case['passed'] or case['skipped'] or case['run']!=1:raise ValueError('Skipped/failed edge case')
@@ -43,8 +49,11 @@ def validate_artifacts(artifacts: Path,commit: str) -> dict:
         result[platform]=manifest
     gcc=json.loads((artifacts/'gcc13-evidence/gcc13.json').read_text())
     if set(gcc)!={'g++13','gcc13'} or not all(complete(r.get('reports',[]),target_ids) for r in gcc.values()):raise ValueError('GNU 13 compatibility gate did not pass')
+    if not all(r.get('executable_sha256')==result['linux']['sha256'] and r.get('unchanged_binary') for r in gcc.values()):raise ValueError('GNU 13 evidence is not bound to the unchanged release Linux binary')
     manual=json.loads((artifacts/'user-manual/manual-manifest.json').read_text())
     if manual['source_commit']!=commit or manual['pages']!=5:raise ValueError('Manual provenance/page count mismatch')
+    pdf=artifacts/'user-manual/group-2.pdf'
+    if not pdf.is_file() or manual.get('sha256')!=sha(pdf) or manual.get('bytes')!=pdf.stat().st_size:raise ValueError('Validated manual PDF is missing or its size/hash changed')
     return result
 
 

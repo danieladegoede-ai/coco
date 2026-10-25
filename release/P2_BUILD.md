@@ -42,6 +42,9 @@ commit, compiles LaTeX, rejects overfull boxes, checks required text and five
 pages, and creates `manual-manifest.json`. Render the final PDF with pdftoppm
 and visually inspect every page. Eight personal signature lines remain blank.
 No software-generated tick or typed owner name is represented as a signature.
+The manual manifest binds those checks to the PDF's exact SHA-256 and size;
+assembly rejects a missing or replaced PDF rather than trusting its page-count
+record alone.
 
 ## Assembly and delivery
 
@@ -53,6 +56,9 @@ examples and manifest. Fresh jobs on all three operating systems extract this
 ZIP outside the checkout, verify payload hashes, follow the manual, run the
 example C++ and check the semantic-invalid example. Only then is a **draft GitHub
 release** created, explicitly labelled as requiring personal signatures.
+Assembly also rechecks native file formats/CPUs, filenames/sizes, the black-box
+gate and that both GNU compatibility reports name the unchanged Linux binary
+being shipped. Reports from another binary cannot certify the candidate.
 
 Download the `group-2-release-candidate` workflow artifact or the draft release.
 Each member signs both declarations personally. Preserve a signed manual,

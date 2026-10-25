@@ -1,6 +1,6 @@
 """Compile the LaTeX manual twice; retain PDF and reproducible source metadata."""
 from __future__ import annotations
-import argparse,json,re,shutil,subprocess,sys,tempfile
+import argparse,hashlib,json,re,shutil,subprocess,sys,tempfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -34,7 +34,9 @@ def main() -> int:
  info=subprocess.check_output(['pdfinfo',str(output/'group-2.pdf')],text=True)
  pages=int(re.search(r'^Pages:\s+(\d+)',info,re.M).group(1))
  if pages!=5:raise RuntimeError(f'Expected five designed pages, got {pages}')
- (output/'manual-manifest.json').write_text(json.dumps({'source_commit':commit,'pages':pages,'personal_signatures':0,'submission_ready':False,'engine':Path(engine).name},indent=2)+'\n')
+ pdf=output/'group-2.pdf'
+ (output/'manual-manifest.json').write_text(json.dumps({'source_commit':commit,'pages':pages,'personal_signatures':0,'submission_ready':False,'engine':Path(engine).name,
+     'sha256':hashlib.sha256(pdf.read_bytes()).hexdigest(),'bytes':pdf.stat().st_size},indent=2)+'\n')
  print(f'Created five-page LaTeX manual: {output/"group-2.pdf"}; personal signatures intentionally blank')
  return 0
 

@@ -37,16 +37,27 @@ class ReleaseEvidenceTests(unittest.TestCase):
         targets=[{'case_id':r['id'],'passed':True} for r in json.loads((ROOT/'tests/fixtures/codegen/acceptance/cases.json').read_text())['cases']]
         for platform in ('windows','linux','macos'):
             directory=self.root/f'native-{platform}';directory.mkdir()
-            filename='group-2.exe' if platform=='windows' else 'group-2';binary=directory/filename;binary.write_bytes(platform.encode())
+            filename='group-2.exe' if platform=='windows' else 'group-2';binary=directory/filename
+            data=bytearray(256)
+            if platform=='windows':
+                data[:2]=b'MZ';struct.pack_into('<I',data,0x3c,128);data[128:132]=b'PE\0\0';struct.pack_into('<H',data,132,0x8664)
+            elif platform=='linux':
+                data[:6]=b'\x7fELF\x02\x01';struct.pack_into('<H',data,18,62)
+            else:
+                data[:4]=b'\xcf\xfa\xed\xfe';struct.pack_into('<I',data,4,0x100000c)
+            binary.write_bytes(data)
             digest=hashlib.sha256(binary.read_bytes()).hexdigest()
-            self.write(directory/'build-manifest.json',{'dirty':False,'source_commit':'commit','os':platform,'sha256':digest})
-            self.write(directory/'acceptance.json',{'passed':True,'executable_sha256':digest,'unchanged_binary':True,'clean_launch':{'status':0},'semantic_reports':semantic,'target_reports':targets})
+            identity=[platform,'arm64' if platform=='macos' else 'x86_64']
+            self.write(directory/'build-manifest.json',{'dirty':False,'source_commit':'commit','os':platform,'architecture':identity[1],'filename':filename,'bytes':len(data),'sha256':digest})
+            self.write(directory/'acceptance.json',{'passed':True,'executable_sha256':digest,'native_identity':identity,'unchanged_binary':True,'clean_launch':{'status':0},'blackbox':{'status':0},'semantic_reports':semantic,'target_reports':targets})
             for shard in range(4):
                 path=self.root/f'package-evidence-{platform}-{shard}'/f'package-{platform}-{shard}.json'
                 self.write(path,{'passed':True,'executable_sha256':digest,'shard_count':4,'shard_index':shard,
                     'results':[{'id':c.case_id,'passed':True,'skipped':[],'run':1} for i,c in enumerate(CASES) if i%4==shard]})
-        self.write(self.root/'gcc13-evidence/gcc13.json',{'g++13':{'reports':targets},'gcc13':{'reports':targets}})
-        self.write(self.root/'user-manual/manual-manifest.json',{'source_commit':'commit','pages':5})
+        linux_hash=hashlib.sha256((self.root/'native-linux/group-2').read_bytes()).hexdigest()
+        self.write(self.root/'gcc13-evidence/gcc13.json',{name:{'reports':targets,'executable_sha256':linux_hash,'unchanged_binary':True} for name in ('g++13','gcc13')})
+        pdf=self.root/'user-manual/group-2.pdf';pdf.parent.mkdir();pdf.write_bytes(b'%PDF-1.4\nvalidated manual fixture\n')
+        self.write(self.root/'user-manual/manual-manifest.json',{'source_commit':'commit','pages':5,'sha256':hashlib.sha256(pdf.read_bytes()).hexdigest(),'bytes':pdf.stat().st_size})
     def write(self,path,data):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data))
     def change(self,path,fn):
         data=json.loads(path.read_text());fn(data);self.write(path,data)
@@ -92,3 +103,49 @@ class ReleaseEvidenceTests(unittest.TestCase):
     def test_failed_clean_launch_is_rejected(self):
         self.change(self.root/'native-windows/acceptance.json',lambda d:d['clean_launch'].update(status=70))
         with self.assertRaises(ValueError):validate_artifacts(self.root,'commit')
+
+    def test_replaced_pdf_is_rejected(self):
+        (self.root/'user-manual/group-2.pdf').write_bytes(b'%PDF-1.4\nunvalidated replacement\n')
+        with self.assertRaisesRegex(ValueError,'manual PDF'):validate_artifacts(self.root,'commit')
+    def test_missing_pdf_is_rejected(self):
+        (self.root/'user-manual/group-2.pdf').unlink()
+        with self.assertRaisesRegex(ValueError,'manual PDF'):validate_artifacts(self.root,'commit')
+    def test_wrong_pdf_size_is_rejected(self):
+        self.change(self.root/'user-manual/manual-manifest.json',lambda d:d.update(bytes=0))
+        with self.assertRaisesRegex(ValueError,'manual PDF'):validate_artifacts(self.root,'commit')
+    def test_unbound_pdf_is_rejected(self):
+        self.change(self.root/'user-manual/manual-manifest.json',lambda d:d.pop('sha256'))
+        with self.assertRaisesRegex(ValueError,'manual PDF'):validate_artifacts(self.root,'commit')
+    def test_gcc_report_for_another_binary_is_rejected(self):
+        self.change(self.root/'gcc13-evidence/gcc13.json',lambda d:d['gcc13'].update(executable_sha256='old binary'))
+        with self.assertRaisesRegex(ValueError,'release Linux binary'):validate_artifacts(self.root,'commit')
+    def test_unbound_gcc_report_is_rejected(self):
+        self.change(self.root/'gcc13-evidence/gcc13.json',lambda d:d['g++13'].pop('executable_sha256'))
+        with self.assertRaisesRegex(ValueError,'release Linux binary'):validate_artifacts(self.root,'commit')
+    def test_changed_gcc_binary_is_rejected(self):
+        self.change(self.root/'gcc13-evidence/gcc13.json',lambda d:d['g++13'].update(unchanged_binary=False))
+        with self.assertRaisesRegex(ValueError,'release Linux binary'):validate_artifacts(self.root,'commit')
+    def test_native_architecture_is_rechecked(self):
+        # Change PE machine type and update all hashes as if mislabelled evidence
+        # had been produced. Assembly must inspect the file rather than trust it.
+        binary=self.root/'native-windows/group-2.exe';data=bytearray(binary.read_bytes());struct.pack_into('<H',data,132,0x14c);binary.write_bytes(data)
+        digest=hashlib.sha256(data).hexdigest()
+        self.change(binary.parent/'build-manifest.json',lambda d:d.update(sha256=digest))
+        self.change(binary.parent/'acceptance.json',lambda d:d.update(executable_sha256=digest))
+        for shard in range(4):self.change(self.root/f'package-evidence-windows-{shard}/package-windows-{shard}.json',lambda d:d.update(executable_sha256=digest))
+        with self.assertRaisesRegex(ValueError,'architecture'):validate_artifacts(self.root,'commit')
+    def test_wrong_manifest_architecture_is_rejected(self):
+        self.change(self.root/'native-macos/build-manifest.json',lambda d:d.update(architecture='x86_64'))
+        with self.assertRaisesRegex(ValueError,'architecture'):validate_artifacts(self.root,'commit')
+    def test_wrong_acceptance_architecture_is_rejected(self):
+        self.change(self.root/'native-macos/acceptance.json',lambda d:d.update(native_identity=['macos','x86_64']))
+        with self.assertRaisesRegex(ValueError,'architecture'):validate_artifacts(self.root,'commit')
+    def test_wrong_native_size_is_rejected(self):
+        self.change(self.root/'native-linux/build-manifest.json',lambda d:d.update(bytes=1))
+        with self.assertRaisesRegex(ValueError,'size/hash'):validate_artifacts(self.root,'commit')
+    def test_missing_blackbox_gate_is_rejected(self):
+        self.change(self.root/'native-linux/acceptance.json',lambda d:d.pop('blackbox'))
+        with self.assertRaisesRegex(ValueError,'black-box'):validate_artifacts(self.root,'commit')
+    def test_failed_blackbox_gate_is_rejected(self):
+        self.change(self.root/'native-linux/acceptance.json',lambda d:d['blackbox'].update(status=1))
+        with self.assertRaisesRegex(ValueError,'black-box'):validate_artifacts(self.root,'commit')
