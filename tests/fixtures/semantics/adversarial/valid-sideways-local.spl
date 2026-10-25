@@ -1,0 +1,1 @@
+#hidden : void #left ( ) { #hidden : : return } void #right ( ) { : : print ( #hidden ) ; return } :

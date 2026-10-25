@@ -1,0 +1,1 @@
+#x : num #f ( #a ) { #v : void #g ( ) { : : #v = add ( #v 1 ) ; return } : #v = #a ; #g ( ) ; return ( #v ) } : #x = #f ( 4 ) ; print ( #x ) ;

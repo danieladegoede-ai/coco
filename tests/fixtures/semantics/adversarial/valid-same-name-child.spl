@@ -1,0 +1,1 @@
+: void #f ( ) { : void #f ( ) { : : print "child" ; return } : #f ( ) ; return } : #f ( ) ;

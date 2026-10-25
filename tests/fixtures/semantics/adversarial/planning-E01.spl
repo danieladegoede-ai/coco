@@ -1,0 +1,1 @@
+#x : void #f ( #p ) { #x : : #x = #p ; print ( #x ) ; return } : #x = 7 ; #f ( 2 ) ; print ( #x ) ;

@@ -1,5 +1,8 @@
 # Integration and release plan
 
+> Historical P1 record. Current P2 work is in [the updated guide](p2/90_HANDOFF_AND_ACCEPTANCE.md).
+> Preserve this reference; its old allocation/checklist is not current P2 status.
+
 ## First agreement
 
 Before feature coding, approve:

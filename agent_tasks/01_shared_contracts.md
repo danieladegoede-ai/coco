@@ -2,6 +2,10 @@
 
 Status: **APPROVED on 22 September 2026.**
 
+This is the P1 approval record. Additive P2 contracts and review status are in
+[`p2/01_p2_contracts.md`](p2/01_p2_contracts.md). As-built corrections below
+describe existing main behavior, not a change to the parser/CLI interface.
+
 The common token, token-stream, diagnostic and tree-type foundation is stored
 under `src/spl_frontend/`. Owners extend those types without breaking these
 contracts.
@@ -64,7 +68,7 @@ def tokenize(source: SourceFile) -> list[Token]:
     """Return all tokens, including exactly one final EOF token."""
 ```
 
-The lexer raises `LexicalError` for malformed input. It never creates tree
+The lexer raises `FrontendError` for malformed input. It never creates tree
 nodes and never makes grammar decisions.
 
 ## Token-stream contract
@@ -86,7 +90,7 @@ Every expected error contains:
 ```python
 @dataclass(frozen=True, slots=True)
 class Diagnostic:
-    phase: str
+    phase: DiagnosticPhase
     code: str
     message: str
     path: Path
@@ -136,8 +140,9 @@ parent/child link. The parser never chooses an ID.
 ## Parser contract
 
 ```python
-def parse(tokens: Sequence[Token], tree: SyntaxTree) -> SyntaxTree:
-    """Parse the entire token sequence or raise SyntaxError."""
+def parse(tokens: Sequence[Token], tree: SyntaxTree,
+          path: Path = DEFAULT_INPUT_PATH) -> SyntaxTree:
+    """Parse the entire token sequence or raise FrontendError."""
 ```
 
 The parser creates original-grammar non-terminal nodes and consumed-terminal
@@ -169,8 +174,20 @@ Defaults:
 - diagnostics: standard error
 - no traceback for expected lexical or syntax errors
 
-The final executable name is provisionally `splc` until submission instructions
-say otherwise.
+The P1 `EXECUTABLE_NAME` constant remains `splc`; native P1 submission artifacts
+were named `group-2.exe` and `group-2` (Linux, no extension). P2 naming/toolchain
+confirmation and packaging belong to #35/#36.
 
 The approved defaults are represented by the shared `CliRequest` value in
 `cli_contract.py`. The CLI owner implements argument parsing around that value.
+
+## Additive tree snapshot import for P2
+
+```python
+SyntaxTree.from_nodes(nodes: Iterable[TreeNode]) -> SyntaxTree
+```
+
+Copies node records and child lists, validates the full graph, preserves IDs
+and child order, and resumes allocation at the next sequential ID. Record
+order and parent-before-child record numbering are not assumed. Existing
+builder/parser/writer signatures and the XML schema are unchanged.

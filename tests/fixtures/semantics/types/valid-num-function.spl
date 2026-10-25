@@ -1,0 +1,1 @@
+#x : num #f ( #a ) { : : return ( add ( #a 1 ) ) } : #x = #f ( 5 ) ; print ( #x ) ;

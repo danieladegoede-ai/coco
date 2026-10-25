@@ -1,1 +1,1 @@
-"""Generated-case regression tests."""
+"""Generated tests package."""

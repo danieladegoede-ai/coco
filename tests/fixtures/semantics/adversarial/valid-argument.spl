@@ -1,0 +1,1 @@
+: num #f ( ) { : : return ( 2 ) } void #g ( #p ) { : : return } : #g ( #f ( ) ) ;

@@ -1,0 +1,1 @@
+#c : : #c = 0 ; while lesser ( #c 3 ) do { #c = add ( #c 1 ) ; } ; #c = 0 ; until eq ( #c 3 ) do { #c = add ( #c 1 ) ; } ;

@@ -1,0 +1,1 @@
+: num #outer ( ) { : void #f ( ) { : : return } : return ( #f ( ) ) } : nop ;

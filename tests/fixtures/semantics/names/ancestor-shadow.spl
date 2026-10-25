@@ -1,0 +1,1 @@
+#x #global : void #f ( #p ) { #x : void #g ( ) { : : #x = add ( #global #p ) ; return } : #g ( ) ; return } : #f ( 1 ) ;
