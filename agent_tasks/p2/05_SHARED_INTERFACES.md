@@ -4,6 +4,18 @@ Updated 18 October 2026. Read this before one module chooses representations
 that another owner must consume. The official 2026 sheets and actual tutor
 answers take precedence. An implemented API can still await team review.
 
+## Release update (25 October, supplied Announcement 34)
+
+A34 explicitly accepts the C++ designation and asks for human-readable target
+source plus g++/gcc compatibility. D01 is resolved for this release: prefer
+g++ C++17, with gcc's explicit C++ frontend/libstdc++ command documented and
+GNU 13 compatibility tested by CI. [Release decisions](../../release/P2_RELEASE_DECISIONS.md)
+record the adopted D02-D07 implementation choices and supported D08 build
+platforms. Those choices are not falsely attributed to new tutor answers.
+The historical question table below remains context, not an instruction to
+block this authorized release. Personal signatures, the portal closing hour
+and a real upload receipt cannot be supplied by technical inference.
+
 ## Current template handoff (24 October)
 
 The implemented #29 API and structural clone/capture contract are documented

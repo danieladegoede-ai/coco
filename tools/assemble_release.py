@@ -1,9 +1,10 @@
 """Assemble only verified matching native artifacts; never fabricate signatures."""
 from __future__ import annotations
-import argparse,hashlib,json,stat,subprocess,zipfile
+import argparse,hashlib,json,stat,subprocess,sys,zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 
 
 def sha(path: Path) -> str:return hashlib.sha256(path.read_bytes()).hexdigest()
